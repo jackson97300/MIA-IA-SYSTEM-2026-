@@ -495,6 +495,14 @@ class TradingFeatures:
     # Metadata
     calculation_time_ms: float = 0.0
     feature_quality: float = 1.0
+    
+    # ✅ Paramètres optionnels pour compatibilité
+    features_calculated: Optional[int] = None
+    lazy_loading_used: Optional[bool] = None
+    prefilter_passed: Optional[bool] = None
+    symbol: Optional[str] = None
+    price: Optional[float] = None
+    volume: Optional[float] = None
 
     def __post_init__(self):
         """Validation features"""

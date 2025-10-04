@@ -555,9 +555,9 @@ def _convert_vva(event: Dict[str, Any], symbol: str, ts: datetime) -> Optional[V
             vah=float(event.get("vah", 0.0) or 0.0),
             val=float(event.get("val", 0.0) or 0.0),
             vpoc=float(event.get("vpoc", 0.0) or 0.0),
-            prev_vah=event.get("prev_vah") or event.get("pvah"),
-            prev_val=event.get("prev_val") or event.get("pval"),
-            prev_vpoc=event.get("prev_vpoc") or event.get("ppoc"),
+            prev_vah=None,  # VVA previous fields removed
+            prev_val=None,  # VVA previous fields removed
+            prev_vpoc=None,  # VVA previous fields removed
             session_id_current=event.get("id_curr"),
             session_id_previous=event.get("id_prev"),
         )

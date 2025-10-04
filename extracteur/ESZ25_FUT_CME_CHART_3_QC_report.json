@@ -1,0 +1,42 @@
+{
+  "symbol": "ESZ25_FUT_CME",
+  "chart": 3,
+  "date_utc": "2025-09-25",
+  "duration_capture_sec": 180,
+  "sections": {
+    "quotes": {
+      "ok": true,
+      "violations_bid_gt_ask": 2,
+      "total_ticks": 88445
+    },
+    "depth": {
+      "ok": false,
+      "l1_eq_bbo_ratio": 0.058
+    },
+    "vwap": {
+      "ok": true,
+      "p95_step": 0.0,
+      "max_step": 3.7e-05
+    },
+    "vva": {
+      "ok": true,
+      "order_ok": true,
+      "inversions": 0
+    },
+    "cumdelta_nbcv": {
+      "ok": true,
+      "corr": 0.999999,
+      "nbcv_zero_sides": 9,
+      "nbcv_total": 623
+    },
+    "atr": {
+      "ok": true,
+      "min": 1.2,
+      "max": 2.29
+    }
+  },
+  "status": "WARN",
+  "warnings": [
+    "Low L1==BBO ratio in DOM (~6%)"
+  ]
+}

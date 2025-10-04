@@ -51,6 +51,12 @@ try:
     from core.data_collector_enhanced import DataCollectorEnhanced
     from core.advanced_metrics import AdvancedMetrics
     from core.mia_bullish import BullishScorer
+    
+    # === IMPORTS ELITE SYSTEM ===
+    from unifier.elite_unifier import EliteUnifier
+    from unifier.robust_unifier import RobustUnifier
+    from execution.elite_trading_bridge import EliteTradingBridge, create_elite_trading_bridge
+    
     SIERRA_AVAILABLE = True
 except ImportError as e:
     print(f"❌ Erreur import: {e}")
@@ -90,6 +96,15 @@ FINAL_CONFIG = {
     'deduplication_enabled': True,
     'family_scoring_enabled': True,
     
+    # === MÉTHODES ELITE ===
+    'elite_methods_enabled': True,
+    'menthorq_elite_enabled': True,
+    'battle_navale_elite_enabled': True,
+    'kernel_smooth_enabled': True,
+    'orderflow_advanced_enabled': True,
+    'dom_health_enabled': True,
+    'elite_unifier_enabled': True,
+    
     # Sierra Chart Integration
     'sierra_enabled': True,
     'sierra_data_path': 'D:/MIA_IA_system',
@@ -113,7 +128,8 @@ FINAL_CONFIG = {
     'features_config': {
         'enable_advanced_features': True,
         'enable_menthorq_integration': True,
-        'enable_smart_money_tracker': True
+        'enable_smart_money_tracker': True,
+        'enable_elite_methods': True
     }
 }
 
@@ -156,6 +172,11 @@ class MIAFinalSystem:
         self.trading_system = None
         self.risk_manager = None
         self.trading_executor = None
+        
+        # Elite System Components
+        self.elite_unifier = None
+        self.robust_unifier = None
+        self.elite_trading_bridge = None
         
         # Variables de suivi pour calculs avancés
         self.previous_delta = None
@@ -230,6 +251,17 @@ class MIAFinalSystem:
                     logger.info("🔄 Fallback vers mode simulation activé")
             else:
                 logger.info("🔄 Mode simulation activé (Sierra Chart désactivé)")
+            
+            # === INITIALISATION ELITE SYSTEM ===
+            if self.config.get('elite_methods_enabled', True):
+                try:
+                    self._initialize_elite_components()
+                    logger.info("✅ Composants Elite System initialisés")
+                except Exception as e:
+                    logger.warning(f"⚠️ Erreur initialisation Elite System: {e}")
+                    logger.info("🔄 Fallback vers stratégies classiques")
+            else:
+                logger.info("🔄 Stratégies classiques activées (Elite System désactivé)")
                 
         except Exception as e:
             logger.error(f"❌ Erreur initialisation composants: {e}")
@@ -329,6 +361,32 @@ class MIAFinalSystem:
             
         except Exception as e:
             logger.error(f"❌ Erreur initialisation composants Sierra Chart: {e}")
+            raise
+    
+    def _initialize_elite_components(self):
+        """Initialise les composants Elite System"""
+        try:
+            logger.info("🚀 Initialisation Elite System...")
+            
+            # Elite Unifier
+            self.elite_unifier = EliteUnifier()
+            logger.info("✅ Elite Unifier initialisé")
+            
+            # Robust Unifier (Elite + Legacy QC)
+            self.robust_unifier = RobustUnifier()
+            logger.info("✅ Robust Unifier initialisé")
+            
+            # Elite Trading Bridge (si TradingExecutor disponible)
+            if self.trading_executor:
+                self.elite_trading_bridge = create_elite_trading_bridge(self.trading_executor)
+                logger.info("✅ Elite Trading Bridge initialisé")
+            else:
+                logger.warning("⚠️ TradingExecutor non disponible - Elite Trading Bridge non initialisé")
+            
+            logger.info("✅ Composants Elite System initialisés avec succès")
+            
+        except Exception as e:
+            logger.error(f"❌ Erreur initialisation Elite System: {e}")
             raise
     
     def _reset_daily_metrics(self):
@@ -672,14 +730,72 @@ class MIAFinalSystem:
             elif market_data is None:
                 market_data = self._get_fallback_market_data()
             
-            # Créer contexte de trading
-            trading_context = self._create_trading_context(market_data)
+            # === ANALYSE ELITE SYSTEM (PRIORITAIRE) ===
+            elite_result = None
+            if self.config.get('elite_methods_enabled', True) and self.robust_unifier:
+                try:
+                    logger.debug("🚀 Analyse Elite System...")
+                    elite_result = self.robust_unifier.unify_robust(market_data)
+                    
+                    # Vérifier si on a une décision Elite
+                    elite_synthesis = elite_result.get("elite_synthesis", {})
+                    recommendation = elite_synthesis.get("recommendation", "NO_GO")
+                    go_live_mode = elite_synthesis.get("go_live_mode", "NO")
+                    
+                    logger.debug(f"🎯 Elite Decision: {recommendation} | Mode: {go_live_mode}")
+                    
+                    # Si Elite System génère un signal, l'utiliser
+                    if recommendation in ["SCOUT_GO", "GO"] and self.elite_trading_bridge:
+                        logger.info(f"🎯 Signal Elite détecté: {recommendation}")
+                        
+                        # Exécuter via Elite Trading Bridge
+                        success, order_id, error = self.elite_trading_bridge.process_elite_decision(
+                            elite_synthesis, market_data
+                        )
+                        
+                        if success:
+                            logger.info(f"✅ Ordre Elite exécuté: {order_id}")
+                            return {
+                                "signal": {
+                                    "strategy": "ELITE_SYSTEM",
+                                    "side": "BUY",  # TODO: Déterminer dynamiquement
+                                    "confidence": elite_synthesis.get("composite_score", 0.0),
+                                    "entry": market_data.get("price", 0.0),
+                                    "stop": 0.0,  # TODO: Calculer depuis risk_bracket
+                                    "targets": [0.0],  # TODO: Calculer depuis risk_bracket
+                                    "reason": f"Elite {recommendation}",
+                                    "metadata": {
+                                        "elite_synthesis": elite_synthesis,
+                                        "order_id": order_id,
+                                        "mode": go_live_mode
+                                    }
+                                },
+                                "decision": recommendation,
+                                "processing_time_ms": (time.perf_counter() - start_time) * 1000,
+                                "signal_source": "elite_system"
+                            }
+                        else:
+                            logger.warning(f"❌ Ordre Elite bloqué: {error}")
+                    
+                except Exception as e:
+                    logger.warning(f"⚠️ Erreur Elite System: {e}")
+                    elite_result = None
             
-            # Analyse avec le strategy selector
-            if self.strategy_selector is None:
-                logger.error("❌ Strategy Selector non initialisé")
-                return {"signal": None, "reason": "strategy_selector_not_initialized"}
-            result = self.strategy_selector.analyze_and_select(trading_context)
+            # === FALLBACK: ANALYSE STRATEGY SELECTOR CLASSIQUE ===
+            if not elite_result or elite_result.get("elite_synthesis", {}).get("recommendation") == "NO_GO":
+                logger.debug("🔄 Fallback vers Strategy Selector classique...")
+                
+                # Créer contexte de trading
+                trading_context = self._create_trading_context(market_data)
+                
+                # Analyse avec le strategy selector
+                if self.strategy_selector is None:
+                    logger.error("❌ Strategy Selector non initialisé")
+                    return {"signal": None, "reason": "strategy_selector_not_initialized"}
+                result = self.strategy_selector.analyze_and_select(trading_context)
+            else:
+                # Utiliser le résultat Elite pour la suite
+                result = None
             
             # Calcul temps de traitement
             processing_time = (time.perf_counter() - start_time) * 1000
@@ -688,33 +804,51 @@ class MIAFinalSystem:
             if processing_time > self.config.get('processing_timeout_ms', 100):
                 logger.warning(f"⚠️ Timeout processing: {processing_time:.1f}ms")
             
-            # Mettre à jour métriques
-            self._update_metrics(result, processing_time)
+            # Mettre à jour métriques (seulement si result existe)
+            if result:
+                self._update_metrics(result, processing_time)
             
             # Préparer résultat
-            analysis_result = {
-                "timestamp": result.timestamp.isoformat(),
-                "signal": None,
-                "strategy": result.best_pattern,
-                "confidence": result.selection_confidence,
-                "regime": result.market_regime,
-                "decision": result.final_decision.value,
-                "processing_time_ms": processing_time,
-                "patterns_considered": len(result.patterns_considered),
-                "daily_signals": self.daily_signal_count
-            }
-            
-            # Ajouter signal si généré
-            if result.signal_generated and result.pattern_signal:
-                analysis_result["signal"] = {
-                    "strategy": result.pattern_signal.strategy,
-                    "side": result.pattern_signal.side,
-                    "confidence": result.pattern_signal.confidence,
-                    "entry": result.pattern_signal.entry,
-                    "stop": result.pattern_signal.stop,
-                    "targets": result.pattern_signal.targets,
-                    "reason": result.pattern_signal.reason,
-                    "metadata": result.pattern_signal.metadata
+            if result:
+                # Résultat Strategy Selector classique
+                analysis_result = {
+                    "timestamp": result.timestamp.isoformat(),
+                    "signal": None,
+                    "strategy": result.best_pattern,
+                    "confidence": result.selection_confidence,
+                    "regime": result.market_regime,
+                    "decision": result.final_decision.value,
+                    "processing_time_ms": processing_time,
+                    "patterns_considered": len(result.patterns_considered),
+                    "daily_signals": self.daily_signal_count
+                }
+                
+                # Ajouter signal si généré
+                if result.signal_generated and result.pattern_signal:
+                    analysis_result["signal"] = {
+                        "strategy": result.pattern_signal.strategy,
+                        "side": result.pattern_signal.side,
+                        "confidence": result.pattern_signal.confidence,
+                        "entry": result.pattern_signal.entry,
+                        "stop": result.pattern_signal.stop,
+                        "targets": result.pattern_signal.targets,
+                        "reason": result.pattern_signal.reason,
+                        "metadata": result.pattern_signal.metadata
+                    }
+            else:
+                # Résultat Elite System (déjà traité plus haut)
+                elite_synthesis = elite_result.get("elite_synthesis", {})
+                analysis_result = {
+                    "timestamp": pd.Timestamp.now().isoformat(),
+                    "signal": None,
+                    "strategy": "ELITE_SYSTEM",
+                    "confidence": elite_synthesis.get("composite_score", 0.0),
+                    "regime": "ELITE",
+                    "decision": elite_synthesis.get("recommendation", "NO_GO"),
+                    "processing_time_ms": processing_time,
+                    "patterns_considered": 0,
+                    "daily_signals": self.daily_signal_count,
+                    "elite_synthesis": elite_synthesis
                 }
             
             # === CLUSTER ALERTS SIGNAL OVERRIDE ===
@@ -727,13 +861,21 @@ class MIAFinalSystem:
                     logger.info(f"🎯 Signal cluster override: {cluster_signal['strategy']} ({cluster_signal['side']})")
             
             # Logging
-            if result.signal_generated:
+            if result and result.signal_generated:
                 logger.info(f"🎯 Signal généré: {result.best_pattern} ({result.pattern_signal.side}) "
                            f"Conf: {result.selection_confidence:.2f} "
                            f"Temps: {processing_time:.1f}ms")
-            else:
+            elif result:
                 logger.debug(f"⏳ Aucun signal: {result.final_decision.value} "
                            f"Temps: {processing_time:.1f}ms")
+            else:
+                # Elite System
+                elite_synthesis = elite_result.get("elite_synthesis", {})
+                recommendation = elite_synthesis.get("recommendation", "NO_GO")
+                if recommendation == "NO_GO":
+                    logger.debug(f"⏳ Elite NO_GO - Temps: {processing_time:.1f}ms")
+                else:
+                    logger.info(f"🎯 Elite {recommendation} - Temps: {processing_time:.1f}ms")
             
             return analysis_result
             

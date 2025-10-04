@@ -63,10 +63,16 @@ class EnhancedDataValidator:
                             result["has_current"] = True
                             result["current_fields"] = [k for k in data.keys() if k in ['vah', 'val', 'vpoc', 'vah_prev', 'val_prev', 'vpoc_prev']]
                         
-                        # Vérifier les champs VVA précédents
-                        if 'pvah' in data or 'pval' in data or 'ppoc' in data:
-                            result["has_previous"] = True
-                            result["previous_fields"] = [k for k in data.keys() if k in ['pvah', 'pval', 'ppoc']]
+                        # VVA previous
+                        if "pvah" in data and "pval" in data and "ppoc" in data:
+                            try:
+                                pvah = float(data["pvah"])
+                                pval = float(data["pval"])
+                                ppoc = float(data["ppoc"])
+                                if not (pval < ppoc < pvah):
+                                    errors.append(f"Invalid VVA previous order: pval={pval}, ppoc={ppoc}, pvah={pvah}")
+                            except (ValueError, TypeError):
+                                errors.append("Invalid VVA previous values")
                         
                         if lines_checked >= 5:  # Vérifier les 5 premières lignes
                             break

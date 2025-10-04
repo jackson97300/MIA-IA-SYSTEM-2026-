@@ -248,6 +248,8 @@ class SimpleBattleNavaleTrader:
         self.status = AutomationStatus.STOPPED
         self.is_trading = False
         self.should_stop = False
+        # Décision heartbeat (anti-spam)
+        self._last_wait_log_ts: float = 0.0
 
         # === PERFORMANCE ===
         self.last_market_data: Optional[MarketData] = None
@@ -674,12 +676,22 @@ class SimpleBattleNavaleTrader:
 
                 # 1. Vérifier heures de trading (sauf mode data collection)
                 if self.mode != TradingMode.DATA_COLLECTION and not self._is_trading_hours():
+                    # Heartbeat lisible: pourquoi pas de trade
+                    now_ts = time.time()
+                    if now_ts - self._last_wait_log_ts > 60:
+                        logger.info("[DECISION] WAIT - Hors heures de trading (9:30-16:00 ET)")
+                        self._last_wait_log_ts = now_ts
                     await asyncio.sleep(60)
                     continue
 
                 # 2. Obtenir données marché
                 market_data = await self._get_current_market_data()
                 if not market_data:
+                    # Heartbeat lisible: feed manquant
+                    now_ts = time.time()
+                    if now_ts - self._last_wait_log_ts > 60:
+                        logger.info("[DECISION] WAIT - Aucune donnée marché disponible")
+                        self._last_wait_log_ts = now_ts
                     await asyncio.sleep(5)
                     continue
 
@@ -746,10 +758,17 @@ class SimpleBattleNavaleTrader:
                         else:
                             logger.info(f"[ERROR] Signal rejeté: {decision.reason}")
                     else:
-                        logger.debug(
-                            f"Signal sous seuil: {
-                                signal_confidence:.2%} < {
-                                self.min_probability:.2%}")
+                        # Heartbeat lisible: signal insuffisant
+                        logger.info(
+                            f"[DECISION] WAIT - Confiance insuffisante (conf={signal_confidence:.2%} < thr={self.min_probability:.2%})")
+                        self._last_wait_log_ts = time.time()
+
+                else:
+                    # Heartbeat lisible: aucun signal généré
+                    now_ts = time.time()
+                    if now_ts - self._last_wait_log_ts > 60:
+                        logger.info("[DECISION] WAIT - Aucun signal")
+                        self._last_wait_log_ts = now_ts
 
                 # 9. Gérer positions existantes
                 await self._manage_open_positions(market_data)

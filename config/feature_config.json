@@ -74,6 +74,27 @@
     "unified_file_path": "D:\\MIA_IA_system",
     "max_lines_per_read": 2000,
     "cache_ttl_seconds": 60
+  },
+  "live_mode": {
+    "enabled": true,
+    "data_source": "filesystem",
+    "realtime": {
+      "watch_dirs": [
+        "D:\\MIA_IA_system\\DATA_SIERRA_CHART\\DATA_2025\\OCTOBRE\\20251002\\CHART_9",
+        "D:\\MIA_IA_system\\DATA_SIERRA_CHART\\DATA_2025\\OCTOBRE\\20251002\\CHART_3"
+      ],
+      "poll_ms": 250,
+      "file_staleness_seconds": 3,
+      "disable_cached_payloads": true
+    },
+    "chart_mapping": {
+      "NQ": 9,
+      "ES": 3,
+      "YM": 3,
+      "RTY": 9
+    },
+    "qc_strict_mode": true,
+    "disable_fallbacks": true
   }
 }
 

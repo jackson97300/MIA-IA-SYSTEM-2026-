@@ -97,7 +97,7 @@ def load_feature_config() -> SimpleNamespace:
     main_sections = [
         'confluence', 'menthorq', 'order_book', 'volume_profile', 
         'vwap', 'vix', 'nbcv', 'feature_weights', 'thresholds', 
-        'data_sources', 'advanced'
+        'data_sources', 'advanced', 'live_mode'
     ]
     
     require_keys(config, main_sections, "features")

@@ -108,7 +108,9 @@ def parse_args():
     ap = argparse.ArgumentParser()
     ap.add_argument("--indir", type=str, required=True, help="Dossier d'entrée (ex: D:\\MIA_IA_system)")
     ap.add_argument("--date", type=str, default="today", help="YYYYMMDD ou 'today' (heure locale machine)")
-    ap.add_argument("--out", type=str, default=None, help="Fichier de sortie JSONL (sinon: <indir>\\unified_<date>.jsonl[.gz])")
+    ap.add_argument("--out", type=str, default=None, help="Fichier de sortie JSONL (sinon: organisé sous CHART_<id>)")
+    ap.add_argument("--chart", type=str, default=None, help="Filtrer et écrire pour un chart précis (ex: 3, 9)")
+    ap.add_argument("--symbol", type=str, default=None, help="Filtrer les enregistrements par symbole (préfixe, ex: ES, NQ)")
     ap.add_argument("--tol", type=float, default=0.2, help="Tolérance de bucket (secondes, défaut 0.2)")
     ap.add_argument("--max_depth_levels", type=int, default=20, help="Max niveaux DOM par côté (défaut 20)")
     ap.add_argument("--menthorq-filter", action="store_true", help="Activer le filtre MenthorQ si disponible")
@@ -120,6 +122,7 @@ def parse_args():
     ap.add_argument("--watch-seconds", type=float, default=0.0, help="Relance l’unification toutes les N secondes (active append-stream)")
     ap.add_argument("--minute-mode", action="store_true", help="Mode M1 strict: force l’agrégation à 1 minute (tol=60.0)")
     ap.add_argument("--verbose", action="store_true")
+    ap.add_argument("--tick-size", type=float, default=0.25, help="Taille de tick (ex: 0.25 pour ES)")
     
     # === NOUVEAUX ARGUMENTS CLUSTER ALERTS ===
     ap.add_argument("--pg-distance", type=float, default=2.5, help="Distance max (points ES) au niveau pour pré-gating (défaut 2.5)")
@@ -206,34 +209,38 @@ def iter_jsonl(path):
             except Exception:
                 continue
 
-def list_inputs(indir: str, yyyymmdd: str):
+def list_inputs(indir: str, yyyymmdd: str, chart: str | None = None):
     """Liste les fichiers d'entrée dans la nouvelle structure organisée"""
     # Chemin organisé
     organized_path = get_organized_data_path(indir, yyyymmdd)
     
     # Patterns avec la nouvelle structure
+    chart_id = str(chart) if chart is not None else "3"
+    chart_dir = os.path.join(organized_path, f"CHART_{chart_id}")
+
     patterns = [
-        # Chart 3
-        os.path.join(organized_path, "CHART_3", f"chart_3_basedata_{yyyymmdd}.jsonl"),
-        os.path.join(organized_path, "CHART_3", f"chart_3_trade_{yyyymmdd}.jsonl"),
-        os.path.join(organized_path, "CHART_3", f"chart_3_quote_{yyyymmdd}.jsonl"),
-        os.path.join(organized_path, "CHART_3", f"chart_3_depth_{yyyymmdd}.jsonl"),
-        os.path.join(organized_path, "CHART_3", f"chart_3_nbcv_{yyyymmdd}.jsonl"),
-        os.path.join(organized_path, "CHART_3", f"chart_3_vwap_{yyyymmdd}.jsonl"),
-        os.path.join(organized_path, "CHART_3", f"chart_3_vva_{yyyymmdd}.jsonl"),
-        os.path.join(organized_path, "CHART_3", f"chart_3_pvwap_{yyyymmdd}.jsonl"),
-        os.path.join(organized_path, "CHART_3", f"chart_3_atr_{yyyymmdd}.jsonl"),
-        os.path.join(organized_path, "CHART_3", f"chart_3_cumulative_delta_{yyyymmdd}.jsonl"),
-        # NOUVEAUX FICHIERS CHART 3 (v2.1)
-        os.path.join(organized_path, "CHART_3", f"chart_3_menthorq_gamma_{yyyymmdd}.jsonl"),
-        os.path.join(organized_path, "CHART_3", f"chart_3_menthorq_blind_spots_{yyyymmdd}.jsonl"),
-        os.path.join(organized_path, "CHART_3", f"chart_3_correlation_unified_{yyyymmdd}.jsonl"),
-        
-        # Chart 8 (VIX)
-        os.path.join(organized_path, "CHART_8", f"chart_8_vix_{yyyymmdd}.jsonl")
-        
-        # Chart 10 SUPPRIMÉ - Tout centralisé sur Chart 3 (v2.1)
+        os.path.join(chart_dir, f"chart_{chart_id}_basedata_{yyyymmdd}.jsonl"),
+        os.path.join(chart_dir, f"chart_{chart_id}_trade_{yyyymmdd}.jsonl"),
+        os.path.join(chart_dir, f"chart_{chart_id}_quote_{yyyymmdd}.jsonl"),
+        os.path.join(chart_dir, f"chart_{chart_id}_depth_{yyyymmdd}.jsonl"),
+        os.path.join(chart_dir, f"chart_{chart_id}_nbcv_{yyyymmdd}.jsonl"),
+        os.path.join(chart_dir, f"chart_{chart_id}_vwap_{yyyymmdd}.jsonl"),
+        os.path.join(chart_dir, f"chart_{chart_id}_vva_{yyyymmdd}.jsonl"),
+        os.path.join(chart_dir, f"chart_{chart_id}_pvwap_{yyyymmdd}.jsonl"),
+        os.path.join(chart_dir, f"chart_{chart_id}_atr_{yyyymmdd}.jsonl"),
+        os.path.join(chart_dir, f"chart_{chart_id}_cumulative_delta_{yyyymmdd}.jsonl"),
+        os.path.join(chart_dir, f"chart_{chart_id}_vix_{yyyymmdd}.jsonl"),
+        # Nouveaux
+        os.path.join(chart_dir, f"chart_{chart_id}_menthorq_gamma_{yyyymmdd}.jsonl"),
+        os.path.join(chart_dir, f"chart_{chart_id}_menthorq_blind_spots_{yyyymmdd}.jsonl"),
+        os.path.join(chart_dir, f"chart_{chart_id}_correlation_unified_{yyyymmdd}.jsonl"),
+        os.path.join(chart_dir, f"chart_{chart_id}_correlation_{yyyymmdd}.jsonl"),
     ]
+
+    # VIX depuis CHART_8 (optionnel si exporté là)
+    vix_c8 = os.path.join(organized_path, "CHART_8", f"chart_8_vix_{yyyymmdd}.jsonl")
+    if os.path.exists(vix_c8):
+        paths.append(vix_c8)
     
     paths = []
     for p in patterns:
@@ -718,7 +725,9 @@ def compute_summary(clusters, current_price, tick_size):
 
 def unify(indir: str, yyyymmdd: str, out_path: str, tol: float, max_depth_levels: int, verbose: bool=False,
           only_set=None, menthorq_filter_enabled=False, gzip_enabled=False, args=None):
-    paths = list_inputs(indir, yyyymmdd)
+    # Filtrage par chart si fourni
+    chart_id = args.chart if args and getattr(args, "chart", None) else None
+    paths = list_inputs(indir, yyyymmdd, chart=chart_id)
     if not paths:
         raise FileNotFoundError(f"Aucun fichier d'entrée pour la date {yyyymmdd} dans {indir}")
 
@@ -740,6 +749,8 @@ def unify(indir: str, yyyymmdd: str, out_path: str, tol: float, max_depth_levels
     }
 
     n_lines = 0
+    # Anti-doublons: n'émettre qu'une ligne par minute (index minute basé sur t_sc)
+    last_emitted_minute_index = None
     for p in paths:
         if verbose:
             print(f"Lecture: {p}", file=sys.stderr)
@@ -760,6 +771,11 @@ def unify(indir: str, yyyymmdd: str, out_path: str, tol: float, max_depth_levels
                 b["t_sc"] = t
 
             typ = obj.get("type")
+            # Filtre symbole si demandé
+            if args and getattr(args, "symbol", None):
+                sym = (obj.get("sym") or obj.get("symbol") or "").upper()
+                if sym and not sym.startswith(args.symbol.upper()):
+                    continue
             if typ == "basedata":
                 b["records"]["basedata"] = obj
             elif typ == "vwap":
@@ -794,6 +810,17 @@ def unify(indir: str, yyyymmdd: str, out_path: str, tol: float, max_depth_levels
                     b["menthorq_levels"].append(obj_copy)
                 else:
                     b["menthorq_levels"].append(obj)
+            elif typ in ("menthorq_gamma", "menthorq_blind_spots"):
+                # Considérer ces objets comme des niveaux MenthorQ consolidés
+                if args and getattr(args, "timezone_offset", 0.0) != 0.0:
+                    obj_copy = obj.copy()
+                    obj_copy["t"] = float(obj.get("t", 0.0)) + (args.timezone_offset * 3600.0)
+                    b["menthorq_levels"].append(obj_copy)
+                else:
+                    b["menthorq_levels"].append(obj)
+            elif typ == "correlation_unified":
+                # Garder uniquement la dernière valeur par bucket (fallback possible)
+                b["records"]["correlation_unified"] = obj
             elif typ == "atr":
                 b["records"]["atr"] = obj
             elif typ == "cumulative_delta":
@@ -919,10 +946,13 @@ def unify(indir: str, yyyymmdd: str, out_path: str, tol: float, max_depth_levels
             enable_menthorq_decisions = args.menthorq_decisions if args else False
             enable_mia_optimal = args.mia_optimal if args else False
             
+            # Sécuriser le prix courant si basedata est absent
+            _bd = unified.get("basedata") or {}
+            current_price = _bd.get("c")
             alerts = compute_cluster_alerts(
                 b["menthorq_levels"], 
-                unified.get("basedata", {}).get("c"),
-                tick_size=0.25,
+                current_price,
+                tick_size=(args.tick_size if args else 0.25),
                 confluence_thr=3.0,
                 cluster_thr=3.0,
                 pg_distance=pg_distance,
@@ -943,9 +973,19 @@ def unify(indir: str, yyyymmdd: str, out_path: str, tol: float, max_depth_levels
             corr_obj = b["records"].get("correlation")
         except Exception:
             corr_obj = None
-        if corr_obj is not None:
-            unified["correlation"] = {"cc": corr_obj.get("cc")}
-            carry_state["correlation"]["value"] = corr_obj.get("cc")
+        # Fallback: utiliser correlation_unified si corr standard absent ou nul
+        corr_unified_obj = b["records"].get("correlation_unified")
+        chosen_cc = None
+        if corr_obj is not None and isinstance(corr_obj.get("cc"), (int, float)) and corr_obj.get("cc") != 0:
+            chosen_cc = corr_obj.get("cc")
+        elif corr_unified_obj is not None and isinstance(corr_unified_obj.get("cc"), (int, float)):
+            chosen_cc = corr_unified_obj.get("cc")
+        # Filtrer valeurs sentinelles/invalides
+        if isinstance(chosen_cc, (int, float)) and (chosen_cc == 0 or abs(chosen_cc - 0.427) < 1e-6):
+            chosen_cc = None
+        if chosen_cc is not None:
+            unified["correlation"] = {"cc": chosen_cc}
+            carry_state["correlation"]["value"] = chosen_cc
             carry_state["correlation"]["ts_sec"] = current_ts_sec
         else:
             ttl_corr = (args.correlation_ttl_seconds if args else 120)
@@ -979,8 +1019,12 @@ def unify(indir: str, yyyymmdd: str, out_path: str, tol: float, max_depth_levels
                 if verbose:
                     print(f"[CUMULATIVE_DELTA] Erreur correction: {e}")
 
-        out.write(json.dumps(unified, ensure_ascii=False) + "\n")
-        total_written += 1
+        # N'écrire qu'une ligne par minute
+        current_minute_index = int(current_ts_sec // 60)
+        if (last_emitted_minute_index is None) or (current_minute_index != last_emitted_minute_index):
+            out.write(json.dumps(unified, ensure_ascii=False) + "\n")
+            total_written += 1
+            last_emitted_minute_index = current_minute_index
 
     return {
         "inputs": len(paths),
@@ -1005,6 +1049,10 @@ def main():
 
     def compute_out_path(ymd: str) -> str:
         organized_path = get_organized_data_path(args.indir, ymd)
+        # Si un chart spécifique est demandé, écrire sous son dossier CHART_<id>
+        chart_id = str(args.chart) if getattr(args, "chart", None) else None
+        if chart_id:
+            organized_path = os.path.join(organized_path, f"CHART_{chart_id}")
         ensure_directory_exists(organized_path)
         if args.rollover_minutes and args.rollover_minutes > 0:
             now = datetime.datetime.now()
@@ -1016,7 +1064,10 @@ def main():
                 suffix = f"{now.strftime('%H')}-{window_index:02d}"
                 out_default = os.path.join(organized_path, f"unified_{ymd}_{suffix}.jsonl")
         else:
-            out_default = os.path.join(organized_path, f"unified_{ymd}.jsonl")
+            if chart_id:
+                out_default = os.path.join(organized_path, f"unified_chart_{chart_id}_{ymd}.jsonl")
+            else:
+                out_default = os.path.join(organized_path, f"unified_{ymd}.jsonl")
             
         # Rollover par taille de fichier si activé
         if getattr(args, "rollover_bytes", 0) > 0:
@@ -1024,7 +1075,10 @@ def main():
                 if os.path.exists(out_default) and os.path.getsize(out_default) >= args.rollover_bytes:
                     # On suffixe HHMM pour ouvrir un nouveau fichier journalier « segmenté »
                     seg = datetime.datetime.now().strftime("%H%M")
-                    out_default = os.path.join(organized_path, f"unified_{ymd}_{seg}.jsonl")
+                    if chart_id:
+                        out_default = os.path.join(organized_path, f"unified_chart_{chart_id}_{ymd}_{seg}.jsonl")
+                    else:
+                        out_default = os.path.join(organized_path, f"unified_{ymd}_{seg}.jsonl")
             except Exception:
                 pass
                 

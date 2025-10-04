@@ -1,0 +1,12 @@
+{
+  "count_total": 605245,
+  "count_kept": 605245,
+  "count_match": 0,
+  "count_valid": 407648,
+  "ratio_kept": 1.0,
+  "ratio_match": 0.0,
+  "ratio_valid": 0.67352559707226,
+  "tol_min": 300.0,
+  "tol_max": 300.0,
+  "status": "WARN"
+}

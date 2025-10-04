@@ -1,0 +1,40 @@
+{
+  "symbol": "NQZ25_FUT_CME",
+  "chart": 9,
+  "date_utc": "2025-09-25",
+  "duration_capture_sec": 180,
+  "sections": {
+    "quotes": {
+      "ok": true,
+      "violations_bid_gt_ask": 0,
+      "total_ticks": 98454
+    },
+    "depth": {
+      "ok": true,
+      "l1_eq_bbo_ratio": 0.54
+    },
+    "vwap": {
+      "ok": true,
+      "p95_step": 0.0,
+      "max_step": 0.0
+    },
+    "vva": {
+      "ok": true,
+      "order_ok": true,
+      "inversions": 0
+    },
+    "cumdelta_nbcv": {
+      "ok": true,
+      "corr": 0.999997,
+      "nbcv_zero_sides": 11,
+      "nbcv_total": 701
+    },
+    "atr": {
+      "ok": true,
+      "min": 5.79,
+      "max": 10.61
+    }
+  },
+  "status": "OK",
+  "warnings": []
+}

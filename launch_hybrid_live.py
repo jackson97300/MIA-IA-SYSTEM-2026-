@@ -2,6 +2,7 @@
 """
 Lanceur MIA HYBRIDE en mode LIVE avec création d'un nouveau unifier
 Utilise le lanceur hybride qui crée un unifier en temps réel
+INTÉGRATION DES MÉTHODES ELITE
 """
 
 import sys
@@ -14,6 +15,17 @@ from datetime import datetime
 
 # Ajouter le répertoire racine au path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+# === CONFIGURATION MÉTHODES ELITE ===
+ELITE_CONFIG = {
+    "elite_methods_enabled": True,
+    "menthorq_elite_enabled": True,
+    "battle_navale_elite_enabled": True,
+    "kernel_smooth_enabled": True,
+    "orderflow_advanced_enabled": True,
+    "dom_health_enabled": True,
+    "elite_unifier_enabled": True
+}
 
 def signal_handler(signum, frame):
     """Gestionnaire de signal pour arrêt propre"""
@@ -28,6 +40,12 @@ def launch_hybrid_live_system():
     print("📊 Mode: Création d'un nouveau unifier en temps réel")
     print("🎯 Trading: Mode LIVE (Demo Account)")
     print("📈 Dow Theory: ✅ Activée")
+    print("🔥 MÉTHODES ELITE: ✅ Activées")
+    print("   - MenthorQ Elite: ✅")
+    print("   - Battle Navale Elite: ✅")
+    print("   - Kernel Smooth: ✅")
+    print("   - OrderFlow Advanced: ✅")
+    print("   - DOM Health: ✅")
     print("=" * 60)
     
     # Configuration des gestionnaires de signal
@@ -100,6 +118,19 @@ if __name__ == "__main__":
         subprocess.run(["python", "launch_hybrid_system.py", "--validate-only", "--date", "today"])
     else:
         launch_hybrid_live_system()
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

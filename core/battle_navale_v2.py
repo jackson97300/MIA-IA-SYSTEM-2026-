@@ -30,7 +30,11 @@ from core.base_types import (
     ES_TICK_SIZE, ES_TICK_VALUE
 )
 from core.unified_stops import calculate_unified_stops, UNIFIED_STOP_CONFIG
-from core.mia_bullish import BullishScorer
+from features.mia_bullish import compute_mia_bullish, MIAInputs, QCContext, MentorQCtx, MentorQGamma, MentorQSwing, MentorQBlind, MentorQScanner, VWAPCtx, VPCtx, LeadershipCtx, OFDOMCtx, MacroCtx, SessionCtx
+
+# === INTÉGRATION MENTHORQ DECISION ENGINE ===
+from engines.MenthorQDecisionEngine import decide
+from unifier.build_ctx import build_ctx
 
 logger = get_logger(__name__)
 
@@ -186,7 +190,12 @@ class BattleNavaleV2:
         self.volume_profile_analyzer = None
         self.orderflow_analyzer = None
         self.leadership_engine = None
-        self.mia_bullish = BullishScorer()  # Nouveau : MIA avec staleness
+        # MIA Bullish v2 - État persistant
+        self.mia_bullish_state = {
+            "prev_state": "NEUTRE",
+            "hold_counts": {},
+            "last_update": 0
+        }
         
         # === ÉTAT ===
         self.price_history: deque = deque(maxlen=100)
@@ -207,6 +216,77 @@ class BattleNavaleV2:
         
         logger.info("Battle Navale V2 initialisé - Architecture modernisée avec composants unifiés")
 
+    def analyze_with_menthorq_engine(self, unified_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """
+        ANALYSE BATTLE NAVALE V2 AVEC MENTHORQ DECISION ENGINE
+        
+        Processus :
+        1. Construction du contexte unifié
+        2. Décision via MenthorQDecisionEngine
+        3. Mapping vers le format Battle Navale
+        """
+        try:
+            # === 1. CONSTRUCTION DU CONTEXTE UNIFIÉ ===
+            snapshot = {
+                "sym": "ES",  # ou "NQ" selon les données
+                "t": unified_data.get("t", time.time()),
+                "last": unified_data.get("price", unified_data.get("last", 0.0)),
+                "phase": unified_data.get("session", {}).get("phase", "MID"),
+                "regime": unified_data.get("session", {}).get("regime", "TREND"),
+                "vix": unified_data.get("vix", {}).get("value", 0.0),
+                "vix_trend": unified_data.get("vix", {}).get("trend", "flat"),
+                "mentorq_gamma": unified_data.get("mentorq", {}).get("gamma", {}),
+                "mentorq_blind": unified_data.get("mentorq", {}).get("blind_spots", {}),
+                "vwap": unified_data.get("micro", {}).get("vwap", {}),
+                "vp": unified_data.get("micro", {}).get("vp", {}),
+                "ofdom": unified_data.get("ofdom", {}),
+                "lead": unified_data.get("lead", {}),
+                "cluster": unified_data.get("cluster", {}),
+                "mia_score": unified_data.get("mia", {}).get("score", 50.0),
+                "mia_state": unified_data.get("mia", {}).get("state", "NEUTRE")
+            }
+            
+            # === 2. DÉCISION VIA MENTHORQ DECISION ENGINE ===
+            ctx = build_ctx(snapshot)
+            decision = decide(ctx)
+            
+            # === 3. MAPPING VERS FORMAT BATTLE NAVALE ===
+            if decision and decision["action"] != "FLAT":
+                # Convertir en format Battle Navale V2
+                battle_result = BattleNavaleV2Result(
+                    timestamp=pd.Timestamp.now(),
+                    battle_status=BattleStatusV2.VIKINGS_WIN if decision["side"] == "LONG" else BattleStatusV2.DEFENDERS_WIN,
+                    battle_navale_signal=decision["confidence"],
+                    base_quality=decision["confidence"],
+                    rouge_sous_verte=decision["side"] == "LONG",
+                    pattern_strength=decision["confidence"],
+                    confluence_score=decision["confidence"],
+                    signal_confidence=decision["confidence"],
+                    signal_type=decision["side"],
+                    golden_rule_status="PASSED",
+                    vix_regime=VIXRegime.MID,  # À calculer selon VIX
+                    dom_health=DOMHealth.GOOD,
+                    menthorq_bonus=0.0,
+                    orderflow_bonus=0.0,
+                    leadership_bonus=0.0,
+                    dynamic_thresholds={},
+                    sensitive_window=False,
+                    hard_exit_mq=False,
+                    audit_data={
+                        "menthorq_decision_engine_used": True,
+                        "original_decision": decision
+                    }
+                )
+                
+                logger.info(f"⚔️ Battle Navale + MenthorQ Engine: {decision['action']} {decision['side']} - {decision['reason']}")
+                return battle_result
+            
+            return None
+            
+        except Exception as e:
+            logger.error(f"Erreur analyse Battle Navale avec MenthorQ Engine: {e}")
+            return None
+
     def analyze_battle_navale_v2(self, unified_data: Dict[str, Any]) -> BattleNavaleV2Result:
         """
         ANALYSE BATTLE NAVALE V2 COMPLÈTE
@@ -225,13 +305,21 @@ class BattleNavaleV2:
         start_time = time.perf_counter()
         
         try:
+            # === 0. MIA BULLISH V2 PRÉ-CALCUL POUR AUDIT (même si gate DOM) ===
+            # Calcul MIA Bullish pour audit (ne pilote PAS la décision si gate)
+            setup_side = "LONG"  # Par défaut pour l'audit
+            mia_ctx = self._build_mia_bullish_context(unified_data, setup_side)
+            mia_out = compute_mia_bullish(mia_ctx)
+            
             # === 1. DOM HEALTH CHECK (ChatGPT) ===
             dom_health = self._check_dom_health(unified_data)
             if dom_health == DOMHealth.CRITICAL:
-                return self._create_blocked_result(
+                # Retour avec audit MIA Bullish même si gate DOM
+                return self._create_blocked_result_with_mia_audit(
                     timestamp=pd.Timestamp.now(),
                     reason="dom_critical",
-                    dom_health=dom_health
+                    dom_health=dom_health,
+                    mia_audit=mia_out
                 )
             
             # === 2. FENÊTRES SENSIBLES (ChatGPT) ===
@@ -260,10 +348,16 @@ class BattleNavaleV2:
             # === 7. VIX ADAPTATION ===
             vix_analysis = self._analyze_vix_regime(unified_data)
             
-            # === 8. HARD-EXIT MQ ===
+            # === 8. MIA BULLISH V2 INTEGRATION ===
+            # Déterminer la direction du setup basée sur l'analyse
+            battle_signal = battle_analysis.get('battle_signal', 0)
+            setup_side = "LONG" if battle_signal > 0 else "SHORT" if battle_signal < 0 else "LONG"  # Par défaut LONG
+            mia_analysis = self._analyze_mia_bullish_v2(unified_data, setup_side)
+            
+            # === 9. HARD-EXIT MQ ===
             hard_exit_mq = self._check_hard_exit_mq(unified_data)
             
-            # === 9. SYNTHÈSE FINALE ===
+            # === 10. SYNTHÈSE FINALE ===
             result = self._synthesize_battle_result(
                 timestamp=pd.Timestamp.now(),
                 battle_analysis=battle_analysis,
@@ -271,6 +365,7 @@ class BattleNavaleV2:
                 golden_rule_analysis=golden_rule_analysis,
                 leadership_analysis=leadership_analysis,
                 vix_analysis=vix_analysis,
+                mia_analysis=mia_analysis,
                 dom_health=dom_health,
                 sensitive_window=sensitive_window,
                 hard_exit_mq=hard_exit_mq,
@@ -716,26 +811,30 @@ class BattleNavaleV2:
 
     def _synthesize_battle_result(self, timestamp: pd.Timestamp, **kwargs) -> BattleNavaleV2Result:
         """
-        SYNTHÈSE FINALE
+        SYNTHÈSE FINALE AVEC MIA BULLISH V2
         """
         battle_analysis = kwargs['battle_analysis']
         base_analysis = kwargs['base_analysis']
         golden_rule_analysis = kwargs['golden_rule_analysis']
         leadership_analysis = kwargs['leadership_analysis']
         vix_analysis = kwargs['vix_analysis']
+        mia_analysis = kwargs['mia_analysis']
         dom_health = kwargs['dom_health']
         sensitive_window = kwargs['sensitive_window']
         hard_exit_mq = kwargs['hard_exit_mq']
         unified_data = kwargs['unified_data']
         
-        # Signal de base
+        # Signal de base Battle Navale
         battle_signal = battle_analysis['battle_signal']
         
-        # Multiplicateurs
+        # Signal MIA Bullish v2 (pondération 40% Battle Navale + 60% MIA Bullish)
+        mia_signal = mia_analysis['mia_score']
+        
+        # Multiplicateurs Battle Navale
         vix_mult = vix_analysis['vix_multiplier']
         leadership_bonus = leadership_analysis['bonus']
         
-        # Bonus MenthorQ
+        # Bonus MenthorQ (intégré dans MIA Bullish v2 maintenant)
         menthorq_bonus = 1.0
         menthorq_levels = unified_data.get('menthorq_levels', [])
         if menthorq_levels:
@@ -747,7 +846,7 @@ class BattleNavaleV2:
                     menthorq_bonus = 1.15
                     break
         
-        # Bonus OrderFlow
+        # Bonus OrderFlow (intégré dans MIA Bullish v2 maintenant)
         orderflow_bonus = 1.0
         nbcv = unified_data.get('nbcv_metrics', {})
         if nbcv:
@@ -755,8 +854,9 @@ class BattleNavaleV2:
             if delta_ratio > 0.3:
                 orderflow_bonus = 1.1
         
-        # Signal final
-        final_signal = battle_signal * vix_mult * leadership_bonus * menthorq_bonus * orderflow_bonus
+        # Signal final hybride : 40% Battle Navale + 60% MIA Bullish v2
+        battle_signal_weighted = battle_signal * vix_mult * leadership_bonus * menthorq_bonus * orderflow_bonus
+        final_signal = 0.4 * battle_signal_weighted + 0.6 * mia_signal
         
         # Seuils dynamiques
         vix_regime = vix_analysis['vix_regime']
@@ -782,9 +882,12 @@ class BattleNavaleV2:
         # Score final
         final_confidence = (confidence * 0.6 + confluence_score * 0.4)
         
-        # Audit data
+        # Audit data avec MIA Bullish v2
         audit_data = {
             'battle_signal_raw': battle_signal,
+            'mia_signal_raw': mia_signal,
+            'mia_state': mia_analysis.get('mia_state', 'UNKNOWN'),
+            'mia_sizing_advice': mia_analysis.get('sizing_advice', {'size': 1, 'confidence': 0.0}),
             'vix_multiplier': vix_mult,
             'leadership_bonus': leadership_bonus,
             'menthorq_bonus': menthorq_bonus,
@@ -793,7 +896,9 @@ class BattleNavaleV2:
             'confluence_score': confluence_score,
             'dom_health': dom_health.value,
             'sensitive_window': sensitive_window,
-            'hard_exit_mq': hard_exit_mq
+            'hard_exit_mq': hard_exit_mq,
+            'mia_validation_metrics': mia_analysis.get('validation_metrics', {}),
+            'setup_side': setup_side
         }
         
         return BattleNavaleV2Result(
@@ -923,37 +1028,208 @@ class BattleNavaleV2:
         
         return wick_size_ticks <= max_wick_ticks
     
-    def _analyze_mia_bullish_with_staleness(self, unified_data: Dict[str, Any]) -> Dict[str, Any]:
+    def _analyze_mia_bullish_v2(self, unified_data: Dict[str, Any], setup_side: str = "LONG") -> Dict[str, Any]:
         """
-        Analyse MIA Bullish avec logging de staleness intégré
+        Analyse MIA Bullish v2 avec toutes les améliorations
+        
+        Args:
+            unified_data: Données unifiées du marché
+            setup_side: "LONG" ou "SHORT" pour direction du setup
         
         Returns:
-            Dict avec score, staleness_status, staleness_ms
+            Dict avec score, état, sizing, métriques de validation
         """
         try:
-            # Utiliser notre système MIA avec staleness
-            mia_score = self.mia_bullish.calculate_bullish_score(unified_data)
+            # Construction du contexte MIA Bullish v2
+            mia_ctx = self._build_mia_bullish_context(unified_data, setup_side)
             
-            # Les informations de staleness sont déjà loggées dans calculate_bullish_score
-            logger.debug(f"📊 Battle Navale MIA: score={mia_score:.3f}")
+            # Debug: vérifier le contexte
+            logger.debug(f"🔍 MIA Bullish v2 contexte: price={mia_ctx.current_price}, setup={setup_side}")
+            
+            # Exécution de MIA Bullish v2
+            result = compute_mia_bullish(mia_ctx)
+            
+            # Debug: vérifier le résultat
+            logger.debug(f"🔍 MIA Bullish v2 résultat: {result}")
+            
+            # Mise à jour de l'état persistant
+            self.mia_bullish_state.update({
+                "prev_state": result["mia_bias_state"],
+                "hold_counts": result["hold_counts"],
+                "last_update": unified_data.get("timestamp", 0)
+            })
+            
+            # Conversion du score 0-100 vers -1 à +1 pour compatibilité
+            score_bidirectional = (result["mia_bullish_score"] - 50.0) / 50.0
+            
+            logger.debug(f"📊 Battle Navale MIA v2: score={score_bidirectional:.3f}, state={result['mia_bias_state']}, setup={setup_side}")
             
             return {
-                "mia_score": mia_score,
-                "mia_bullish": mia_score > 0.2,  # Seuil LONG
-                "mia_bearish": mia_score < -0.2,  # Seuil SHORT
-                "mia_neutral": abs(mia_score) <= 0.2,
-                "mia_strength": abs(mia_score)
+                "mia_score": score_bidirectional,
+                "mia_bullish": result["mia_bias_state"] == "BULLISH",
+                "mia_bearish": result["mia_bias_state"] == "BEARISH", 
+                "mia_neutral": result["mia_bias_state"] == "NEUTRE",
+                "mia_strength": abs(score_bidirectional),
+                "mia_state": result["mia_bias_state"],
+                "sizing_advice": result["sizing_advice"],
+                "validation_metrics": result["validation_metrics"],
+                "setup_side": setup_side
             }
             
         except Exception as e:
-            logger.error(f"❌ Erreur analyse MIA Battle Navale: {e}")
+            logger.error(f"❌ Erreur analyse MIA Bullish v2: {e}")
             return {
                 "mia_score": 0.0,
                 "mia_bullish": False,
                 "mia_bearish": False,
                 "mia_neutral": True,
-                "mia_strength": 0.0
+                "mia_strength": 0.0,
+                "mia_state": "NEUTRE",
+                "sizing_advice": {"size": 1, "confidence": 0.0},
+                "validation_metrics": {"error": str(e)},
+                "setup_side": setup_side
             }
+
+    def _build_mia_bullish_context(self, unified_data: Dict[str, Any], setup_side: str) -> MIAInputs:
+        """
+        Construction du contexte MIA Bullish v2 à partir des données unifiées
+        
+        Args:
+            unified_data: Données unifiées du marché
+            setup_side: "LONG" ou "SHORT"
+            
+        Returns:
+            MIAInputs: Contexte complet pour MIA Bullish v2
+        """
+        try:
+            # Extraction des données de base
+            current_price = unified_data.get('current_price', 0)
+            symbol = unified_data.get('symbol', 'ES')
+            timestamp = unified_data.get('timestamp', 0)
+            
+            # Debug: vérifier les données d'entrée
+            logger.debug(f"🔍 Données unifiées: price={current_price}, symbol={symbol}, setup={setup_side}")
+            
+            # Construction du contexte QC
+            qc = QCContext(
+                options_snapshot_age_min=unified_data.get('options_snapshot_age_min', 0),
+                vwap_qc_p95=unified_data.get('vwap_qc_p95', 0.0),
+                data_quality_score=unified_data.get('data_quality_score', 1.0),
+                atr_per_bar=unified_data.get('atr_per_bar', 1.0),
+                atr_relative=unified_data.get('atr_relative', 1.0),
+                l1_bbo_ratio_rolling=unified_data.get('l1_bbo_ratio_rolling', 1.0),
+                symbol=symbol,
+                tick_size=unified_data.get('tick_size', 0.25)
+            )
+            
+            # Construction du contexte MentorQ
+            mentorq_data = unified_data.get('menthorq', {})
+            mentorq_ctx = MentorQCtx(
+                gamma=MentorQGamma(
+                    dist_to_HVL_pts=mentorq_data.get('gamma', {}).get('dist_to_HVL_pts', 0),
+                    flip_active=mentorq_data.get('gamma', {}).get('flip_active', False)
+                ),
+                swing=MentorQSwing(
+                    swing_high=mentorq_data.get('swing', {}).get('swing_high', 0),
+                    swing_low=mentorq_data.get('swing', {}).get('swing_low', 0)
+                ),
+                blind=MentorQBlind(
+                    distance_ticks=mentorq_data.get('blind_spots', {}).get('distance_ticks', 0),
+                    blind_spot_1=mentorq_data.get('blind_spots', {}).get('blind_spot_1', 0)
+                ),
+                scanner=MentorQScanner(
+                    recent=mentorq_data.get('scanner', {}).get('recent', {}),
+                    scanner_debounce=mentorq_data.get('scanner', {}).get('scanner_debounce', set())
+                )
+            )
+            
+            # Construction du contexte VWAP
+            vwap_data = unified_data.get('vwap', {})
+            vwap_ctx = VWAPCtx(
+                vwap=vwap_data.get('vwap', 0),
+                vwap_up1=vwap_data.get('up1', 0),
+                vwap_dn1=vwap_data.get('dn1', 0),
+                vwap_slope=vwap_data.get('slope', 0.0)
+            )
+            
+            # Construction du contexte Volume Profile
+            vp_data = unified_data.get('volume_profile', {})
+            vp_ctx = VPCtx(
+                vpoc=vp_data.get('vpoc', 0),
+                val=vp_data.get('val', 0),
+                vah=vp_data.get('vah', 0)
+            )
+            
+            # Construction du contexte Leadership
+            leadership_data = unified_data.get('leadership', {})
+            leadership_ctx = LeadershipCtx(
+                nq_stronger_than_es=leadership_data.get('nq_stronger_than_es', False),
+                es_nq_correlation=leadership_data.get('es_nq_correlation', 0.0),
+                leadership_strength=leadership_data.get('leadership_strength', 0.0)
+            )
+            
+            # Construction du contexte OF/DOM
+            ofdom_data = unified_data.get('orderflow', {})
+            ofdom_ctx = OFDOMCtx(
+                ask_imbalance=ofdom_data.get('ask_imbalance', 1.0),
+                seller_absorption=ofdom_data.get('seller_absorption', False),
+                l1_eq_bbo=ofdom_data.get('l1_eq_bbo', True),
+                spread_ticks=ofdom_data.get('spread_ticks', 1),
+                bid_imbalance=ofdom_data.get('bid_imbalance', 1.0),
+                buyer_absorption=ofdom_data.get('buyer_absorption', False)
+            )
+            
+            # Construction du contexte Macro
+            macro_data = unified_data.get('macro', {})
+            macro_ctx = MacroCtx(
+                vix=macro_data.get('vix', 20.0),
+                vix_regime=macro_data.get('vix_regime', 'NORMAL')
+            )
+            
+            # Construction du contexte Session
+            session_data = unified_data.get('session', {})
+            session_ctx = SessionCtx(
+                session_id=session_data.get('session_id', 'unknown'),
+                session_phase=session_data.get('session_phase', 'unknown')
+            )
+            
+            # Construction du contexte MIA Bullish v2
+            mia_ctx = MIAInputs(
+                current_price=current_price,
+                timestamp=timestamp,
+                mentorq=mentorq_ctx,
+                vwap=vwap_ctx,
+                vp=vp_ctx,
+                leadership=leadership_ctx,
+                ofdom=ofdom_ctx,
+                macro=macro_ctx,
+                session=session_ctx,
+                qc=qc,
+                setup_side=setup_side,
+                prev_state=self.mia_bullish_state.get("prev_state", "NEUTRE"),
+                hold_counts=self.mia_bullish_state.get("hold_counts", {})
+            )
+            
+            return mia_ctx
+            
+        except Exception as e:
+            logger.error(f"❌ Erreur construction contexte MIA Bullish v2: {e}")
+            # Retour d'un contexte minimal en cas d'erreur
+            return MIAInputs(
+                current_price=0,
+                timestamp=0,
+                mentorq=MentorQCtx(),
+                vwap=VWAPCtx(),
+                vp=VPCtx(),
+                leadership=LeadershipCtx(),
+                ofdom=OFDOMCtx(),
+                macro=MacroCtx(),
+                session=SessionCtx(),
+                qc=QCContext(),
+                setup_side=setup_side,
+                prev_state="NEUTRE",
+                hold_counts={}
+            )
 
     def is_true_breakout_at_close(self, bar: Dict, level_price: float, vix_value: float, level_type: str = "support") -> bool:
         """
@@ -1104,6 +1380,41 @@ class BattleNavaleV2:
             sensitive_window=kwargs.get('sensitive_window', False),
             hard_exit_mq=False,
             audit_data={'block_reason': reason}
+        )
+    
+    def _create_blocked_result_with_mia_audit(self, timestamp: pd.Timestamp, reason: str, dom_health: DOMHealth, mia_audit: Dict[str, Any]) -> BattleNavaleV2Result:
+        """Création d'un résultat bloqué avec audit MIA Bullish v2"""
+        # Conversion du score MIA Bullish v2 vers -1 à +1 pour compatibilité
+        mia_score = (mia_audit.get("mia_bullish_score", 50.0) - 50.0) / 50.0
+        
+        audit_data = {
+            'block_reason': reason,
+            'mia_signal_raw': mia_score,
+            'mia_state': mia_audit.get('mia_bias_state', 'UNKNOWN'),
+            'mia_sizing_advice': mia_audit.get('sizing_advice', {'size': 1, 'confidence': 0.0}),
+            'mia_validation_metrics': mia_audit.get('validation_metrics', {})
+        }
+        
+        return BattleNavaleV2Result(
+            timestamp=timestamp,
+            battle_status=BattleStatusV2.DOM_DEGRADED if reason == "dom_critical" else BattleStatusV2.SENSITIVE_WINDOW,
+            battle_navale_signal=0.0,
+            base_quality=0.0,
+            rouge_sous_verte=False,
+            pattern_strength=0.0,
+            confluence_score=0.0,
+            signal_confidence=0.0,
+            signal_type="NO_SIGNAL",
+            golden_rule_status="blocked",
+            vix_regime=VIXRegime.MID,
+            dom_health=dom_health,
+            menthorq_bonus=1.0,
+            orderflow_bonus=1.0,
+            leadership_bonus=1.0,
+            dynamic_thresholds={},
+            sensitive_window=False,
+            hard_exit_mq=False,
+            audit_data=audit_data
         )
 
     def _create_error_result(self, timestamp: pd.Timestamp, error: str, calc_time: float) -> BattleNavaleV2Result:

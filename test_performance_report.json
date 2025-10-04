@@ -1,0 +1,45 @@
+{
+  "timestamp": "2025-10-01T04:37:18.549753",
+  "total_time_ms": 506.7731000017375,
+  "total_calls": 10,
+  "functions_count": 2,
+  "metrics": {
+    "test_fast_function": {
+      "execution_time_ms": 6.119200006651226,
+      "call_count": 5,
+      "min_time_ms": 1.0172999973292463,
+      "max_time_ms": 1.9877000013366342,
+      "avg_time_ms": 1.2238400013302453,
+      "last_called": 1759286238.4483688
+    },
+    "test_slow_function": {
+      "execution_time_ms": 500.65389999508625,
+      "call_count": 5,
+      "min_time_ms": 100.04169999592705,
+      "max_time_ms": 100.23860000364948,
+      "avg_time_ms": 100.13077999901725,
+      "last_called": 1759286238.5486226
+    }
+  },
+  "slowest_functions": [
+    {
+      "function_name": "test_slow_function",
+      "avg_time_ms": 100.13077999901725,
+      "max_time_ms": 100.23860000364948,
+      "call_count": 5
+    },
+    {
+      "function_name": "test_fast_function",
+      "avg_time_ms": 1.2238400013302453,
+      "max_time_ms": 1.9877000013366342,
+      "call_count": 5
+    }
+  ],
+  "bottlenecks": [
+    {
+      "function_name": "test_slow_function",
+      "avg_time_ms": 100.13077999901725,
+      "call_count": 5
+    }
+  ]
+}

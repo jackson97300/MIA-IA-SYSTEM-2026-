@@ -249,23 +249,7 @@ def validate_vva(rec):
         pass
     return errs
 
-def validate_vva_previous(rec):
-    errs = []
-    required = ["sym","t","i","ppoc","pvah","pval"]
-    for k in required:
-        if k not in rec:
-            errs.append(f"missing:{k}")
-    if errs: return errs
-    for k in ["t","i","ppoc","pvah","pval"]:
-        if not is_number(rec[k]):
-            errs.append(f"not_number:{k}={rec[k]}")
-    try:
-        pval = float(rec["pval"]); ppoc = float(rec["ppoc"]); pvah = float(rec["pvah"])
-        if not (pval <= ppoc <= pvah):
-            errs.append(f"order_guard_failed_prev: pval={pval},ppoc={ppoc},pvah={pvah}")
-    except Exception:
-        pass
-    return errs
+# VVA previous validation removed - fields no longer used
 
 def validate_nbcv(rec):
     errs = []

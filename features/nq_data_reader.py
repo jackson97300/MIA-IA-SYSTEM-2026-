@@ -145,3 +145,7 @@ class NQDataReader:
             return []
 
 
+
+
+
+

@@ -29,11 +29,15 @@ from .stats_tracker import StatsTracker
 # Imports des autres composants système
 from features import create_feature_calculator, MarketRegimeDetector, ConfluenceAnalyzer
 from features.market_regime import MarketRegimeData
-from core.battle_navale import BattleNavaleAnalyzer
+
+# 🚀 NOUVELLES MÉTHODES ELITE
+from core.battle_navale_elite import BattleNavaleElite
+from core.menthorq_elite import MenthorQElite
+
 from strategies.trend_strategy import TrendStrategy
 from strategies.range_strategy import RangeStrategy
 
-# 🆕 Import de la méthode MenthorQ-Distance avec Leadership
+# 🆕 Import de la méthode MenthorQ-Distance avec Leadership (gardé pour compatibilité)
 from features.leadership_zmom import LeadershipZMom
 from core.menthorq_distance_trading import MenthorQDistanceTrader
 
@@ -66,6 +70,7 @@ class SignalGenerator:
         logger.info("[BRAIN] Initialisation SignalGenerator v3.6 REFACTORISÉ (TOUTES LES TECHNIQUES ELITE)...")
 
         # === COMPOSANTS SYSTÈME ===
+        self.components = {}  # ✅ Dictionnaire pour stocker tous les composants
         self._initialize_core_components()
         self._initialize_strategies()
         
@@ -91,6 +96,25 @@ class SignalGenerator:
                    f"ML={techniques_status['ml_ensemble_enabled']}, "
                    f"Gamma={techniques_status['gamma_cycles_enabled']}")
 
+    # ✅ Méthodes safe-getter pour accès robuste aux composants
+    def _get_bn(self):
+        """Accès tolérant aux différents noms/points d'injection Battle Navale"""
+        return (
+            getattr(self, "battle_navale", None)
+            or getattr(self, "battle_navale_elite", None)
+            or self.components.get("battle_navale")
+            or self.components.get("battle_navale_elite")
+        )
+
+    def _get_mq(self):
+        """Accès tolérant aux différents noms/points d'injection MenthorQ"""
+        return (
+            getattr(self, "menthorq", None)
+            or getattr(self, "menthorq_elite", None)
+            or self.components.get("menthorq")
+            or self.components.get("menthorq_elite")
+        )
+
     def _initialize_core_components(self):
         """Initialise les composants core du système"""
         
@@ -114,13 +138,29 @@ class SignalGenerator:
         # Autres composants
         self.confluence_analyzer = ConfluenceAnalyzer(self.config)
         self.market_regime = MarketRegimeDetector(self.config)
-        self.battle_navale = BattleNavaleAnalyzer(self.config)
-
-        # 🆕 PHASE 3: Connection MTF Elite avec Battle Navale
-        self.confluence_analyzer.set_battle_navale_analyzer(self.battle_navale)
-        logger.info("[OK] 🚀 Elite MTF Confluence connectée avec Battle Navale")
         
-        # 🆕 MenthorQ Distance Trader avec Leadership Z-Momentum
+        # 🚀 NOUVELLES MÉTHODES ELITE
+        self.battle_navale_elite = BattleNavaleElite()
+        self.menthorq_elite = MenthorQElite()
+        
+        # ✅ Toujours définir les attributs pour compatibilité
+        self.battle_navale = self.battle_navale_elite  # Alias pour compatibilité
+        self.menthorq = self.menthorq_elite  # Alias pour compatibilité
+        
+        # ✅ Stocker dans le dictionnaire components
+        self.components["battle_navale_elite"] = self.battle_navale_elite
+        self.components["menthorq_elite"] = self.menthorq_elite
+        self.components["battle_navale"] = self.battle_navale  # Alias
+        self.components["menthorq"] = self.menthorq  # Alias
+        
+        logger.info("[OK] 🚀 Battle Navale Elite initialisé")
+        logger.info("[OK] 🧠 MenthorQ Elite initialisé")
+
+        # 🆕 PHASE 3: Connection MTF Elite avec Battle Navale Elite
+        self.confluence_analyzer.set_battle_navale_analyzer(self.battle_navale_elite)
+        logger.info("[OK] 🚀 Elite MTF Confluence connectée avec Battle Navale Elite")
+        
+        # 🆕 MenthorQ Distance Trader avec Leadership Z-Momentum (gardé pour compatibilité)
         self.menthorq_distance_trader = MenthorQDistanceTrader()
         logger.info("[OK] 🎯 MenthorQ Distance Trader avec Leadership Z-Momentum initialisé")
 

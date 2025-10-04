@@ -365,9 +365,7 @@ def create_market_data_dict(snapshot: MarketDataSnapshot) -> Dict[str, Any]:
             'vah': snapshot.vva.get('vah', 4505.0),
             'val': snapshot.vva.get('val', 4495.0),
             'vpoc': snapshot.vva.get('vpoc', 4500.0),
-            'pvah': snapshot.vva.get('pvah', 4505.0),
-            'pval': snapshot.vva.get('pval', 4495.0),
-            'ppoc': snapshot.vva.get('ppoc', 4500.0)
+            # VVA previous fields removed
         })
     
     # NBCV OrderFlow - Génération de données delta si manquantes

@@ -1,0 +1,46 @@
+{
+  "chart": 3,
+  "date": "20251001",
+  "counts": {
+    "basedata": 509,
+    "vwap": 465,
+    "trades": 18704,
+    "vva": 51,
+    "quotes": 125545
+  },
+  "vwap_deviation": {
+    "n_pairs": 0
+  },
+  "sessions": {
+    "session_transitions": 0,
+    "reset_warnings": [],
+    "session_stats": {
+      "Asia": {
+        "count": 18704,
+        "cum_delta_session": {
+          "min": -415.0,
+          "max": 657.0,
+          "final": -320.0
+        },
+        "cum_delta_day": {
+          "min": -415.0,
+          "max": 657.0,
+          "final": -320.0
+        }
+      }
+    },
+    "status": "OK"
+  },
+  "dom": {
+    "count_total": 206357,
+    "count_kept": 206357,
+    "count_match": 1119,
+    "count_valid": 78606,
+    "ratio_kept": 1.0,
+    "ratio_match": 0.0054226413448538215,
+    "ratio_valid": 0.38092238208541507,
+    "tol_min": 150.0,
+    "tol_max": 150.0,
+    "status": "WARN"
+  }
+}

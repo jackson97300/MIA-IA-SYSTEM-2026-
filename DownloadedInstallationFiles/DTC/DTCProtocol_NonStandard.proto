@@ -1,0 +1,705 @@
+syntax = "proto3";
+
+package DTCNonStandard_PB;
+
+//============================================================================
+// DTC protocol version
+enum DTCVersion 
+{
+    DTC_VERSION_UNSET = 0;
+	CURRENT_VERSION = 8;
+}
+
+//============================================================================
+// All messages are preceded by the following 4-byte little-endian binary
+// header:
+//
+//	uint16 Size;  // size of the entire message including this 4-byte header
+//	uint16 Type;  // DTC message type
+
+
+//============================================================================
+//----Message types----
+
+enum DTCMessageType 
+{
+    MESSAGE_TYPE_UNSET = 0;
+
+	HISTORICAL_TRADES_REQUEST = 10100;
+	HISTORICAL_TRADES_REJECT = 10101;
+	HISTORICAL_TRADES_RESPONSE = 10102;
+	REPLAY_CHART_DATA = 10104;
+	REPLAY_CHART_DATA_PERFORM_ACTION = 10105;
+	REPLAY_CHART_DATA_STATUS = 10106;
+	REQUEST_NUM_CURRENT_CLIENT_CONNECTIONS = 10107;
+	NUM_CURRENT_CLIENT_CONNECTIONS_RESPONSE = 10108;
+	MARKET_DATA_UPDATE_ORDER_IMBALANCE_DATA = 10200;
+	
+	TRADE_ACCOUNT_DATA_REQUEST = 10115;
+	TRADE_ACCOUNT_DATA_RESPONSE = 10116;
+	TRADE_ACCOUNT_DATA_UPDATE = 10117;
+	TRADE_ACCOUNT_DATA_DELETE = 10118;
+
+	TRADE_ACCOUNT_DATA_SYMBOL_COMMISSION_RESPONSE = 10119;
+	TRADE_ACCOUNT_DATA_SYMBOL_COMMISSION_UPDATE = 10120;
+
+	TRADE_ACCOUNT_DATA_SYMBOL_LIMITS_RESPONSE = 10121;
+	TRADE_ACCOUNT_DATA_SYMBOL_LIMITS_UPDATE = 10122;
+
+	TRADE_ACCOUNT_DATA_AUTHORIZED_USERNAME_RESPONSE = 10124;
+	TRADE_ACCOUNT_DATA_AUTHORIZED_USERNAME_ADD = 10125;
+	TRADE_ACCOUNT_DATA_AUTHORIZED_USERNAME_REMOVE = 10126;
+
+	TRADE_ACCOUNT_DATA_USERNAME_TO_SHARE_WITH_RESPONSE = 10127;
+	TRADE_ACCOUNT_DATA_USERNAME_TO_SHARE_WITH_ADD = 10128;
+	TRADE_ACCOUNT_DATA_USERNAME_TO_SHARE_WITH_REMOVE = 10129;
+
+	TRADE_ACCOUNT_DATA_RESPONSE_TRAILER = 10130;
+	TRADE_ACCOUNT_DATA_UPDATE_OPERATION_COMPLETE = 10131;
+
+	MARGIN_DATA_REQUEST = 10141;
+	MARGIN_DATA_RESPONSE = 10142;
+	
+	TRADE_ACCOUNT_DATA_SUB_ACCOUNT_RESPONSE = 10201;
+	TRADE_ACCOUNT_DATA_SUB_ACCOUNT_UPDATE = 10202;
+
+}
+
+//============================================================================
+enum BuySellEnum 
+{
+  BUY_SELL_UNSET = 0;
+  BUY = 1;
+  SELL = 2;
+}
+
+//============================================================================
+enum ReplayChartDataActionEnum
+{
+  REPLAY_CHART_DATA_ACTION_NONE = 0;
+  REPLAY_CHART_DATA_ACTION_STOP = 1;
+  REPLAY_CHART_DATA_ACTION_PAUSE = 2;
+  REPLAY_CHART_DATA_ACTION_RESUME = 3;
+  REPLAY_CHART_DATA_ACTION_FINISH = 4;
+  REPLAY_CHART_DATA_ACTION_CHANGE_SPEED = 5;
+}
+
+//============================================================================
+enum ReplayChartDataStatusEnum
+{
+  REPLAY_CHART_DATA_STATUS_UNSET = 0;
+  REPLAY_CHART_DATA_STATUS_STARTED = 1;
+  REPLAY_CHART_DATA_STATUS_ERROR = 2;
+  REPLAY_CHART_DATA_STATUS_COMPLETE = 3;
+}
+
+//============================================================================
+message HistoricalTradesRequest
+{
+	int32 RequestID = 1;
+	string Symbol = 2;
+	string TradeAccount = 3;
+	sfixed64 StartDateTime = 4;
+	uint32 SubAccountIdentifier = 5;
+	uint32 CreateFlatToFlatTrades = 6;
+}
+
+//============================================================================
+message HistoricalTradesReject
+{
+	int32 RequestID = 1;
+	string RejectText = 2;
+}
+
+//============================================================================
+message HistoricalTradesResponse
+{
+	int32 RequestID = 1;
+	uint32 IsFinalMessage = 2;
+	string Symbol = 3;
+	string TradeAccount = 4;
+	double EntryDateTime = 5;
+	double ExitDateTime = 6;
+	double EntryPrice = 7;
+	double ExitPrice = 8;
+	BuySellEnum TradeType = 9;
+	uint32 EntryQuantity = 10;
+	uint32 ExitQuantity = 11;
+	uint32 MaxOpenQuantity = 12;
+	double ClosedProfitLoss = 13;
+	double MaximumOpenPositionLoss = 14;
+	double MaximumOpenPositionProfit = 15;
+	double Commission = 16;
+	string OpenFillExecutionID = 17;
+	string CloseFillExecutionID = 18;
+	uint32 SubAccountIdentifier = 19;
+}
+
+//============================================================================
+message ReplayChartData
+{
+	uint32 RequestID = 1;
+	string Symbol = 2;
+	string TradeAccount = 3;
+	string TimeZone = 4;
+	int64 StartDateTimeForInitialData = 5;
+	int64 StartDateTime = 6;
+	int64 StopDateTime = 7;
+	uint32 SessionBeginTimeInSeconds = 8;
+	uint32 SessionEndTimeInSeconds = 9;
+	float ReplaySpeed = 10;
+	int32 BarTimeInSeconds = 11;
+	uint32 PauseReplayAfterInitialDataSent = 12;
+	uint32 UseSavedPriorState = 13;
+	float SymbolVolatility = 14;
+	float InterestRate = 15;
+	int32 NumberOfOrdersToTriggerFinishToStopDateTime = 16;
+	int32 MaximumNumberOfOrdersPerReplaySession = 17;
+	int32 NumberOfDaysForInitialDataFromBeforeLastSavedDateTime = 18;
+	uint32 SubAccountIdentifier = 19;
+	int32 OptionsPriceSendIntervalInSeconds = 20;
+}
+
+//============================================================================
+message ReplayChartDataPerformAction
+{
+	uint32 RequestID = 1;
+	ReplayChartDataActionEnum Action = 2;
+	float ReplaySpeed = 3;
+}
+
+//============================================================================
+message ReplayChartDataStatus
+{
+	uint32 RequestID = 1;
+	string ErrorMessage = 2;
+	ReplayChartDataStatusEnum Status = 3;
+	uint32  SubAccountIdentifier = 4;
+}
+
+//============================================================================
+message MarketDataUpdateOrderImbalanceData
+{
+	uint32 SymbolID = 1;
+	int64 DateTime = 2;
+	double MatchingQuantity = 3;
+	double NonMatchingQuantity = 4;
+	double CurrentReferencePrice = 5;
+	int32 ImbalanceDirection = 6;
+	int32 CrossType = 7;
+
+}
+
+//============================================================================
+message TradeAccountDataRequest
+{
+	uint32 RequestID = 1;
+	string TradeAccount = 2;
+}
+
+//============================================================================
+message TradeAccountDataResponse
+{
+	uint32 RequestID = 1;
+	uint32 TradeAccountNotExist = 2;
+	uint32 IsSnapshot = 3;
+	uint32 IsFirstMessageInBatch = 4;
+	uint32 IsLastMessageInBatch = 5;
+	uint32 IsDeleted = 6;
+
+	string TradeAccount = 7;
+	uint32 IsSimulated = 8;
+
+	string CurrencyCode = 9;
+
+	double CurrentCashBalance = 10;
+	double AvailableFundsForNewPositions = 11;
+	double MarginRequirement = 12;
+	double AccountValue = 13;
+	double OpenPositionsProfitLoss = 14;
+	double DailyProfitLoss = 15;
+	uint64 TransactionIdentifierForCashBalanceAdjustment = 16;
+	int64 LastTransactionDateTime = 17;
+	double TrailingAccountValueAtWhichToNotAllowNewPositions = 18;
+	double CalculatedDailyNetLossLimitInAccountCurrency = 19;
+	uint32 DailyNetLossLimitHasBeenReached = 20;
+	int64 LastResetDailyNetLossManagementVariablesDateTimeUTC = 21;
+	uint32 IsUnderRequiredMargin = 22;
+
+	float DailyNetLossLimitInAccountCurrency = 23;
+	int32 PercentOfAccountValueForDailyNetLossLimit = 24;
+	uint32 UseTrailingAccountValueToNotAllowIncreaseInPositions = 25;
+	uint32 DoNotAllowIncreaseInPositionsAtDailyLossLimit = 26;
+	uint32 FlattenPositionsAtDailyLossLimit = 27;
+	uint32 ClosePositionsAtEndOfDay = 28;
+	uint32 FlattenPositionsWhenUnderMarginIntraday = 29;
+	uint32 FlattenPositionsWhenUnderMarginAtEndOfDay = 30;
+	string SenderSubID = 31;
+	string SenderLocationId = 32;
+	string SelfMatchPreventionID = 33;
+	int32 CTICode = 34;
+	uint32 TradeAccountIsReadOnly = 35;
+	int32 MaximumGlobalPositionQuantity = 36;
+	double TradeFeePerContract = 37;
+	double TradeFeePerShare = 38;
+	uint32 RequireSufficientMarginForNewPositions = 39;
+	int32 UsePercentOfMargin = 40;
+	int32 UsePercentOfMarginForDayTrading = 41;
+	int32 MaximumAllowedAccountBalanceForPositionsAsPercentage = 42;
+	string FirmID = 43;
+	uint32 TradingIsDisabled = 44;
+	string DescriptiveName = 45;
+
+	uint32 IsMasterFirmControlAccount = 46;
+	double MinimumRequiredAccountValue = 47;
+
+	int64  BeginTimeForDayMargin = 48;
+	int64  EndTimeForDayMargin = 49;
+	string DayMarginTimeZone = 50;
+
+	uint32 UseMasterFirm_FlattenPositionsWhenUnderMarginIntraday = 51;
+	uint32 UseMasterFirm_FlattenPositionsWhenUnderMarginAtEndOfDay = 52;
+	uint32 UseMasterFirm_TradeFees = 53;
+	uint32 UseMasterFirm_RequireSufficientMarginForNewPositions = 54;
+	uint32 UseMasterFirm_UsePercentOfMargin = 55;
+	uint32 UseMasterFirm_MaximumAllowedAccountBalanceForPositionsAsPercentage = 56;
+	uint32 UseMasterFirm_MinimumRequiredAccountValue = 57;
+	uint32 UseMasterFirm_MarginTimeSettings = 58;
+	uint32 UseMasterFirm_TradingIsDisabled = 59;
+
+	uint32 IsTradeStatisticsPublicallyShared = 60;
+	uint32 IsReadOnlyFollowingRequestsAllowed = 61;
+	uint32 IsTradeAccountSharingAllowed = 62;
+	uint32 ReadOnlyShareToAllSCUsernames = 63;
+
+	uint32 UseMasterFirm_DoNotAllowIncreaseInPositionsAtDailyLossLimit = 64;
+	uint32 UseMasterFirm_UsePercentOfMarginForDayTrading = 65;
+
+	double OpenPositionsProfitLossBasedOnSettlement = 66;
+	double MarginRequirementFull = 67;
+	double MarginRequirementFullPositionsOnly = 68;
+	
+	uint32 UseMasterFirm_TradeFeesFullOverride = 69;
+	uint32 UseMasterFirm_NumDaysBeforeLastTradingDateToDisallowOrders = 70;
+	uint32 UseMasterFirm_UsePercentOfMarginFullOverride = 71;
+	uint32 UseMasterFirm_UsePercentOfMarginForDayTradingFullOverride = 72;
+
+	double PeakMarginRequirement = 73;
+	uint32 LiquidationOnlyMode = 74;
+
+	uint32 FlattenPositionsWhenUnderMarginIntradayTriggered = 75;
+	uint32 FlattenPositionsWhenUnderMinimumAccountValueTriggered = 76;
+
+	double AccountValueAtEndOfDayCaptureTime = 77;
+	int64 EndOfDayCaptureTime = 78;
+
+	uint32 CustomerOrFirm = 79;
+	uint32 MasterFirm_FlattenCancelAccountWhenDailyLossLimitMet = 80;
+	uint32 MasterFirm_FlattenCancelWhenUnderMinimumAccountValue = 81;
+	uint32 MasterFirm_FlattenCancelWhenUnderMarginIntraday = 82;
+	uint32 MasterFirm_FlattenCancelWhenUnderMarginEndOfDay = 83;
+	uint32 MasterFirm_MaximumOrderQuantity = 84;
+
+	int64 LastTriggerDateTimeUTCForDailyLossLimit = 85;
+
+	string ExchangeTraderId = 86;
+	int64 ProfitLossForOpenPositionDateTimeUTC = 87;
+
+	uint32 UseFixedCashOnHandBalance = 88;
+	float FixedCashOnHandBalance = 89;
+
+	double EndOfDayNetLiquidatingValueFromImportFile = 90;
+
+	string AdministratorUsernamesOwnAccountAccess = 91;
+	string TradeAccountPrefixForExchange = 92;
+	string IntroducingBroker = 93;
+
+	uint32 RejectCrossingOrders = 94;
+
+	string SenderSubIDsForUserNames = 95;
+	uint32 MessageLimitPerTenSeconds = 96;
+	uint32 LastTradeDateSource = 97;
+
+	uint32 DisableTradingForParentAccountOnly = 98;
+	uint32 SupportIntendedPositionOrders = 99;
+
+	int64 MarginRecalculationTime1 = 100;
+	int64 MarginRecalculationTime2 = 101;
+	int64 ClosePositionsAtEndOfDayTime = 102;
+	string MasterSettingsTimeZone = 103;
+
+	int32 UsePercentOfMarginForOvernightTrading = 104;
+	int64 BeginTimeForOvernightMargin = 105;
+	int64 EndTimeForOvernightMargin = 106;
+
+	uint32 UseMasterFirm_UsePercentOfMarginForOvernightTrading = 107;
+	uint32 UseMasterFirm_UsePercentOfMarginForOvernightTradingFullOverride = 108;
+		
+	uint32 UseMasterFirm_UseSymbolPositionAndOrderQuantityLimitsAsMaximum = 109;
+	uint32 MasterFirm_SupportUserSetProfitLossManagement = 110;
+
+}
+
+//============================================================================
+message TradeAccountDataUpdate
+{
+	uint32 RequestID = 1;
+	uint32 IsNewAccount = 2;
+	string NewAccountAuthorizedUsername = 3;
+	string TradeAccount = 4;
+	uint32 CurrencyCodeIsSet = 5;
+	string CurrencyCode = 6;
+	uint32 DailyNetLossLimitInAccountCurrencyIsSet = 7;
+	float DailyNetLossLimitInAccountCurrency = 8;
+	uint32 PercentOfCashBalanceForDailyNetLossLimitIsSet = 9;
+	int32 PercentOfCashBalanceForDailyNetLossLimit = 10;
+	uint32 UseTrailingAccountValueToNotAllowIncreaseInPositionsIsSet = 11;
+	uint32 UseTrailingAccountValueToNotAllowIncreaseInPositions = 12;
+	uint32 DoNotAllowIncreaseInPositionsAtDailyLossLimitIsSet = 13;
+	uint32 DoNotAllowIncreaseInPositionsAtDailyLossLimit = 14;
+	uint32 FlattenPositionsAtDailyLossLimitIsSet = 15;
+	uint32 FlattenPositionsAtDailyLossLimit = 16;
+	uint32 ClosePositionsAtEndOfDayIsSet = 17;
+	uint32 ClosePositionsAtEndOfDay = 18;
+	uint32 FlattenPositionsWhenUnderMarginIntradayIsSet = 19;
+	uint32 FlattenPositionsWhenUnderMarginIntraday = 20;
+	uint32 FlattenPositionsWhenUnderMarginAtEndOfDayIsSet = 21;
+	uint32 FlattenPositionsWhenUnderMarginAtEndOfDay = 22;
+	uint32 SenderSubIDIsSet = 23;
+	string SenderSubID = 24;
+	uint32 SenderLocationIdIsSet = 25;
+	string SenderLocationId = 26;
+	uint32 SelfMatchPreventionIDIsSet = 27;
+	string SelfMatchPreventionID = 28;
+	uint32 CTICodeIsSet = 29;
+	int32 CTICode = 30;
+	uint32 TradeAccountIsReadOnlyIsSet = 31;
+	uint32 TradeAccountIsReadOnly = 32;
+	uint32 MaximumGlobalPositionQuantityIsSet = 33;
+	int32 MaximumGlobalPositionQuantity = 34;
+	uint32 TradeFeePerContractIsSet = 35;
+	double TradeFeePerContract = 36;
+	uint32 TradeFeePerShareIsSet = 37;
+	double TradeFeePerShare = 38;
+	uint32 RequireSufficientMarginForNewPositionsIsSet = 39;
+	uint32 RequireSufficientMarginForNewPositions = 40;
+	uint32 UsePercentOfMarginIsSet = 41;
+	int32 UsePercentOfMargin = 42;
+	uint32 UsePercentOfMarginForDayTradingIsSet = 43;
+	int32 UsePercentOfMarginForDayTrading = 44;
+	uint32 MaximumAllowedAccountBalanceForPositionsAsPercentageIsSet = 45;
+	int32 MaximumAllowedAccountBalanceForPositionsAsPercentage = 46;
+	uint32 FirmIDIsSet = 47;
+	string FirmID = 48;
+	uint32 TradingIsDisabledIsSet = 49;
+	uint32 TradingIsDisabled = 50;
+	uint32 DescriptiveNameIsSet = 51;
+	string DescriptiveName = 52;
+	uint32 IsMasterFirmControlAccountIsSet = 53;
+	uint32 IsMasterFirmControlAccount = 54;
+	uint32 MinimumRequiredAccountValueIsSet = 55;
+	double MinimumRequiredAccountValue = 56;
+	uint32 BeginTimeForDayMarginIsSet = 57;
+	int64 BeginTimeForDayMargin = 58;
+	uint32 EndTimeForDayMarginIsSet = 59;
+	int64 EndTimeForDayMargin = 60;
+	uint32 DayMarginTimeZoneIsSet = 61;
+	string DayMarginTimeZone = 62;
+	uint32 UseMasterFirm_FlattenPositionsWhenUnderMarginIntradayIsSet = 63;
+	uint32 UseMasterFirm_FlattenPositionsWhenUnderMarginIntraday = 64;
+	uint32 UseMasterFirm_FlattenPositionsWhenUnderMarginAtEndOfDayIsSet = 65;
+	uint32 UseMasterFirm_FlattenPositionsWhenUnderMarginAtEndOfDay = 66;
+	uint32 UseMasterFirm_TradeFeesIsSet = 67;
+	uint32 UseMasterFirm_TradeFees = 68;
+	uint32 UseMasterFirm_RequireSufficientMarginForNewPositionsIsSet = 69;
+	uint32 UseMasterFirm_RequireSufficientMarginForNewPositions = 70;
+	uint32 UseMasterFirm_UsePercentOfMarginIsSet = 71;
+	uint32 UseMasterFirm_UsePercentOfMargin = 72;
+	uint32 UseMasterFirm_MaximumAllowedAccountBalanceForPositionsAsPercentageIsSet = 73;
+	uint32 UseMasterFirm_MaximumAllowedAccountBalanceForPositionsAsPercentage = 74;
+	uint32 UseMasterFirm_MinimumRequiredAccountValueIsSet = 75;
+	uint32 UseMasterFirm_MinimumRequiredAccountValue = 76;
+	uint32 UseMasterFirm_MarginTimeSettingsIsSet = 77;
+	uint32 UseMasterFirm_MarginTimeSettings = 78;
+	uint32 UseMasterFirm_TradingIsDisabledIsSet = 79;
+	uint32 UseMasterFirm_TradingIsDisabled = 80;
+	uint32 IsTradeStatisticsPublicallySharedIsSet = 81;
+	uint32 IsTradeStatisticsPublicallyShared = 82;
+	uint32 IsReadOnlyFollowingRequestsAllowedIsSet = 83;
+	uint32 IsReadOnlyFollowingRequestsAllowed = 84;
+	uint32 IsTradeAccountSharingAllowedIsSet = 85;
+	uint32 IsTradeAccountSharingAllowed = 86;
+	uint32 ReadOnlyShareToAllSCUsernamesIsSet = 87;
+	uint32 ReadOnlyShareToAllSCUsernames = 88;
+	uint32 UseMasterFirm_DoNotAllowIncreaseInPositionsAtDailyLossLimitIsSet = 89;
+	uint32 UseMasterFirm_DoNotAllowIncreaseInPositionsAtDailyLossLimit = 90;
+	uint32 UseMasterFirm_UsePercentOfMarginForDayTradingIsSet = 91;
+	uint32 UseMasterFirm_UsePercentOfMarginForDayTrading = 92;
+	uint32 UseMasterFirm_NumDaysBeforeLastTradingDateToDisallowOrdersIsSet = 93;
+	uint32 UseMasterFirm_NumDaysBeforeLastTradingDateToDisallowOrders = 94;
+	uint32 UseMasterFirm_UsePercentOfMarginFullOverrideIsSet = 95;
+	uint32 UseMasterFirm_UsePercentOfMarginFullOverride = 96;
+	uint32 UseMasterFirm_TradeFeesFullOverrideIsSet = 97;
+	uint32 UseMasterFirm_TradeFeesFullOverride = 98;
+	uint32 UseMasterFirm_UsePercentOfMarginForDayTradingFullOverrideIsSet = 99;
+	uint32 UseMasterFirm_UsePercentOfMarginForDayTradingFullOverride = 100;
+	uint32 LiquidationOnlyModeIsSet = 101;
+	uint32 LiquidationOnlyMode = 102;
+	uint32 CustomerOrFirmIsSet = 103;
+	uint32 CustomerOrFirm = 104;
+	uint32 MasterFirm_FlattenCancelAccountWhenDailyLossLimitMetIsSet = 105;
+	uint32 MasterFirm_FlattenCancelAccountWhenDailyLossLimitMet = 106;
+	uint32 MasterFirm_FlattenCancelWhenUnderMinimumAccountValueIsSet = 107;
+	uint32 MasterFirm_FlattenCancelWhenUnderMinimumAccountValue = 108;
+	uint32 MasterFirm_FlattenCancelWhenUnderMarginIntradayIsSet = 109;
+	uint32 MasterFirm_FlattenCancelWhenUnderMarginIntraday = 110;
+	uint32 MasterFirm_FlattenCancelWhenUnderMarginEndOfDayIsSet = 111;
+	uint32 MasterFirm_FlattenCancelWhenUnderMarginEndOfDay = 112;
+	uint32 MasterFirm_MaximumOrderQuantityIsSet = 113;
+	uint32 MasterFirm_MaximumOrderQuantity = 114;
+	uint32 ExchangeTraderIdIsSet = 115;
+	string ExchangeTraderId = 116;
+	uint32 UseFixedCashOnHandBalanceIsSet = 117;
+	uint32 UseFixedCashOnHandBalance = 118;
+	uint32 FixedCashOnHandBalanceIsSet = 119;
+	float FixedCashOnHandBalance = 120;
+	uint32 AdministratorUsernamesOwnAccountAccessIsSet = 121;
+	string AdministratorUsernamesOwnAccountAccess = 122;
+	uint32 TradeAccountPrefixForExchangeIsSet = 123;
+	string TradeAccountPrefixForExchange = 124;
+	uint32 IntroducingBrokerIsSet = 125;
+	string IntroducingBroker = 126;
+	uint32 RejectCrossingOrdersIsSet = 127;
+	uint32 RejectCrossingOrders = 128;
+	uint32 SenderSubIDsForUserNamesIsSet = 129;
+	string SenderSubIDsForUserNames = 130;
+	uint32 MessageLimitPerTenSecondsIsSet = 131;
+	uint32 MessageLimitPerTenSeconds = 132;
+	uint32 LastTradeDateSourceIsSet = 133;
+	uint32 LastTradeDateSource = 134;
+	uint32 DisableTradingForParentAccountOnlyIsSet = 135;
+	uint32 DisableTradingForParentAccountOnly = 136;
+	uint32 SupportIntendedPositionOrdersIsSet = 137;
+	uint32 SupportIntendedPositionOrders = 138;
+	uint32 MarginRecalculationTime1IsSet = 139;
+	int64 MarginRecalculationTime1 = 140;
+	uint32 MarginRecalculationTime2IsSet = 141;
+	int64 MarginRecalculationTime2 = 142;
+	uint32 ClosePositionsAtEndOfDayTimeIsSet = 143;
+	int64 ClosePositionsAtEndOfDayTime = 144;
+	uint32 MasterSettingsTimeZoneIsSet = 145;
+	string MasterSettingsTimeZone = 146;
+	uint32 UsePercentOfMarginForOvernightTradingIsSet = 147;
+	int32 UsePercentOfMarginForOvernightTrading = 148;
+	uint32 BeginTimeForOvernightMarginIsSet = 149;
+	int64 BeginTimeForOvernightMargin = 150;
+	uint32 EndTimeForOvernightMarginIsSet = 151;
+	int64 EndTimeForOvernightMargin = 152;
+	uint32 UseMasterFirm_UsePercentOfMarginForOvernightTradingIsSet = 153;
+	uint32 UseMasterFirm_UsePercentOfMarginForOvernightTrading = 154;
+	uint32 UseMasterFirm_UsePercentOfMarginForOvernightTradingFullOverrideIsSet = 155;
+	uint32 UseMasterFirm_UsePercentOfMarginForOvernightTradingFullOverride = 156;
+	
+	uint32 UseMasterFirm_UseSymbolPositionAndOrderQuantityLimitsAsMaximumIsSet = 157;
+	uint32 UseMasterFirm_UseSymbolPositionAndOrderQuantityLimitsAsMaximum = 158;
+	uint32 SupportUserSetProfitLossManagementIsSet = 159;
+	uint32 SupportUserSetProfitLossManagement = 160;
+	uint32 GenerateTradeAccountDataReport = 161;
+}
+
+//============================================================================
+message TradeAccountDataDelete
+{
+	uint32 RequestID = 1;
+	string TradeAccount = 2;
+}
+
+//============================================================================
+message TradeAccountDataSymbolLimitsResponse
+{
+	uint32 RequestID = 1;
+	string TradeAccount = 2;
+	string Symbol = 3;
+	double TradePositionLimit = 4;
+	double OrderQuantityLimit = 5;
+	int32 UsePercentOfMargin = 6;
+	uint32 OverrideMarginOtherAccounts = 7;
+	int32 UsePercentOfMarginForDayTrading = 8;
+	int32 NumberOfDaysBeforeLastTradingDateToDisallowOrders = 9;
+	float FixedMarginCashValue = 10;
+	float FixedMarginCashValueForDayTrading = 11;
+
+	int32 UsePercentOfMarginForOvernightTrading = 12;
+	float FixedMarginCashValueForOvernightTrading = 13;
+}
+
+//============================================================================
+message TradeAccountDataSymbolLimitsUpdate
+{
+	uint32 RequestID = 1;
+	uint32 IsDeleted = 2;
+	uint32 IsChanged = 3;
+	uint32 IsAdded = 4;
+	string TradeAccount = 5;
+	string Symbol = 6;
+	double TradePositionLimit = 7;
+	double OrderQuantityLimit = 8;
+	int32 UsePercentOfMargin = 9;
+	uint32 OverrideMarginOtherAccounts = 10;
+	int32 UsePercentOfMarginForDayTrading = 11;
+	int32 NumberOfDaysBeforeLastTradingDateToDisallowOrders = 12;
+	float FixedMarginCashValue = 13;
+	float FixedMarginCashValueForDayTrading = 14;
+	int32 UsePercentOfMarginForOvernightTrading = 15;
+	float FixedMarginCashValueForOvernightTrading = 16;
+}
+
+//============================================================================
+message TradeAccountDataSymbolCommissionResponse
+{
+	uint32 RequestID = 1;
+	string TradeAccount = 2;
+	string Symbol = 3;
+	double TradeFeePerContract = 4;
+
+}
+
+//============================================================================
+message TradeAccountDataSymbolCommissionUpdate
+{
+	uint32 RequestID = 1;
+	uint32 IsDeleted = 2;
+	uint32 IsChanged = 3;
+	uint32 IsAdded = 4;
+	string TradeAccount = 5;
+	string Symbol = 6;
+	double TradeFeePerContract = 7;
+}
+
+//============================================================================
+message TradeAccountDataSubAccountResponse
+{
+	uint32 RequestID = 1;
+	string TradeAccount = 2;
+	string TradeAccountSuffix = 3;
+	string Currency = 4;
+	double Balance = 5;
+	uint32 UseMainAccountForMarginAndBalance = 6;
+	uint64 TransactionIdentifierForCashBalanceAdjustment = 7;
+	uint32 DisableTrading = 8;
+	double LowestAllowedNegativeBalance = 9;
+}
+
+//============================================================================
+message TradeAccountDataSubAccountUpdate
+{
+	uint32 RequestID = 1;
+	string TradeAccount = 2;
+	uint32 IsDeleted = 3;
+	uint32 IsChanged = 4;
+	uint32 IsAdded = 5;
+	string TradeAccountSuffix = 6;
+	string Currency = 7;
+	double Balance = 8;
+	uint32 UseMainAccountForMarginAndBalance = 9;
+	uint32 DisableTrading = 10;
+	double LowestAllowedNegativeBalance = 11;
+}
+
+//============================================================================
+message TradeAccountDataAuthorizedUsernameResponse
+{
+	uint32 RequestID = 1;
+	string TradeAccount = 2;
+	string Username = 3;
+	uint32 UpdateOperationComplete = 4;
+	uint32 UpdateOperationMessageType = 5;
+	string UpdateOperationErrorText = 6;
+}
+
+//============================================================================
+message TradeAccountDataAuthorizedUsernameAdd
+{
+	uint32 RequestID = 1;
+	string TradeAccount = 2;
+	string Username = 3;
+}
+
+//============================================================================
+message TradeAccountDataAuthorizedUsernameRemove
+{
+	uint32 RequestID = 1;
+	string TradeAccount = 2;
+	string Username = 3;
+}
+
+//============================================================================
+message TradeAccountDataUsernameToShareWithResponse
+{
+	uint32 RequestID = 1;
+	string TradeAccount = 2;
+	string Username = 3;
+	uint32 IsReadOnly = 4;
+	uint32 UpdateOperationComplete = 5;
+	uint32 UpdateOperationMessageType = 6;
+	string UpdateOperationErrorText = 7;
+}
+
+//============================================================================
+message TradeAccountDataUsernameToShareWithAdd
+{
+	uint32 RequestID = 1;
+	string TradeAccount = 2;
+	string Username = 3;
+	uint32 IsReadOnly = 4;
+}
+
+//============================================================================
+message TradeAccountDataUsernameToShareWithRemove
+{
+	uint32 RequestID = 1;
+	string TradeAccount = 2;
+	string Username = 3;
+	uint32 IsReadOnly = 4;
+}
+
+//============================================================================
+message TradeAccountDataResponseTrailer
+{
+	uint32 RequestID = 1;
+	uint32 IsSnapshot = 2;
+	uint32 IsFirstMessageInBatch = 3;
+	uint32 IsLastMessageInBatch = 4;
+	string TradeAccount = 5;
+}
+
+//============================================================================
+message TradeAccountDataUpdateOperationComplete
+{
+	uint32 RequestID = 1;
+	uint32 IsError = 2;
+	string ErrorText = 3;
+	uint32 IsDeleteOperation = 4;
+	uint32 IsSymbolLimitsUpdateOperation = 5;
+	uint32 IsSymbolCommissionUpdateOperation = 6;
+	string TradeAccount = 7;
+}
+
+//============================================================================
+message MarginDataRequest
+{
+	int32 RequestID = 1;
+	string TradeAccount = 2;
+	string Symbol = 3;
+}
+
+//============================================================================
+message MarginDataResponse
+{
+	int32 RequestID = 1;
+	string TradeAccount = 2;
+	string ErrorText = 3;
+	double ExchangeMargin = 4;
+	double AccountMargin = 5;
+}
+

@@ -1,0 +1,33 @@
+{
+  "chart": 3,
+  "date": "20250924",
+  "counts": {
+    "basedata": 1,
+    "vwap": 0,
+    "trades": 0,
+    "nbcv": 1
+  },
+  "vwap_deviation": {},
+  "nbcv": {
+    "bad_delta": 0,
+    "bad_total": 0
+  },
+  "sessions": {
+    "session_transitions": 0,
+    "reset_warnings": [],
+    "session_stats": {},
+    "status": "OK"
+  },
+  "dom": {
+    "count_total": 17454,
+    "count_kept": 0,
+    "count_match": 0,
+    "count_valid": 0,
+    "ratio_kept": 0.0,
+    "ratio_match": 0.0,
+    "ratio_valid": 0.0,
+    "tol_min": null,
+    "tol_max": null,
+    "status": "WARN"
+  }
+}

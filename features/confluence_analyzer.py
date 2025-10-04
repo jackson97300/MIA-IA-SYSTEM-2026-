@@ -774,33 +774,7 @@ class ConfluenceAnalyzer:
                 touches_count=profile_data.get('val_touches', 0)
             ))
 
-        # Previous session
-        if 'ppoc' in profile_data:
-            levels.append(Level(
-                price=float(profile_data['ppoc']),
-                level_type=LevelType.PPOC,
-                strength=0.6,
-                age_minutes=profile_data.get('ppoc_age', 1440),
-                touches_count=profile_data.get('ppoc_touches', 2)
-            ))
-
-        if 'pvah' in profile_data:
-            levels.append(Level(
-                price=float(profile_data['pvah']),
-                level_type=LevelType.PVAH,
-                strength=0.5,
-                age_minutes=profile_data.get('pvah_age', 1440),
-                touches_count=profile_data.get('pvah_touches', 1)
-            ))
-
-        if 'pval' in profile_data:
-            levels.append(Level(
-                price=float(profile_data['pval']),
-                level_type=LevelType.PVAL,
-                strength=0.5,
-                age_minutes=profile_data.get('pval_age', 1440),
-                touches_count=profile_data.get('pval_touches', 1)
-            ))
+        # VVA previous fields removed - no previous session levels
 
         return levels
 

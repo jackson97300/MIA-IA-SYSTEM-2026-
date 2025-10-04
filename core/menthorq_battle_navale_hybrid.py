@@ -27,6 +27,10 @@ from core.battle_navale_v2 import BattleNavaleV2, BattleNavaleV2Result
 from core.menthorq_distance_trading import MenthorQDistanceTrader
 from features.leadership_zmom import LeadershipZMom
 
+# === INTÉGRATION MENTHORQ DECISION ENGINE ===
+from engines.MenthorQDecisionEngine import decide
+from unifier.build_ctx import build_ctx
+
 # Local imports
 from core.base_types import (
     MarketData, OrderFlowData, TradingFeatures,
@@ -132,55 +136,69 @@ class MenthorQBattleNavaleHybrid:
 
     def analyze_hybrid_opportunity(self, es_data: Dict, nq_data: Dict, config: Optional[Dict] = None) -> HybridMethodResult:
         """
-        ANALYSE OPPORTUNITÉ HYBRIDE
+        ANALYSE OPPORTUNITÉ HYBRIDE - INTÉGRÉE AVEC MENTHORQ DECISION ENGINE
         
         Processus :
-        1. MenthorQ (décideur principal)
-        2. Battle Navale V2 (validateur)
-        3. Confluence analysis
-        4. Signal final avec votre expérience
+        1. Construction du contexte unifié
+        2. Décision via MenthorQDecisionEngine (intègre tout)
+        3. Mapping vers le format hybride existant
         """
         start_time = time.perf_counter()
         result = HybridMethodResult()
         
         try:
-            # === 1. MENTHORQ (DÉCIDEUR PRINCIPAL) ===
-            menthorq_result = self.menthorq_trader.decide_mq_distance_integrated(
-                es_data, nq_data, config
-            )
+            # === 1. CONSTRUCTION DU CONTEXTE UNIFIÉ ===
+            # Utiliser les données ES comme base (sym="ES")
+            snapshot = {
+                "sym": "ES",
+                "t": es_data.get("t", time.time()),
+                "last": es_data.get("price", es_data.get("last", 0.0)),
+                "phase": es_data.get("session", {}).get("phase", "MID"),
+                "regime": es_data.get("session", {}).get("regime", "TREND"),
+                "vix": es_data.get("vix", {}).get("value", 0.0),
+                "vix_trend": es_data.get("vix", {}).get("trend", "flat"),
+                "mentorq_gamma": es_data.get("mentorq", {}).get("gamma", {}),
+                "mentorq_blind": es_data.get("mentorq", {}).get("blind_spots", {}),
+                "vwap": es_data.get("micro", {}).get("vwap", {}),
+                "vp": es_data.get("micro", {}).get("vp", {}),
+                "ofdom": es_data.get("ofdom", {}),
+                "lead": es_data.get("lead", {}),
+                "cluster": es_data.get("cluster", {}),
+                "mia_score": es_data.get("mia", {}).get("score", 50.0),
+                "mia_state": es_data.get("mia", {}).get("state", "NEUTRE")
+            }
             
-            if menthorq_result:
-                result.menthorq_result = menthorq_result
+            # === 2. DÉCISION VIA MENTHORQ DECISION ENGINE ===
+            ctx = build_ctx(snapshot)
+            decision = decide(ctx)
+            
+            # === 3. MAPPING VERS FORMAT HYBRIDE ===
+            if decision and decision["action"] != "FLAT":
+                result.menthorq_result = {
+                    "action": decision["action"],
+                    "side": decision["side"],
+                    "confidence": decision["confidence"],
+                    "entry": decision["entry"],
+                    "stop": decision["stop"],
+                    "tp1": decision["tp1"],
+                    "tp2": decision["tp2"],
+                    "scenario": decision["scenario"],
+                    "label": decision["label"],
+                    "reason": decision["reason"]
+                }
+                
+                # Mise à jour des stats
                 self.stats['menthorq_signals'] += 1
-                logger.debug(f"🎯 MenthorQ signal: {menthorq_result.get('action', 'NO_SIGNAL')}")
-            
-            # === 2. BATTLE NAVALE V2 (VALIDATEUR) ===
-            battle_result = self.battle_navale_v2.analyze_battle_navale_v2(es_data)
-            
-            if battle_result and battle_result.signal_type != "NO_SIGNAL":
-                result.battle_navale_result = battle_result
-                self.stats['battle_navale_signals'] += 1
-                logger.debug(f"⚔️ Battle Navale signal: {battle_result.signal_type}")
-            
-            # === 3. CONFLUENCE ANALYSIS ===
-            confluence_score = self._analyze_confluence(menthorq_result, battle_result)
-            result.confluence_score = confluence_score
-            
-            # === 4. SIGNAL FINAL ===
-            if self._should_take_hybrid_signal(menthorq_result, battle_result, confluence_score):
-                result = self._generate_hybrid_signal(result, es_data)
                 self.stats['hybrid_signals'] += 1
-                self.stats['confluence_agreements'] += 1
-            else:
-                if menthorq_result or (battle_result and battle_result.signal_type != "NO_SIGNAL"):
-                    self.stats['confluence_disagreements'] += 1
-                logger.debug("❌ Pas de confluence - Pas de signal hybride")
+                logger.info(f"🎯 MenthorQ Decision Engine: {decision['action']} {decision['side']} - {decision['reason']}")
+                logger.info(f"   Entry: {decision['entry']}, Stop: {decision['stop']}, TP1: {decision['tp1']}")
+                logger.info(f"   Confidence: {decision['confidence']:.2f}, Label: {decision['label']}")
             
-            # === 5. AUDIT DATA ===
+            # === 4. AUDIT DATA ===
             result.audit_data = {
-                'menthorq_available': menthorq_result is not None,
-                'battle_navale_available': battle_result is not None and battle_result.signal_type != "NO_SIGNAL",
-                'confluence_score': confluence_score,
+                'menthorq_decision_engine_used': True,
+                'decision_available': decision is not None,
+                'action': decision.get("action", "FLAT") if decision else "FLAT",
                 'calculation_time_ms': (time.perf_counter() - start_time) * 1000
             }
             

@@ -1,0 +1,22 @@
+stale:
+  max_age_hours: 6
+  warn_age_hours: 2
+# Futures (ES/NQ) : limiter aux alertes EOD recommandées par MenthorQ
+futures:
+  enforce_eod_only: true
+  symbols_regex: "^(ES|NQ)[A-Z0-9!]*$"
+# TTL par catégorie (minutes)
+ttl_minutes:
+  INTRADAY_STRONG: 15
+  INTRADAY_WEAK: 5
+  EOD: 1500
+
+
+
+
+
+
+
+
+
+

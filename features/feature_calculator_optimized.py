@@ -42,6 +42,19 @@ from core.base_types import (
 from types import SimpleNamespace
 from inspect import signature
 
+# Import des optimisations avancées
+try:
+    from core.menthorq_cache import get_optimized_menthorq_signal, get_cache_stats as get_menthorq_cache_stats
+    from core.battle_navale_cache import get_optimized_battle_navale_analysis, get_battle_navale_cache_stats
+    from features.feature_calculator_optimized_v2 import get_optimized_features, get_feature_cache_stats
+    OPTIMIZATIONS_AVAILABLE = True
+    logger = get_logger(__name__)
+    logger.info("🔥 Optimisations avancées chargées - Performance <200ms activée")
+except ImportError as e:
+    OPTIMIZATIONS_AVAILABLE = False
+    logger = get_logger(__name__)
+    logger.warning(f"⚠️ Optimisations non disponibles: {e}")
+
 # === TRADING THRESHOLDS ===
 
 def get_trading_thresholds():
@@ -722,7 +735,7 @@ class FeatureCalculatorOptimized:
     def calculate_features(self, market_data: MarketData, 
                           order_flow: Optional[OrderFlowData] = None) -> TradingFeatures:
         """
-        Calcule toutes les features avec optimisation
+        Calcule toutes les features avec optimisation ULTRA-OPTIMISÉE
         
         Args:
             market_data: Données de marché
@@ -734,6 +747,112 @@ class FeatureCalculatorOptimized:
         market_data = self._normalize_market_data(market_data)
         start_time = time.time()
         
+        try:
+            # OPTIMISATION AVANCÉE - Utiliser les caches optimisés si disponibles
+            if OPTIMIZATIONS_AVAILABLE:
+                return self._calculate_features_optimized(market_data, order_flow, start_time)
+            
+            # Fallback vers l'ancienne méthode
+            return self._calculate_features_legacy(market_data, order_flow, start_time)
+            
+        except Exception as e:
+            logger.error(f"❌ Erreur calcul features: {e}")
+            return self._create_fallback_features(market_data)
+    
+    def _extract_structure_data(self, market_data: MarketData) -> Dict[str, Any]:
+        """Extrait les données de structure pour l'optimisation"""
+        return {
+            'vwap_price': getattr(market_data, 'vwap', 0.0),
+            'volume_profile': getattr(market_data, 'volume_profile', {}),
+            'support_resistance': getattr(market_data, 'support_resistance', []),
+            'current_price': float(market_data.close)
+        }
+    
+    def _extract_order_flow_data(self, order_flow: Optional[OrderFlowData]) -> Dict[str, Any]:
+        """Extrait les données d'order flow pour l'optimisation"""
+        if not order_flow:
+            return {}
+        
+        return {
+            'delta': getattr(order_flow, 'delta', 0.0),
+            'cumulative_delta': getattr(order_flow, 'cumulative_delta', 0.0),
+            'large_trades': getattr(order_flow, 'large_trades', []),
+            'order_book_imbalance': getattr(order_flow, 'order_book_imbalance', 0.0)
+        }
+    
+    def _extract_menthorq_data(self, market_data: MarketData) -> Dict[str, Any]:
+        """Extrait les données MenthorQ pour l'optimisation"""
+        return {
+            'gamma_levels': getattr(market_data, 'gamma_levels', {}),
+            'blind_spots': getattr(market_data, 'blind_spots', {}),
+            'current_price': float(market_data.close),
+            'symbol': market_data.symbol
+        }
+    
+    def _convert_optimized_to_trading_features(self, optimized_result: Dict[str, Any],
+                                             market_data: MarketData,
+                                             start_time: float) -> TradingFeatures:
+        """Convertit le résultat optimisé vers TradingFeatures"""
+        features_dict = optimized_result.get('features', {})
+        calculation_time = optimized_result.get('calculation_time_ms', 0.0)
+        
+        # Vérifier si le calcul était trop lent
+        if calculation_time > 200:
+            logger.warning(f"⚠️ Calcul lent: {calculation_time:.2f}ms")
+        
+        return TradingFeatures(
+            # Features principales
+            battle_navale_signal=features_dict.get('battle_navale_signal', 0.0),
+            gamma_pin_strength=features_dict.get('gamma_pin_strength', 0.0),
+            headfake_signal=features_dict.get('headfake_signal', 0.0),
+            microstructure_anomaly=features_dict.get('microstructure_anomaly', 0.0),
+            market_regime_score=features_dict.get('market_regime_score', 0.0),
+            base_quality=features_dict.get('base_quality', 0.0),
+            confluence_score=features_dict.get('confluence_score', 0.0),
+            
+            # Métadonnées
+            calculation_time_ms=calculation_time,
+            features_calculated=optimized_result.get('features_calculated', 0),
+            lazy_loading_used=optimized_result.get('lazy_loading_used', False),
+            prefilter_passed=optimized_result.get('prefilter_passed', True),
+            
+            # Données de base
+            symbol=market_data.symbol,
+            timestamp=market_data.timestamp,
+            price=float(market_data.close),
+            volume=float(market_data.volume)
+        )
+    
+    def _calculate_features_optimized(self, market_data: MarketData, 
+                                    order_flow: Optional[OrderFlowData], 
+                                    start_time: float) -> TradingFeatures:
+        """Calcul optimisé avec caches avancés"""
+        try:
+            # Utiliser le Feature Calculator V2 optimisé
+            structure_data = self._extract_structure_data(market_data)
+            order_flow_data = self._extract_order_flow_data(order_flow) if order_flow else {}
+            menthorq_data = self._extract_menthorq_data(market_data)
+            
+            # Calcul optimisé
+            optimized_result = get_optimized_features(
+                market_data, structure_data, order_flow_data, menthorq_data
+            )
+            
+            # Convertir vers TradingFeatures
+            features = self._convert_optimized_to_trading_features(
+                optimized_result, market_data, start_time
+            )
+            
+            return features
+            
+        except Exception as e:
+            logger.warning(f"⚠️ Fallback vers méthode legacy: {e}")
+            return self._calculate_features_legacy(market_data, order_flow, start_time)
+    
+    def _calculate_features_legacy(self, market_data: MarketData, 
+                                 order_flow: Optional[OrderFlowData], 
+                                 start_time: float) -> TradingFeatures:
+        """Méthode legacy (ancienne)"""
         try:
             # Vérifier le cache avec clé optimisée
             cache_key = self.cache._generate_key(
