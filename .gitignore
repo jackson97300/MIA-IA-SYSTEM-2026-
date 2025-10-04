@@ -61,6 +61,17 @@ logs/
 trained_models/
 models/
 
+# 🤖 Pipeline ML - Datasets et modèles
+DATASET/dataset_*.parquet
+DATASET/models/
+DATASET/results/
+DATASET/*.csv
+DATASET/*.json
+DATASET/backtest_*.py
+DATASET/validate_*.py
+DATASET/test_*.py
+DATASET/*_test.py
+
 # 📊 Données de test volumineuses
 test_data/
 sample_data/
@@ -139,3 +150,5 @@ backups/
 archived_legacy/
 ancien_system/
 g3_validation_report.csv
+
+test_validation.csv

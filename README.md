@@ -39,6 +39,7 @@ python launchers/launch_24_7.py
 - **`features/`** : Fonctionnalités (sierra_stream, unifier, menthorq_processor)
 - **`config/`** : Configurations (sierra_paths, menthorq_runtime)
 - **`launchers/`** : Lanceurs (launch_24_7.py, collector.py)
+- **`DATASET/`** : 🤖 **Pipeline ML** (assemblage, entraînement, RL)
 - **`ancien_system/`** : Systèmes legacy (archivés)
 
 ## 🔧 Données collectées
@@ -47,6 +48,18 @@ python launchers/launch_24_7.py
 - **Graph 4 (30m)** : basedata, vwap, pvwap
 - **Graph 8 (VIX)** : vix + policy
 - **Graph 10 (MenthorQ)** : gamma (SG1..19), blind spots (BL1..10), swings (SG1..9)
+
+## 🤖 Pipeline ML
+
+Le système inclut un **pipeline ML complet** dans `DATASET/` :
+
+- **📊 Assemblage multi-sources** : OHLC, VWAP, NBCV, MenthorQ, DOM, VIX, ATR
+- **🏷️ Labels ML** : Direction H=5min, Touch VWAP, Breakouts
+- **🧠 Modèles** : XGBoost, LightGBM, CatBoost, PPO, SAC
+- **🎛️ Policy Overlay** : Gating dynamique, hystérésis, sizing régimique
+- **📈 Métriques** : Accuracy, F1, LogLoss, MCC, PR-AUC
+
+**Documentation ML** : Voir `DATASET/README_ML_PIPELINE.md`
 
 ## 🧪 Tests CI
 
