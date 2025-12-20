@@ -1,0 +1,15 @@
+{
+    "logging": {
+        "level": "WARNING",
+        "disable_debug": true,
+        "disable_info": true,
+        "enable_errors": true,
+        "enable_warnings": true
+    },
+    "performance": {
+        "optimize_logging": true,
+        "reduce_console_output": true,
+        "minimal_debug_info": true
+    },
+    "production_mode": true
+}

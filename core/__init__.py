@@ -20,16 +20,18 @@ except ImportError as e:
     logger.warning(f"Could not import trading_types: {e}")
     trading_types_imports = False
 
-# Import base types
+# Import base types (SANS TradingSignal pour éviter conflit avec trading_types)
 try:
     from .base_types import (
-        MarketData, TradingSignal, SignalType, MarketRegime,
+        MarketData, SignalType, MarketRegime,
         ES_TICK_SIZE, ES_TICK_VALUE, OrderFlowData,
         get_session_phase, validate_market_data, TradeResult,
         SystemState
     )
+    # ✅ Import TradingSignal depuis trading_types (avec paramètre 'action')
+    from .trading_types import TradingSignal
     base_imports = True
-    logger.debug("[OK] base_types importé avec succès")
+    logger.debug("[OK] base_types importé avec succès (TradingSignal from trading_types)")
 except ImportError as e:
     logger.warning(f"Could not import base_types: {e}")
     base_imports = False
@@ -37,7 +39,7 @@ except ImportError as e:
 # Import detectors
 try:
     from .battle_navale import (
-        BattleNavaleDetector, 
+        BattleNavaleDetector,
         BattleNavaleAnalyzer,
         create_battle_navale_detector
     )
@@ -80,7 +82,7 @@ try:
     signal_explainer_imports = True
     logger.debug("[OK] signal_explainer importé avec succès")
 except ImportError as e:
-    logger.warning(f"Could not import signal_explainer: {e}")
+    logger.debug(f"[SKIP] signal_explainer: {e}")  # ✅ Changed to debug
     signal_explainer_imports = False
 
 try:
@@ -184,7 +186,7 @@ if base_imports:
 # Detectors
 if battle_imports:
     __all__.extend([
-        'BattleNavaleDetector', 
+        'BattleNavaleDetector',
         'BattleNavaleAnalyzer',
         'create_battle_navale_detector'
     ])
@@ -249,8 +251,7 @@ else: failed_imports.append("battle_navale")
 if patterns_imports: successful_imports.append("patterns_detector")
 else: failed_imports.append("patterns_detector")
 
-# IBKR tracking supprimé (migration vers Sierra)
-failed_imports.append("ibkr_connector")
+# IBKR tracking supprimé (migration vers Sierra) - No longer logged
 
 if sierra_router_imports: successful_imports.append("sierra_order_router")
 else: failed_imports.append("sierra_order_router")
@@ -261,7 +262,7 @@ if structure_imports:
 else:
     failed_imports.append("structure_data")
 
-# ✅ NOUVEAUX MODULES - Signal Analysis & Risk Management  
+# ✅ NOUVEAUX MODULES - Signal Analysis & Risk Management
 if signal_explainer_imports: successful_imports.append("signal_explainer")
 else: failed_imports.append("signal_explainer")
 
@@ -346,7 +347,7 @@ def check_circular_imports_prevention():
     if not trading_types_imports:
         logger.error("[ERROR] trading_types non chargé - risque d'imports circulaires!")
         return False
-    
+
     # Vérifier que les types sont disponibles
     try:
         from .trading_types import TradingMode, AutomationStatus, Position

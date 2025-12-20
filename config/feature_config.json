@@ -1,4 +1,12 @@
 {
+  "LIVE_DATA_READER": {
+    "watch_dirs": [
+      "D:\\MIA_IA_system\\DATA_SIERRA_CHART\\DATA_2025\\OCTOBRE\\20251015\\CHART_3\\unified",
+      "D:\\MIA_IA_system\\DATA_SIERRA_CHART\\DATA_2025\\OCTOBRE\\20251015\\CHART_9\\unified"
+    ],
+    "poll_ms": 250,
+    "staleness_s": 3
+  },
   "vwap": {
     "max_history": 2048,
     "bands_stdev": [1.0, 2.0],
@@ -21,18 +29,18 @@
   },
   "advanced": {
     "enabled": true,
-    "tick_momentum": { 
-      "window": 20, 
-      "volume_weight": 0.6 
+    "tick_momentum": {
+      "window": 20,
+      "volume_weight": 0.6
     },
-    "delta_divergence": { 
-      "lookback": 10, 
-      "threshold": 0.7 
+    "delta_divergence": {
+      "lookback": 10,
+      "threshold": 0.7
     },
-    "volatility_regime": { 
-      "atr_len": 20, 
-      "vix_low": 15.0, 
-      "vix_high": 25.0 
+    "volatility_regime": {
+      "atr_len": 20,
+      "vix_low": 15.0,
+      "vix_high": 25.0
     }
   },
   "confluence": {
@@ -80,8 +88,8 @@
     "data_source": "filesystem",
     "realtime": {
       "watch_dirs": [
-        "D:\\MIA_IA_system\\DATA_SIERRA_CHART\\DATA_2025\\OCTOBRE\\20251002\\CHART_9",
-        "D:\\MIA_IA_system\\DATA_SIERRA_CHART\\DATA_2025\\OCTOBRE\\20251002\\CHART_3"
+        "D:\\MIA_IA_system\\DATA_SIERRA_CHART\\DATA_2025\\OCTOBRE\\20251015\\CHART_3\\unified",
+        "D:\\MIA_IA_system\\DATA_SIERRA_CHART\\DATA_2025\\OCTOBRE\\20251015\\CHART_9\\unified"
       ],
       "poll_ms": 250,
       "file_staleness_seconds": 3,
@@ -97,6 +105,3 @@
     "disable_fallbacks": true
   }
 }
-
-
-

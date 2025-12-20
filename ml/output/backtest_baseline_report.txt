@@ -1,0 +1,61 @@
+======================================================================
+BACKTEST ML_3LAYER - CONFIGURATION BASELINE (ATR ADAPTATIF)
+======================================================================
+
+Date: 2025-11-15 16:09:47
+
+CONFIGURATION:
+  SL: 1.5x ATR, cappé min/max (ES: 20-40t, NQ: 20-48t)
+  TP: MenthorQ Levels ou 3.5x ATR moyen
+  Fees: ES 0.12t, NQ 0.28t
+
+----------------------------------------------------------------------
+
+============================== ES ==============================
+
+  Trades Total:      2068
+  Trades WIN:        0 (0.0%)
+  Trades LOSS:       2068 (100.0%)
+
+  P&L Net:           -248.16 ticks ($-3,102.00)
+  P&L/trade:         -0.120 ticks
+
+  TP Hit Rate:       0.0%
+  SL Hit Rate:       0.0%
+
+  Avg SL:            23.6 ticks
+  Avg TP:            42.0 ticks
+
+
+============================== NQ ==============================
+
+  Trades Total:      5881
+  Trades WIN:        0 (0.0%)
+  Trades LOSS:       5881 (100.0%)
+
+  P&L Net:           -1646.68 ticks ($-8,233.40)
+  P&L/trade:         -0.280 ticks
+
+  TP Hit Rate:       0.0%
+  SL Hit Rate:       0.0%
+
+  Avg SL:            45.1 ticks
+  Avg TP:            78.9 ticks
+
+
+============================== TOTAL ==============================
+
+  Trades Total:      7949
+  Trades WIN:        0 (0.0%)
+  Trades LOSS:       7949 (100.0%)
+
+  P&L Net:           -1894.84 ticks ($-11,335.40)
+  P&L/trade:         -0.238 ticks
+
+  TP Hit Rate:       0.0%
+  SL Hit Rate:       0.0%
+
+  Avg SL:            39.5 ticks
+  Avg TP:            69.3 ticks
+
+======================================================================

@@ -7,60 +7,60 @@ from typing import Dict, Any, Optional
 @dataclass
 class TradingConfig:
     """Configuration trading avec support .get() et attributs complets"""
-    
+
     # Symboles
     primary_symbol: str = "ES"
     secondary_symbol: str = "NQ"
-    
+
     # Risk management
     max_position_size: int = 3
-    daily_loss_limit: float = 1000.0
-    daily_profit_target: float = 500.0
-    
+    daily_loss_limit: float = 99999.0  # ✅ MODIFIÉ CALIBRAGE 18/11: 1000 → 99999 (désactiver limite)
+    daily_profit_target: float = 99999.0  # ✅ MODIFIÉ CALIBRAGE 18/11: 500 → 99999 (désactiver limite)
+
     # Features
-    min_confidence: float = 0.65
+    min_confidence: float = 0.30  # 🔧 TEST: Réduit de 0.58 → 0.30  # ✅ MODIF 18/11: 0.50 → 0.58 (réduction overtrading)
     lookback_periods: int = 20
     feature_lookback: int = 20
-    
+
     # Sessions
-    trading_start_hour: int = 9
-    trading_end_hour: int = 16
-    
+    trading_start_hour: int = 0  # ✅ MODIFIÉ CALIBRAGE 18/11: 9 → 0 (24h trading)
+    trading_end_hour: int = 23  # ✅ MODIFIÉ CALIBRAGE 18/11: 16 → 23 (24h trading)
+
     # Signal thresholds
-    signal_threshold: float = 0.65
-    
+    signal_threshold: float = 0.30  # 🔧 TEST: Réduit de 0.50 → 0.30  # ✅ MODIFIÉ CALIBRAGE 18/11: 0.65 → 0.50 (-23%)
+
     # Cache configuration
     cache_config: Dict[str, Any] = field(default_factory=lambda: {
         'enabled': True,
         'ttl_seconds': 60,
         'max_size': 500
     })
-    
+
     # Elite techniques
     enable_mtf_confluence: bool = True
     enable_smart_money: bool = True
     enable_ml_ensemble: bool = True
     enable_gamma_cycles: bool = True
-    
+
     # ML Ensemble config
-    ml_confidence_threshold: float = 0.70
-    
+    ml_confidence_threshold: float = 0.30  # 🔧 TEST: Réduit de 0.62 → 0.30  # ✅ MODIF 18/11: 0.55 → 0.62 (réduction overtrading)
+
     # Performance config
     enable_cache: bool = True
     cache_ttl: int = 60
     max_cache_size: int = 500
-    
+
     def get(self, key: str, default=None):
         """Methode get pour compatibilite dict-like"""
         return getattr(self, key, default)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Conversion en dictionnaire"""
         result = {}
         for field_name in self.__dataclass_fields__:
             result[field_name] = getattr(self, field_name)
         return result
-    
+
     def update(self, updates: Dict[str, Any]):
         """Mise a jour depuis dictionnaire"""
         for key, value in updates.items():
@@ -97,12 +97,12 @@ def get_feature_config() -> Dict[str, Any]:
 # Test auto-validation
 if __name__ == "__main__":
     config = TradingConfig()
-    
+
     # Test .get()
     symbol = config.get('primary_symbol', 'DEFAULT')
     cache_cfg = config.get('cache_config', {})
     missing = config.get('non_existent_key', 'FALLBACK')
-    
+
     print(f"✅ Config OK: {symbol}")
     print(f"✅ Cache config: {type(cache_cfg)}")
     print(f"✅ Missing key: {missing}")

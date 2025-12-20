@@ -1,0 +1,186 @@
+{
+  "test_name": "Delta Minimum",
+  "test_date": "2025-12-06T15:26:03.914922",
+  "results": {
+    "ES_DELTA_0_ACTUEL": {
+      "trades": 134,
+      "wins": 29,
+      "losses": 50,
+      "pnl": -2875.0,
+      "win_rate": 21.641791044776117,
+      "avg_delta": 142.8582089552239,
+      "min_delta": 0,
+      "symbol": "ES"
+    },
+    "ES_DELTA_25": {
+      "trades": 134,
+      "wins": 32,
+      "losses": 46,
+      "pnl": -650.0,
+      "win_rate": 23.88059701492537,
+      "avg_delta": 148.58955223880596,
+      "min_delta": 25,
+      "symbol": "ES"
+    },
+    "ES_DELTA_50": {
+      "trades": 130,
+      "wins": 30,
+      "losses": 45,
+      "pnl": -1125.0,
+      "win_rate": 23.076923076923077,
+      "avg_delta": 163.8923076923077,
+      "min_delta": 50,
+      "symbol": "ES"
+    },
+    "ES_DELTA_75": {
+      "trades": 123,
+      "wins": 22,
+      "losses": 51,
+      "pnl": -5775.0,
+      "win_rate": 17.88617886178862,
+      "avg_delta": 191.10569105691056,
+      "min_delta": 75,
+      "symbol": "ES"
+    },
+    "ES_DELTA_100": {
+      "trades": 114,
+      "wins": 26,
+      "losses": 45,
+      "pnl": -2625.0,
+      "win_rate": 22.807017543859647,
+      "avg_delta": 200.2719298245614,
+      "min_delta": 100,
+      "symbol": "ES"
+    },
+    "ES_DELTA_150": {
+      "trades": 98,
+      "wins": 21,
+      "losses": 40,
+      "pnl": -3125.0,
+      "win_rate": 21.428571428571427,
+      "avg_delta": 258.2959183673469,
+      "min_delta": 150,
+      "symbol": "ES"
+    },
+    "ES_DELTA_200": {
+      "trades": 82,
+      "wins": 17,
+      "losses": 37,
+      "pnl": -3800.0,
+      "win_rate": 20.73170731707317,
+      "avg_delta": 301.1341463414634,
+      "min_delta": 200,
+      "symbol": "ES"
+    },
+    "ES_DELTA_300": {
+      "trades": 60,
+      "wins": 17,
+      "losses": 24,
+      "pnl": -225.0,
+      "win_rate": 28.333333333333332,
+      "avg_delta": 423.05,
+      "min_delta": 300,
+      "symbol": "ES"
+    },
+    "ES_DELTA_500": {
+      "trades": 35,
+      "wins": 9,
+      "losses": 18,
+      "pnl": -1575.0,
+      "win_rate": 25.71428571428571,
+      "avg_delta": 670.8,
+      "min_delta": 500,
+      "symbol": "ES"
+    },
+    "NQ_DELTA_0_ACTUEL": {
+      "trades": 56,
+      "wins": 32,
+      "losses": 23,
+      "pnl": 5000.0,
+      "win_rate": 57.14285714285714,
+      "avg_delta": 111.53571428571429,
+      "min_delta": 0,
+      "symbol": "NQ"
+    },
+    "NQ_DELTA_25": {
+      "trades": 55,
+      "wins": 31,
+      "losses": 23,
+      "pnl": 4700.0,
+      "win_rate": 56.36363636363636,
+      "avg_delta": 116.05454545454545,
+      "min_delta": 25,
+      "symbol": "NQ"
+    },
+    "NQ_DELTA_50": {
+      "trades": 53,
+      "wins": 30,
+      "losses": 22,
+      "pnl": 4600.0,
+      "win_rate": 56.60377358490566,
+      "avg_delta": 125.35849056603773,
+      "min_delta": 50,
+      "symbol": "NQ"
+    },
+    "NQ_DELTA_75": {
+      "trades": 50,
+      "wins": 24,
+      "losses": 25,
+      "pnl": 2200.0,
+      "win_rate": 48.0,
+      "avg_delta": 140.0,
+      "min_delta": 75,
+      "symbol": "NQ"
+    },
+    "NQ_DELTA_100": {
+      "trades": 41,
+      "wins": 22,
+      "losses": 18,
+      "pnl": 3000.0,
+      "win_rate": 53.65853658536586,
+      "avg_delta": 159.4878048780488,
+      "min_delta": 100,
+      "symbol": "NQ"
+    },
+    "NQ_DELTA_150": {
+      "trades": 30,
+      "wins": 19,
+      "losses": 11,
+      "pnl": 3500.0,
+      "win_rate": 63.33333333333333,
+      "avg_delta": 221.26666666666668,
+      "min_delta": 150,
+      "symbol": "NQ"
+    },
+    "NQ_DELTA_200": {
+      "trades": 21,
+      "wins": 15,
+      "losses": 6,
+      "pnl": 3300.0,
+      "win_rate": 71.42857142857143,
+      "avg_delta": 269.5238095238095,
+      "min_delta": 200,
+      "symbol": "NQ"
+    },
+    "NQ_DELTA_300": {
+      "trades": 10,
+      "wins": 10,
+      "losses": 0,
+      "pnl": 3000.0,
+      "win_rate": 100.0,
+      "avg_delta": 338.0,
+      "min_delta": 300,
+      "symbol": "NQ"
+    },
+    "NQ_DELTA_500": {
+      "trades": 2,
+      "wins": 2,
+      "losses": 0,
+      "pnl": 600.0,
+      "win_rate": 100.0,
+      "avg_delta": 527.0,
+      "min_delta": 500,
+      "symbol": "NQ"
+    }
+  }
+}

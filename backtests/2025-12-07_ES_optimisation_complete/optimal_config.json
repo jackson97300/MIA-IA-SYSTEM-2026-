@@ -1,0 +1,32 @@
+{
+  "audit_date": "2025-12-06T15:47:36.189569",
+  "symbol": "ES",
+  "optimal_config": {
+    "TP": 22,
+    "SL": 20,
+    "delta_min": 0,
+    "pressure_min": 0.2,
+    "layer1_min": 0.3,
+    "layer2_min": 0.1,
+    "layer3_min": 0.1,
+    "direction": "SHORT_ONLY",
+    "sessions": [
+      "London",
+      "US Morning",
+      "US Power Hour"
+    ]
+  },
+  "current_result": {
+    "trades": 77,
+    "wins": 18,
+    "win_rate": 23.376623376623375,
+    "pnl": -2050.0
+  },
+  "optimal_result": {
+    "trades": 40,
+    "wins": 18,
+    "win_rate": 45.0,
+    "pnl": 2450.0
+  },
+  "gain": 4500.0
+}

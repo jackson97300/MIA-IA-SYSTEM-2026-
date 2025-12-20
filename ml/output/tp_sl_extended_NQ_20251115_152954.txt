@@ -1,0 +1,47 @@
+================================================================================
+RAPPORT OPTIMISATION TP/SL - NQ
+================================================================================
+
+## MEILLEURE COMBINAISON (selon P&L/trade)
+
+TP Optimal:      23 ticks
+SL Optimal:      12 ticks
+R:R:             1.92:1
+P&L/trade:       +1.528 ticks
+P&L Net:         +8988.20 ticks
+WinRate:         43.5%
+Profit Factor:   1.27
+TP Hit Rate:     15.1%
+SL Hit Rate:     56.2%
+
+## IMPACT FINANCIER
+
+Sur 1,000 trades:
+  P&L Net: +7,641.73 USD
+
+## OBJECTIF +1.0 t/trade
+
+OBJECTIF ATTEINT ! (+0.528t au-dessus)
+
+## TOP 10 MEILLEURES COMBINAISONS
+
+ 1. TP=23t, SL=12t | R:R=1.92:1 | P&L=+1.528t | WR=43.5% | PF=1.27
+ 2. TP=24t, SL=12t | R:R=2.00:1 | P&L=+1.518t | WR=43.5% | PF=1.27
+ 3. TP=22t, SL=12t | R:R=1.83:1 | P&L=+1.495t | WR=43.5% | PF=1.26
+ 4. TP=25t, SL=12t | R:R=2.08:1 | P&L=+1.482t | WR=43.5% | PF=1.26
+ 5. TP=26t, SL=12t | R:R=2.17:1 | P&L=+1.443t | WR=43.5% | PF=1.26
+ 6. TP=21t, SL=12t | R:R=1.75:1 | P&L=+1.438t | WR=43.5% | PF=1.25
+ 7. TP=27t, SL=12t | R:R=2.25:1 | P&L=+1.371t | WR=43.5% | PF=1.24
+ 8. TP=23t, SL=13t | R:R=1.77:1 | P&L=+1.344t | WR=44.7% | PF=1.23
+ 9. TP=28t, SL=12t | R:R=2.33:1 | P&L=+1.334t | WR=43.5% | PF=1.24
+10. TP=24t, SL=13t | R:R=1.85:1 | P&L=+1.333t | WR=44.7% | PF=1.23
+
+## STATISTIQUES GLOBALES
+
+Total combinaisons testees: 147
+Combinaisons rentables (P&L > 0): 120
+Combinaisons atteignant +1.0t: 44
+Meilleur P&L/trade: +1.528t
+Pire P&L/trade: -1.348t
+
+================================================================================

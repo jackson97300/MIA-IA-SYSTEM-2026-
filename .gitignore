@@ -1,154 +1,93 @@
-# 🚫 FICHIERS À IGNORER - MIA_IA_SYSTEM
+# ============================================
+# .gitignore MIA_IA_SYSTEM
+# ============================================
 
-# 📊 Données volumineuses
-data/snapshots/bar_data/*.jsonl
-data/snapshots/*.jsonl
-data/*.jsonl
-*.jsonl
-
-# ☕ Java JDK (trop volumineux)
-OpenJDK17U-jdk_x64_windows_hotspot_*/
-jdk-*/
-*.jar
-
-# 🐍 Python
+# ===== PYTHON =====
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
 *.egg-info/
-.installed.cfg
-*.egg
-
-# 🔧 Environnements virtuels
+dist/
+build/
 venv/
 env/
 ENV/
-env.bak/
-venv.bak/
 
-# 📝 Logs
-*.log
+# ===== LOGS (CRITIQUES - GROS FICHIERS) =====
 logs/
+logs_advanced/
+*.log
 *.log.*
 
-# 💾 Fichiers temporaires
+# ===== DATA & SNAPSHOTS (CRITIQUES - TRÈS GROS) =====
+snapshots/
+snapshots_trades/
+CALIBRAGE_PHASE/SNAPSHOTS/
+DATA_SIERRA_CHART/
+data/
+test_data/
+ml_ready_data/
+streams/
+prop_firm_data/
+
+# ===== BACKUPS & ARCHIVES =====
+ARCHIVE/
+*.zip
+*.tar.gz
+*.rar
+
+# ===== MODELS ML (GROS FICHIERS) =====
+models/
+*.pkl
+*.h5
+*.pth
+*.model
+
+# ===== BACKTESTING RESULTS =====
+backtesting/logs/
+backtesting/results/
+backtests/*/results/
+*.csv
+
+# ===== DEBUG FILES =====
+debug_*.log
+study_resolve_*.log
+unified_debug_*.log
+startup_*.txt
+
+# ===== TEMP & CACHE =====
+.cache/
+.pytest_cache/
+.mypy_cache/
 *.tmp
 *.temp
-*.bak
-*.backup
-*_backup_*
-*.corrupted_backup
 
-# 🗃️ Modèles entraînés volumineux
-*.pkl
-*.joblib
-*.h5
-*.hdf5
-trained_models/
-models/
-
-# 🤖 Pipeline ML - Datasets et modèles
-DATASET/dataset_*.parquet
-DATASET/models/
-DATASET/results/
-DATASET/*.csv
-DATASET/*.json
-DATASET/backtest_*.py
-DATASET/validate_*.py
-DATASET/test_*.py
-DATASET/*_test.py
-
-# 📊 Données de test volumineuses
-test_data/
-sample_data/
-large_data/
-
-# 🔐 Fichiers sensibles
-*.key
-*.pem
-config/secrets.json
-secrets/
-.env
-.env.*
-.env.live
-.env.automation
-.env.production
-.env.staging
-.env.dev
-
-# 🖥️ Fichiers système
-.DS_Store
-Thumbs.db
+# ===== IDE =====
+.vscode/
+.idea/
 *.swp
 *.swo
 *~
 
-# 📁 Dossiers de cache
-.cache/
-.pytest_cache/
-.coverage
-htmlcov/
+# ===== OS =====
+.DS_Store
+Thumbs.db
+desktop.ini
 
-# 🚀 Fichiers de déploiement
-deployment/
-docker/
-*.dockerfile
+# ===== CONFIG SECRETS =====
+*.env
+.env.*
+secrets/
+credentials/
 
-# 📋 Fichiers de documentation temporaires
-docs/temp/
-docs/draft/
+# ===== WEBSITE BUILD =====
+website/**/node_modules/
+website/**/.next/
+website/**/out/
+website/**/*.log
 
-# 🧪 Fichiers de test
-test_*.py
-tests/
-tests_old/
-tests_archive/
-*_test.py
-*_test_*.py
+# ===== KEEP STRUCTURE =====
+!**/.gitkeep
 
-# 📄 Fichiers temporaires et de documentation
-*.txt
-*.md
-!README.md
-!ARCHITECTURE.md
-!DOCUMENTATION_COMPLETE_METHODES_TRADING.md
-GUIDE_*.md
-AUDIT_*.md
-BILAN_*.md
-CONFIGURATION_*.md
-CORRECTIONS_*.md
-RAPPORT_*.md
-ETAT_*.md
-TODO_*.md
-CORRECTION_*.md
-MAPPING_*.md
-INTEGRATION_*.md
-LAUNCH_*.md
-STRATEGY_*.md
-MIA_*.cpp
-MIA_*.hpp
-*.whl
-*.zip
-
-# 🗂️ Dossiers temporaires
-temp/
-backups/
-archived_legacy/
-ancien_system/
-g3_validation_report.csv
-
-test_validation.csv

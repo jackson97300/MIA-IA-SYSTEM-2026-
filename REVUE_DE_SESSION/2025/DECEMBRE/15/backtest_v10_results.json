@@ -1,0 +1,347 @@
+{
+  "date": "2025-12-16T01:19:16.808410",
+  "training_days": [
+    "20251105",
+    "20251106",
+    "20251107",
+    "20251110",
+    "20251111",
+    "20251112",
+    "20251113",
+    "20251114",
+    "20251117",
+    "20251118",
+    "20251119",
+    "20251120",
+    "20251121",
+    "20251124",
+    "20251125",
+    "20251126",
+    "20251127",
+    "20251201",
+    "20251202",
+    "20251203",
+    "20251204",
+    "20251205"
+  ],
+  "validation_days": [
+    "20251208",
+    "20251209",
+    "20251210",
+    "20251211",
+    "20251212",
+    "20251215"
+  ],
+  "results": {
+    "LONDON_ES": {
+      "optimal_params": {
+        "min_confluence": 3,
+        "max_distance": 15,
+        "min_layer1": 0.2,
+        "min_layer2": 0.2,
+        "min_layer3": 0.12
+      },
+      "training_pnl": 4130.9999999999945,
+      "training_trades": 81,
+      "training_winrate": 67.90123456790124,
+      "validation": {
+        "v10": {
+          "n_trades": 40,
+          "n_wins": 20,
+          "n_losses": 20,
+          "pnl_ticks": 18.0,
+          "pnl_usd": 225.0,
+          "signals_generated": 4844,
+          "rejections": {
+            "confluence": 4786,
+            "layer2": 17,
+            "layer3": 1
+          },
+          "winrate": 50.0
+        },
+        "ml_only": {
+          "n_trades": 63,
+          "n_wins": 30,
+          "n_losses": 33,
+          "pnl_ticks": 5.479999999999563,
+          "pnl_usd": 68.49999999999454,
+          "signals_generated": 1587,
+          "rejections": {
+            "layer3": 1405,
+            "layer2": 119
+          },
+          "winrate": 47.61904761904761
+        },
+        "v9": {
+          "n_trades": 58,
+          "n_wins": 35,
+          "n_losses": 23,
+          "pnl_ticks": 175.52000000000044,
+          "pnl_usd": 2194.0000000000055,
+          "signals_generated": 2468,
+          "rejections": {
+            "layer3": 1125,
+            "layer2": 73,
+            "confluence": 1212
+          },
+          "winrate": 60.3448275862069
+        }
+      }
+    },
+    "LONDON_NQ": {
+      "optimal_params": {
+        "min_confluence": 5,
+        "max_distance": 5,
+        "min_layer1": 0.2,
+        "min_layer2": 0.1,
+        "min_layer3": 0.1
+      },
+      "training_pnl": 0.0,
+      "training_trades": 0,
+      "training_winrate": 0,
+      "validation": {
+        "v10": {
+          "n_trades": 2,
+          "n_wins": 1,
+          "n_losses": 1,
+          "pnl_ticks": 5,
+          "pnl_usd": 25.0,
+          "signals_generated": 17988,
+          "rejections": {
+            "confluence": 17986
+          },
+          "winrate": 50.0
+        },
+        "ml_only": {
+          "n_trades": 45,
+          "n_wins": 18,
+          "n_losses": 27,
+          "pnl_ticks": -109.0,
+          "pnl_usd": -545.0,
+          "signals_generated": 74,
+          "rejections": {
+            "layer2": 29
+          },
+          "winrate": 40.0
+        },
+        "v9": {
+          "n_trades": 20,
+          "n_wins": 7,
+          "n_losses": 13,
+          "pnl_ticks": -72.0,
+          "pnl_usd": -360.0,
+          "signals_generated": 10912,
+          "rejections": {
+            "layer3": 888,
+            "confluence": 9537,
+            "layer2": 467
+          },
+          "winrate": 35.0
+        }
+      }
+    },
+    "US_MORNING_ES": {
+      "optimal_params": {
+        "min_confluence": 4,
+        "max_distance": 8,
+        "min_layer1": 0.2,
+        "min_layer2": 0.1,
+        "min_layer3": 0.1
+      },
+      "training_pnl": 450.0,
+      "training_trades": 9,
+      "training_winrate": 66.66666666666666,
+      "validation": {
+        "v10": {
+          "n_trades": 7,
+          "n_wins": 2,
+          "n_losses": 5,
+          "pnl_ticks": -36,
+          "pnl_usd": -450.0,
+          "signals_generated": 5139,
+          "rejections": {
+            "confluence": 5132
+          },
+          "winrate": 28.57142857142857
+        },
+        "ml_only": {
+          "n_trades": 30,
+          "n_wins": 16,
+          "n_losses": 14,
+          "pnl_ticks": 24,
+          "pnl_usd": 300.0,
+          "signals_generated": 30,
+          "rejections": {},
+          "winrate": 53.333333333333336
+        },
+        "v9": {
+          "n_trades": 25,
+          "n_wins": 12,
+          "n_losses": 13,
+          "pnl_ticks": -12,
+          "pnl_usd": -150.0,
+          "signals_generated": 1176,
+          "rejections": {
+            "layer3": 237,
+            "confluence": 898,
+            "layer2": 16
+          },
+          "winrate": 48.0
+        }
+      }
+    },
+    "US_MORNING_NQ": {
+      "optimal_params": {
+        "min_confluence": 1,
+        "max_distance": 5,
+        "min_layer1": 0.2,
+        "min_layer2": 0.1,
+        "min_layer3": 0.1
+      },
+      "training_pnl": 3350.0,
+      "training_trades": 70,
+      "training_winrate": 65.71428571428571,
+      "validation": {
+        "v10": {
+          "n_trades": 14,
+          "n_wins": 9,
+          "n_losses": 5,
+          "pnl_ticks": 125,
+          "pnl_usd": 625.0,
+          "signals_generated": 3740,
+          "rejections": {
+            "confluence": 3726
+          },
+          "winrate": 64.28571428571429
+        },
+        "ml_only": {
+          "n_trades": 22,
+          "n_wins": 12,
+          "n_losses": 10,
+          "pnl_ticks": 100,
+          "pnl_usd": 500.0,
+          "signals_generated": 22,
+          "rejections": {},
+          "winrate": 54.54545454545454
+        },
+        "v9": {
+          "n_trades": 7,
+          "n_wins": 4,
+          "n_losses": 3,
+          "pnl_ticks": 40,
+          "pnl_usd": 200.0,
+          "signals_generated": 7436,
+          "rejections": {
+            "confluence": 7217,
+            "layer3": 191,
+            "layer2": 21
+          },
+          "winrate": 57.14285714285714
+        }
+      }
+    },
+    "POWER_HOUR_ES": {
+      "optimal_params": {
+        "min_confluence": 1,
+        "max_distance": 8,
+        "min_layer1": 0.2,
+        "min_layer2": 0.1,
+        "min_layer3": 0.1
+      },
+      "training_pnl": 2262.5,
+      "training_trades": 97,
+      "training_winrate": 55.670103092783506,
+      "validation": {
+        "v10": {
+          "n_trades": 28,
+          "n_wins": 17,
+          "n_losses": 11,
+          "pnl_ticks": 82.0,
+          "pnl_usd": 1025.0,
+          "signals_generated": 1238,
+          "rejections": {
+            "confluence": 1209,
+            "layer2": 1
+          },
+          "winrate": 60.71428571428571
+        },
+        "ml_only": {
+          "n_trades": 34,
+          "n_wins": 19,
+          "n_losses": 15,
+          "pnl_ticks": 48,
+          "pnl_usd": 600.0,
+          "signals_generated": 34,
+          "rejections": {},
+          "winrate": 55.88235294117647
+        },
+        "v9": {
+          "n_trades": 14,
+          "n_wins": 9,
+          "n_losses": 5,
+          "pnl_ticks": 48,
+          "pnl_usd": 600.0,
+          "signals_generated": 3347,
+          "rejections": {
+            "confluence": 1680,
+            "layer3": 1583,
+            "layer2": 70
+          },
+          "winrate": 64.28571428571429
+        }
+      }
+    },
+    "POWER_HOUR_NQ": {
+      "optimal_params": {
+        "min_confluence": 2,
+        "max_distance": 12,
+        "min_layer1": 0.2,
+        "min_layer2": 0.25,
+        "min_layer3": 0.1
+      },
+      "training_pnl": 2425.0,
+      "training_trades": 32,
+      "training_winrate": 78.125,
+      "validation": {
+        "v10": {
+          "n_trades": 8,
+          "n_wins": 4,
+          "n_losses": 4,
+          "pnl_ticks": 20,
+          "pnl_usd": 100.0,
+          "signals_generated": 8002,
+          "rejections": {
+            "confluence": 7994
+          },
+          "winrate": 50.0
+        },
+        "ml_only": {
+          "n_trades": 28,
+          "n_wins": 17,
+          "n_losses": 11,
+          "pnl_ticks": 186.0,
+          "pnl_usd": 930.0,
+          "signals_generated": 37,
+          "rejections": {
+            "layer2": 9
+          },
+          "winrate": 60.71428571428571
+        },
+        "v9": {
+          "n_trades": 12,
+          "n_wins": 9,
+          "n_losses": 3,
+          "pnl_ticks": 165,
+          "pnl_usd": 825.0,
+          "signals_generated": 6515,
+          "rejections": {
+            "confluence": 5759,
+            "layer3": 716,
+            "layer2": 28
+          },
+          "winrate": 75.0
+        }
+      }
+    }
+  }
+}

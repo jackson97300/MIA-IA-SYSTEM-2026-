@@ -1,0 +1,1 @@
+{"timestamp": "2025-10-31T01:30:00", "symbol": "MNQ", "side": "SHORT", "entry": 26200, "exit": 26150, "ticks": 50, "profit_usd": 25, "setup": "GEX_5_BLIND_SPOT_3", "gex_level": 25800, "blind_spot": 26295.87, "confluence_type": "MenthorQ_Elite", "notes": "Confluence GEX_5 (25800) + Blind Spot 3 (26295.87), trade manuel gagnant", "outcome": "WIN"}

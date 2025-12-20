@@ -1,0 +1,66 @@
+{
+  "mode": "REGLES_PURES_3LAYER",
+  "description": "Mode Règles Pures 3-Layer - MenthorQ First sans modèles ML",
+
+  "ml_models": {
+    "enabled": false,
+    "mode": "disabled",
+    "comment": "Modèles ML complètement désactivés"
+  },
+
+  "ml_3layer_system": {
+    "enabled": true,
+    "mode": "required",
+    "comment": "Système 3-Layer actif en mode REQUIS (pas advisory)"
+  },
+
+  "data_collection": {
+    "enabled": true,
+    "mode": "paper_trading",
+    "confidence_adjustment": -0.05,
+    "dom_adjustment": -0.05,
+    "comment": "Seuils permissifs pour collecte de données"
+  },
+
+  "symbols": {
+    "ES": {
+      "enabled": true,
+      "min_confidence": 0.50,
+      "sessions": ["ASIA", "LONDON", "US"]
+    },
+    "NQ": {
+      "enabled": true,
+      "min_confidence": 0.55,
+      "sessions": ["ASIA", "LONDON", "US"]
+    },
+    "RTY": {
+      "enabled": true,
+      "min_confidence": 0.53,
+      "sessions": ["LONDON", "US"],
+      "comment": "ASIA désactivé (illiquide)"
+    }
+  },
+
+  "risk_management": {
+    "kill_switch_enabled": false,
+    "max_daily_loss_usd": 99999,
+    "max_losing_streak": 99,
+    "anti_cumulation": true,
+    "comment": "Kill-switch désactivé pour data collection"
+  },
+
+  "trading_rules": {
+    "max_trades_per_symbol": 1,
+    "require_3layer_validation": true,
+    "require_ml_validation": false,
+    "require_context_alignment": true,
+    "require_menthorq_rules": true
+  },
+
+  "objectives": {
+    "target_trades_total": 600,
+    "target_duration_days": 21,
+    "win_rate_target": 0.70,
+    "profit_factor_target": 1.5
+  }
+}

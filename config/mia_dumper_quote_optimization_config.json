@@ -1,0 +1,100 @@
+{
+  "dumper_optimization": {
+    "name": "MIA Dumper QUOTE Optimization - GPT Recommendations",
+    "version": "1.0",
+    "description": "Configuration optimisée pour réduire le spam QUOTE selon l'audit GPT",
+    "created": "2025-01-13T12:00:00.000Z",
+    "audit_source": "GPT Analysis of MIA_Dumper_G3_Unifier.cpp"
+  },
+  "problem_analysis": {
+    "issue": "QUOTE écrit trop - sur-échantillonnage détecté",
+    "root_cause": "Paramètres trop agressifs: Min Interval=100ms, Min Size=1, Write On Spread=ON",
+    "impact": "Fichiers trop lourds, coût I/O élevé, parsing lent"
+  },
+  "optimized_settings": {
+    "ES_parameters": {
+      "Input[70]": {
+        "name": "Quote Min Interval (ms)",
+        "old_value": 100,
+        "new_value": 250,
+        "description": "Réduit de 10Hz à 4Hz max - réduit ~3-5x les lignes"
+      },
+      "Input[71]": {
+        "name": "Quote Tick Threshold",
+        "old_value": 1,
+        "new_value": 1,
+        "description": "Conservé - seuil de 1 tick pour price-change"
+      },
+      "Input[72]": {
+        "name": "Quote Min Size Change",
+        "old_value": 1,
+        "new_value": 4,
+        "description": "Augmenté de 1 à 4 lots - filtre le bruit micro-size"
+      },
+      "Input[73]": {
+        "name": "Quote Write On Spread Change",
+        "old_value": 1,
+        "new_value": 0,
+        "description": "DÉSACTIVÉ - évite écriture sur chaque 'respiration' du spread"
+      },
+      "Input[74]": {
+        "name": "Quote Dedup Enabled",
+        "old_value": 1,
+        "new_value": 1,
+        "description": "Conservé ACTIVÉ - déduplication pour éviter doublons"
+      }
+    },
+    "NQ_parameters": {
+      "Input[70]": {
+        "name": "Quote Min Interval (ms)",
+        "recommended_value": 350,
+        "description": "Plus nerveux que ES - intervalle plus long"
+      },
+      "Input[71]": {
+        "name": "Quote Tick Threshold",
+        "recommended_value": 1,
+        "description": "Conservé - seuil de 1 tick"
+      },
+      "Input[72]": {
+        "name": "Quote Min Size Change",
+        "recommended_value": 6,
+        "description": "Plus élevé que ES - filtre plus agressif"
+      },
+      "Input[73]": {
+        "name": "Quote Write On Spread Change",
+        "recommended_value": 0,
+        "description": "DÉSACTIVÉ - même logique que ES"
+      },
+      "Input[74]": {
+        "name": "Quote Dedup Enabled",
+        "recommended_value": 1,
+        "description": "ACTIVÉ - déduplication"
+      }
+    }
+  },
+  "expected_improvements": {
+    "quote_reduction": "3-5x moins de lignes QUOTE",
+    "file_size_reduction": "Réduction significative de la taille des fichiers",
+    "io_performance": "Amélioration des performances I/O",
+    "parsing_speed": "Parsing plus rapide des données",
+    "target_ratio": "QUOTE ≤ 40% du total en marché actif"
+  },
+  "implementation_notes": {
+    "applied_to": "extracteur/MIA_Dumper_G3_Unifier.cpp",
+    "lines_modified": "1567, 1573, 1576",
+    "comments_added": "Optimisations GPT pour réduire le spam QUOTE",
+    "validation_required": "Tester avec données réelles ES/NQ"
+  },
+  "next_steps": {
+    "1": "Recompiler le dumper dans Sierra Chart",
+    "2": "Appliquer les paramètres dans l'étude",
+    "3": "Tester avec données ES en mode paper",
+    "4": "Créer version NQ avec paramètres 350/6 si nécessaire",
+    "5": "Valider la réduction du ratio QUOTE vs TRADE/DEPTH"
+  },
+  "preset_ready": {
+    "ES_preset": "70=250, 71=1, 72=4, 73=0, 74=1",
+    "NQ_preset": "70=350, 71=1, 72=6, 73=0, 74=1",
+    "usage": "Coller ces valeurs dans la doc d'étude Sierra"
+  }
+}

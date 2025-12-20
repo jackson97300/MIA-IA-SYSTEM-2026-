@@ -1,0 +1,9 @@
+{
+  "symbol": "ES",
+  "side": "UP",
+  "threshold": 0.5800000000000001,
+  "profit_factor": Infinity,
+  "win_rate": 100.0,
+  "accept_rate": 2.1632251720747298,
+  "accuracy": 1.0
+}

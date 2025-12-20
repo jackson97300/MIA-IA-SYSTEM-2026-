@@ -1,0 +1,66 @@
+{
+  "_comment": "=================================================================",
+  "_description": "Overrides système pour replay/lab/test",
+  "_usage": "Permet de forcer la session et bypass les gating week-end",
+  "_comment2": "=================================================================",
+
+  "trading_session_override": "RTH",
+  "allow_weekend_trading": true,
+  "force_session_active": true,
+
+  "replay_mode": {
+    "enabled": true,
+    "watch_dirs": {
+      "ES": "D:\\MIA_IA_system\\DATA_SIERRA_CHART\\REPLAY\\CHART_3\\ML_READY",
+      "NQ": "D:\\MIA_IA_system\\DATA_SIERRA_CHART\\REPLAY\\CHART_9\\ML_READY"
+    },
+    "poll_interval_ms": 250,
+    "staleness_tolerance_seconds": 10
+  },
+
+  "strategy_debug": {
+    "debug_scan": true,
+    "log_min_score": true,
+    "min_signal_strength": 0.0,
+    "enable_neutral_logs": true,
+    "log_all_candidates": false
+  },
+
+  "ml_filter_config": {
+    "enabled": true,
+    "mode": "advisory",
+    "log_all_decisions": true,
+    "ES": {
+      "UP": {
+        "threshold": 0.55,
+        "mode": "advisory"
+      },
+      "DOWN": {
+        "threshold": null,
+        "mode": "advisory"
+      }
+    },
+    "NQ": {
+      "UP": {
+        "threshold": null,
+        "mode": "advisory"
+      },
+      "DOWN": {
+        "threshold": 0.69,
+        "mode": "advisory"
+      }
+    }
+  },
+
+  "live_trading": false,
+  "paper_trading": true,
+
+  "_notes": [
+    "Pour activer les overrides, charger ce fichier au boot du système",
+    "Ou utiliser des variables d'environnement :",
+    "  setx FORCE_SESSION RTH",
+    "  setx ALLOW_WEEKEND_TRADING true",
+    "  setx REPLAY_MODE true"
+  ]
+}
+

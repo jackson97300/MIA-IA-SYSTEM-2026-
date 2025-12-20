@@ -1,0 +1,358 @@
+{
+  "_comment": "Règles de trading MIA_IA_SYSTEM - Bible MenthorQ v2.0 Edition",
+  "_version": "2.0.0",
+  "_last_update": "2025-11-12",
+  "_bible_reference": "MenthorQ v2.0 - Document Complet",
+
+  "entry_rules": {
+    "_description": "Règles d'entrée basées sur Bible MenthorQ v2.0",
+
+    "layer1_menthorq": {
+      "_comment": "Layer 1: MenthorQ identifie les zones de réaction",
+      "min_confidence": 0.15,
+      "description": "Layer 1 minimum confidence (MenthorQ signals)",
+      "enabled": true,
+
+      "gamma_walls": {
+        "max_distance_ticks": 80,
+        "symbol_multipliers": {
+          "ES": 1.0,
+          "NQ": 2.5,
+          "RTY": 1.5
+        },
+        "prioritize_put_support": true,
+        "prioritize_call_resistance": true,
+        "respect_gamma_side": true,
+        "description": "📚 Bible: Put Wall = Support LONG, Call Wall = Resistance SHORT. Distances adaptées par symbole (ES=80t, NQ=200t, RTY=120t)",
+        "enabled": true
+      },
+
+      "gex_levels": {
+        "very_close_threshold_ticks": 50,
+        "close_threshold_ticks": 120,
+        "symbol_multipliers": {
+          "ES": 1.0,
+          "NQ": 2.0,
+          "RTY": 1.3
+        },
+        "require_confluence": true,
+        "confluence_bonus": 0.20,
+        "description": "📚 Bible: GEX = zones réaction NON directionnelles, EXIGER confluence CR/PS/HVL/Blind. Distances adaptées par symbole",
+        "enabled": true
+      },
+
+      "blind_spots": {
+        "max_distance_ticks": 100,
+        "symbol_multipliers": {
+          "ES": 1.0,
+          "NQ": 2.0,
+          "RTY": 1.5
+        },
+        "require_orderflow_validation": true,
+        "critical_warning_threshold_ticks": 25,
+        "description": "📚 Bible: NE JAMAIS trader Blind Spot SEUL ! Exiger confirmation Layer 2 ABSOLUE. Distances adaptées par symbole",
+        "enabled": true
+      },
+
+      "hvl": {
+        "very_close_threshold_ticks": 25,
+        "close_threshold_ticks": 100,
+        "positive_gamma_mean_revert": true,
+        "negative_gamma_directional": true,
+        "description": "📚 Bible: HVL = pivot gamma regime. Positive=stable, Negative=directional",
+        "enabled": true
+      },
+
+      "0dte_levels": {
+        "magnetic_priority": true,
+        "aggressive_hedging_alert": true,
+        "intraday_pin_risk": true,
+        "description": "📚 Bible: 0DTE = magnétisme puissant intraday, hedging agressif MM",
+        "enabled": true
+      },
+
+      "next_wall": {
+        "max_distance_ticks": 100,
+        "symbol_multipliers": {
+          "ES": 1.0,
+          "NQ": 2.0,
+          "RTY": 1.5
+        },
+        "min_strength": 0.15,
+        "official_logic": {
+          "put_wall_support_long": true,
+          "call_wall_resistance_short": true
+        },
+        "description": "📚 Bible: Logique MenthorQ officielle validée. Distances adaptées par symbole (ES=100t, NQ=200t, RTY=150t)",
+        "enabled": true
+      },
+
+      "confluence": {
+        "min_levels_aligned": 2,
+        "cr_ps_bonus": 0.10,
+        "hvl_confluence_bonus": 0.15,
+        "blind_spot_confluence_bonus": 0.10,
+        "gex_confluence_bonus": 0.20,
+        "description": "📚 Bible: Confluence = FORCE. GEX+CR/PS/HVL = EXTRA-PUISSANT",
+        "enabled": true
+      }
+    },
+
+    "layer2_orderflow": {
+      "_comment": "Layer 2: OrderFlow VALIDE la direction (FILTRE #1)",
+      "min_confidence": 0.12,
+      "description": "Layer 2 minimum confidence (OrderFlow validation) - Seuil calibré empiriquement (plus strict que 0.10 recommandé)",
+      "enabled": true,
+
+      "smart_money": {
+        "require_alignment": true,
+        "min_cum_delta_long": 1000,
+        "min_cum_delta_short": -1000,
+        "description": "Smart money (Cum Delta) doit confirmer direction: LONG si >+1000, SHORT si <-1000",
+        "enabled": true
+      },
+
+      "volume": {
+        "require_alignment": true,
+        "logic": "absorption",
+        "min_bid_pct_long": 55.0,
+        "max_ask_pct_long": 45.0,
+        "description": "Volume: Logique ABSORPTION (BID dominance >55% = acheteurs absorbent ventes = LONG). Approche MenthorQ validée par tests.",
+        "enabled": true
+      },
+
+      "dom": {
+        "require_alignment": false,
+        "min_imbalance_long": 0.15,
+        "min_imbalance_short": -0.15,
+        "description": "DOM imbalance doit confirmer direction - Seuil calibré 0.15 (plus strict que 0.10 recommandé) pour réduire faux signaux",
+        "enabled": true
+      },
+
+      "institutional_pressure": {
+        "require_alignment": true,
+        "description": "Institutional pressure doit confirmer direction",
+        "enabled": true
+      },
+
+      "battle_navale": {
+        "use_signal": true,
+        "min_score": 0.05,
+        "description": "Battle Navale signal renforce validation - Seuil 0.05 (Battle Navale rarement >0.10, ajusté pour réalité terrain)",
+        "enabled": true
+      }
+    },
+
+    "layer3_context": {
+      "_comment": "Layer 3: Context CONFIRME le timing (FILTRE #2)",
+      "min_confidence": 0.08,
+      "description": "Layer 3 minimum confidence (Context confirmation) - Seuil calibré 0.08 (plus strict que 0.05 recommandé)",
+      "enabled": true,
+
+      "vwap": {
+        "check_distance": true,
+        "favorable_distance_ticks": 50,
+        "description": "Distance VWAP doit être favorable",
+        "enabled": true
+      },
+
+      "value_area": {
+        "prefer_inside_va": true,
+        "description": "Préférer trades inside Value Area",
+        "enabled": true
+      },
+
+      "spread": {
+        "max_spread_ticks": 3,
+        "description": "Spread bid-ask raisonnable",
+        "enabled": true
+      },
+
+      "hvl_regime": {
+        "respect_regime": true,
+        "positive_gamma_favor_reversions": true,
+        "negative_gamma_favor_breakouts": true,
+        "description": "📚 Bible: Positive Gamma=mean-revert, Negative Gamma=directionnel",
+        "enabled": true
+      },
+
+      "1day_extremes": {
+        "avoid_near_max": true,
+        "avoid_near_min": true,
+        "extreme_threshold_pct": 95,
+        "description": "📚 Bible: 1-Day Max/Min = psychological resistance/support fort",
+        "enabled": true
+      }
+    },
+
+    "ml_3layer_integrated": {
+      "_comment": "Système ML 3-Layer Intégré (avec Bible MenthorQ v2.0)",
+      "min_total_confidence": 0.50,
+      "min_layer1_confidence": 0.15,
+      "progressive_validation": true,
+      "description": "Layer 1 IDENTIFIE, Layer 2 VALIDE, Layer 3 CONFIRME",
+      "enabled": true
+    },
+
+    "session": {
+      "avoid_mid_day_chop": true,
+      "mid_day_start_hour": 20,
+      "mid_day_end_hour": 22,
+      "description": "Éviter lunch chop (14h-16h EST)",
+      "enabled": true
+    },
+
+    "volatility": {
+      "max_vix_for_entry": 35.0,
+      "min_atr_for_entry": 0.5,
+      "adaptive_by_regime": true,
+      "description": "Limites volatilité adaptatives",
+      "enabled": true
+    },
+
+    "position": {
+      "max_open_positions_per_symbol": 1,
+      "description": "Anti-cumulation: 1 position max par symbole",
+      "enabled": true
+    },
+
+    "cooldown": {
+      "min_seconds_between_trades": 120,
+      "ignore_if_gamma_flip": true,
+      "ignore_if_hvl_break": true,
+      "ignore_if_0dte_pin": true,
+      "description": "📚 Bible: Cooldown sauf événements MenthorQ majeurs",
+      "enabled": true
+    }
+  },
+
+  "exit_rules": {
+    "_description": "Règles de sortie basées sur Bible MenthorQ v2.0",
+
+    "time": {
+      "max_trade_duration_minutes": 60,
+      "force_close_before_eod": true,
+      "eod_close_minutes": 15,
+      "description": "Fermer positions avant EOD",
+      "enabled": true
+    },
+
+    "target": {
+      "tp1_use_menthorq_levels": true,
+      "tp1_call_resistance_long": true,
+      "tp1_put_support_short": true,
+      "tp2_use_gex_levels": true,
+      "tp2_fallback_atr_multiplier": 5.0,
+      "move_sl_to_breakeven_at_tp1": true,
+      "description": "📚 Bible: TP1=CR/PS, TP2=GEX ou 5x ATR",
+      "enabled": true
+    },
+
+    "menthorq_events": {
+      "close_on_hvl_break_against": true,
+      "close_on_gamma_flip_against": false,
+      "close_on_0dte_pin_against": true,
+      "description": "📚 Bible: Fermer si événement MenthorQ majeur défavorable",
+      "enabled": true
+    },
+
+    "context": {
+      "close_if_bias_reverses": true,
+      "min_bias_reversal_strength": 0.50,
+      "description": "Fermer si bias s'inverse fortement",
+      "enabled": true
+    }
+  },
+
+  "risk_management": {
+    "_description": "Gestion du risque alignée Bible MenthorQ v2.0",
+
+    "daily_limits": {
+      "max_daily_loss": 1000.0,
+      "max_daily_trades": 25,
+      "max_consecutive_losses": 4,
+      "description": "Limites journalières",
+      "enabled": true
+    },
+
+    "drawdown": {
+      "max_drawdown_percent": 15.0,
+      "max_drawdown_duration_minutes": 120,
+      "description": "Limites drawdown (SafetyKillSwitch)",
+      "enabled": true
+    },
+
+    "position_sizing": {
+      "base_size_contracts": 1,
+      "max_size_contracts": 1,
+      "reduce_size_on_high_vix": true,
+      "vix_threshold_reduce": 25.0,
+      "reduce_size_near_blind_spot": true,
+      "blind_spot_size_multiplier": 0.7,
+      "description": "📚 Bible: Réduire size près Blind Spots",
+      "enabled": true
+    },
+
+    "risk_reward": {
+      "min_rr_ratio": 1.5,
+      "preferred_rr_ratio": 2.0,
+      "menthorq_adjust_rr": true,
+      "description": "RR ajusté selon distance MenthorQ levels",
+      "enabled": true
+    }
+  },
+
+  "context_rules": {
+    "_description": "Règles contextuelles Bible MenthorQ v2.0",
+
+    "volatility": {
+      "high_vol_reduce_size": true,
+      "high_vol_threshold": 25.0,
+      "low_vol_increase_tp": true,
+      "low_vol_threshold": 15.0,
+      "description": "Adaptation volatilité",
+      "enabled": true
+    },
+
+    "session": {
+      "eu_open_cautious": true,
+      "us_open_aggressive": true,
+      "power_hour_selective": true,
+      "description": "Adaptation session",
+      "enabled": true
+    },
+
+    "market_regime": {
+      "positive_gamma_mean_revert_strategies": true,
+      "negative_gamma_directional_strategies": true,
+      "hvl_pivot_priority": true,
+      "description": "📚 Bible: Régime gamma dicte stratégie (HVL pivot)",
+      "enabled": true
+    },
+
+    "menthorq_distance": {
+      "very_close_aggressive": true,
+      "close_normal": true,
+      "medium_cautious": true,
+      "far_ignore": true,
+      "distance_thresholds": {
+        "very_close": 25,
+        "close": 50,
+        "medium": 100,
+        "far": 150
+      },
+      "description": "📚 Bible: Action selon distance MenthorQ levels",
+      "enabled": true
+    }
+  },
+
+  "calibration_mode": {
+    "_description": "Mode calibration (désactive certaines limites)",
+    "enabled": false,
+    "override_daily_limits": true,
+    "override_drawdown_limits": true,
+    "log_all_rejections": true,
+    "description": "Activer pour tests/calibration"
+  }
+}
+

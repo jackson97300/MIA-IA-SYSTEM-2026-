@@ -1,0 +1,64 @@
+================================================================================
+RAPPORT COMPARATIF: TP OPTIMAL ES vs NQ
+================================================================================
+
+## RÉSULTATS PAR SYMBOLE
+
+### ES (S&P 500)
+
+TP Optimal:      16 ticks
+R:R:             1.33:1
+P&L/trade:       +0.397 ticks
+WinRate:         45.8%
+Profit Factor:   1.09
+Fees:            0.12 ticks
+Tick Value:      $12.5
+
+Sur 1,000 trades:
+  P&L Net: +4,964.46 USD
+
+### NQ (Nasdaq-100)
+
+TP Optimal:      20 ticks
+R:R:             1.67:1
+P&L/trade:       +2.071 ticks
+WinRate:         45.9%
+Profit Factor:   1.36
+Fees:            0.28 ticks
+Tick Value:      $5.0
+
+Sur 1,000 trades:
+  P&L Net: +10,353.00 USD
+
+## COMPARAISON
+
+| Métrique | ES | NQ | Gagnant |
+|----------|----|----|---------|
+| TP Optimal | 16t | 20t | - |
+| P&L/trade | +0.397t | +2.071t | NQ |
+| WinRate | 45.8% | 45.9% | NQ |
+| P&L 1000 trades | $4,964 | $10,353 | NQ |
+| Fees (ticks) | 0.12t | 0.28t | ES |
+| Objectif +1.0t | ❌ Non | ✅ ATTEINT | - |
+
+## RECOMMANDATION FINALE
+
+**FOCUS PRINCIPAL: NQ**
+
+- TP Optimal: **20 ticks**
+- Performance: **+2.071 t/trade**
+- Meilleur P&L net/trade
+
+**Configuration recommandée:**
+
+```python
+# ES:
+tp_ticks_es = 16  # R:R 1.33:1
+# Performance attendue: +0.397 t/trade
+
+# NQ:
+tp_ticks_nq = 20  # R:R 1.67:1
+# Performance attendue: +2.071 t/trade
+```
+
+================================================================================

@@ -1,0 +1,638 @@
+"""
+Filtre ML pour bloquer stop hunts.
+Utilise modèle LightGBM v2_clean.
+
+Version: 1.0
+Date: 19 Novembre 2025
+"""
+
+import pickle
+import numpy as np
+import pandas as pd
+import json
+from pathlib import Path
+import logging
+from typing import Dict, Any, Optional
+
+logger = logging.getLogger(__name__)
+
+
+class MLStopHuntFilter:
+    """
+    Filtre ML pour prédire et bloquer stop hunts.
+
+    Utilise le modèle stop_hunt_predictor_v2_clean.pkl entraîné
+    sur 775 trades (540 réels + 235 synthétiques).
+
+    AUC: 0.8367 (excellent)
+    AUC STOP_HUNT: 1.000 (parfait)
+    """
+
+    def __init__(self, config: Dict[str, Any]):
+        """
+        Initialise le filtre ML Stop Hunt.
+
+        Args:
+            config: Configuration depuis ml_stop_hunt_config.py
+        """
+        self.config = config
+        self.model = None
+        self.label_encoder = None
+        self.feature_cols = None
+        self.enabled = config.get('enabled', True)
+        self.stats = {
+            'predictions': 0,
+            'blocked': 0,
+            'executed': 0,
+            'errors': 0,
+            'stop_hunt_predicted': 0,
+            'timeout_predicted': 0
+        }
+
+        logger.info(f"🔍 [MLStopHuntFilter] Initialisation: enabled={self.enabled}")
+        if self.enabled:
+            try:
+                logger.info("🔍 [MLStopHuntFilter] Début chargement modèle...")
+                self.load_model()
+                logger.info("🔍 [MLStopHuntFilter] Modèle chargé avec succès")
+
+                # ✅ VÉRIFICATION CRITIQUE: S'assurer que modèle est chargé
+                if self.model is None:
+                    logger.error("❌ Model is None after load_model()!")
+                    raise RuntimeError("Model failed to load - model is None")
+
+                if self.label_encoder is None:
+                    logger.error("❌ LabelEncoder is None after load_model()!")
+                    raise RuntimeError("LabelEncoder failed to load - label_encoder is None")
+
+                if not self.feature_cols:
+                    logger.error("❌ feature_cols is empty after load_model()!")
+                    raise RuntimeError("feature_cols failed to load - feature_cols is empty")
+
+                logger.info("✅ MLStopHuntFilter ready - All checks passed")
+            except Exception as e:
+                logger.error(f"❌ Erreur chargement modèle ML Stop Hunt: {e}")
+                logger.error(f"   Exception type: {type(e)}")
+                import traceback
+                logger.error(f"   Traceback: {traceback.format_exc()}")
+                self.enabled = False
+                self.model = None
+                self.label_encoder = None
+                self.feature_cols = None
+
+    def load_model(self):
+        """Charge modèle v2_clean"""
+        logger.info("=" * 80)
+        logger.info("LOADING ML MODEL - DEBUG")
+        logger.info("=" * 80)
+
+        # ✅ CORRIGÉ: Résoudre le chemin depuis le répertoire racine du projet
+        model_path_str = self.config.get('model_path', 'models/stop_hunt_predictor_v2_clean.pkl')
+        logger.info(f"Model path (config): {model_path_str}")
+
+        if not Path(model_path_str).is_absolute():
+            # Chemin relatif: résoudre depuis le répertoire racine du projet
+            # __file__ = D:\MIA_IA_system\ml\ml_stop_hunt_filter.py
+            # parent = D:\MIA_IA_system\ml
+            # parent.parent = D:\MIA_IA_system (ROOT)
+            project_root = Path(__file__).parent.parent  # ml -> root
+            model_path = project_root / model_path_str
+        else:
+            model_path = Path(model_path_str)
+
+        logger.info(f"Model path (resolved): {model_path}")
+        logger.info(f"File exists: {model_path.exists()}")
+        logger.info(f"Absolute path: {model_path.absolute()}")
+
+        if not model_path.exists():
+            logger.error(f"❌ MODEL FILE NOT FOUND: {model_path}")
+            logger.error(f"   Chemin absolu: {model_path.absolute()}")
+            logger.error("Available files in models/:")
+            models_dir = project_root / "models"
+            if models_dir.exists():
+                for f in models_dir.glob('*.pkl'):
+                    logger.info(f"  - {f}")
+            else:
+                logger.error(f"  Directory 'models' does not exist: {models_dir}")
+            raise FileNotFoundError(f"Model not found: {model_path}")
+            raise FileNotFoundError(f"ML Model not found: {model_path}")
+
+        logger.info(f"📦 Loading from: {model_path}")
+        logger.info(f"   Chemin absolu: {model_path.absolute()}")
+
+        with open(model_path, 'rb') as f:
+            model_data = pickle.load(f)
+
+        # ✅ VÉRIFICATION: Structure du modèle
+        required_keys = ['model', 'label_encoder', 'feature_cols']
+        for key in required_keys:
+            if key not in model_data:
+                logger.error(f"❌ Missing key in model: {key}")
+                logger.error(f"   Keys disponibles: {list(model_data.keys())}")
+                raise KeyError(f"Missing key in model: {key}")
+            logger.info(f"   ✓ {key} present")
+
+        self.model = model_data['model']
+        self.label_encoder = model_data['label_encoder']
+        self.feature_cols = model_data['feature_cols']
+
+        # ✅ VÉRIFICATION: Modèle valide
+        if self.model is None:
+            logger.error("❌ Model is None after loading!")
+            raise ValueError("Model is None")
+
+        if self.label_encoder is None:
+            logger.error("❌ LabelEncoder is None after loading!")
+            raise ValueError("LabelEncoder is None")
+
+        if not self.feature_cols or len(self.feature_cols) == 0:
+            logger.error("❌ feature_cols is empty!")
+            raise ValueError("feature_cols is empty")
+
+        logger.info(f"✅ ML Stop Hunt Filter loaded successfully")
+        logger.info(f"   Features: {len(self.feature_cols)}")
+        logger.info(f"   Classes: {list(self.label_encoder.classes_)}")
+        logger.info(f"   Model type: {type(self.model)}")
+        logger.info(f"   Model AUC: 0.8367 (excellent)")
+        logger.info("=" * 80)
+
+    def predict(self, snapshot: Dict[str, Any], signal: Any) -> Dict[str, Any]:
+        """
+        Prédit outcome du trade.
+
+        Args:
+            snapshot: dict avec données marché (ML_READY format)
+            signal: Signal trading généré (dict ou objet avec attributs)
+
+        Returns:
+            {
+                'outcome': 'WIN'|'LOSS'|'STOP_HUNT'|'TIMEOUT',
+                'confidence': float,
+                'probabilities': dict,
+                'action': 'EXECUTE'|'BLOCK',
+                'reason': str (si BLOCK)
+            }
+        """
+        if not self.enabled:
+            logger.debug("🔍 ML Stop Hunt Filter: DÉSACTIVÉ → EXECUTE")
+            return {'action': 'EXECUTE', 'reason': 'ML filter disabled'}
+
+        self.stats['predictions'] += 1
+
+        # ✅ LOG DEBUG: Début prédiction
+        symbol = snapshot.get('symbol', snapshot.get('sym', 'UNKNOWN'))
+        logger.info("=" * 80)
+        logger.info("ML PREDICTION DEBUG")
+        logger.info("=" * 80)
+        logger.info(f"Symbol: {symbol}")
+        logger.info(f"Snapshot keys (first 10): {list(snapshot.keys())[:10]}")
+        logger.info(f"Signal type: {type(signal)}")
+
+        # Vérifier que modèle est chargé
+        if self.model is None:
+            logger.error("❌ [ML] Model is None! Cannot predict.")
+            raise ValueError("Model not loaded")
+
+        if self.label_encoder is None:
+            logger.error("❌ [ML] LabelEncoder is None! Cannot decode outcome.")
+            raise ValueError("LabelEncoder not loaded")
+
+        if not self.feature_cols:
+            logger.error("❌ [ML] feature_cols is empty! Cannot extract features.")
+            raise ValueError("feature_cols not loaded")
+
+        logger.info(f"✓ Model ready: {type(self.model)}")
+        logger.info(f"✓ LabelEncoder ready: {len(self.label_encoder.classes_)} classes")
+        logger.info(f"✓ Expected features: {len(self.feature_cols)}")
+
+        try:
+            # 1. Extraire features
+            logger.info("1. Extracting features...")
+            features_df = self._extract_features(snapshot, signal)
+            logger.info(f"   ✓ Features shape: {features_df.shape}")
+            logger.info(f"   ✓ Columns: {len(features_df.columns)}")
+            logger.info(f"   ✓ Feature columns (first 10): {list(features_df.columns)[:10]}")
+
+            # 2. Vérifier features disponibles
+            logger.info("2. Checking required features...")
+            logger.info(f"   Model expects: {len(self.feature_cols)} features")
+            missing_features = [col for col in self.feature_cols if col not in features_df.columns]
+            if missing_features:
+                logger.warning(f"   ⚠️ Missing {len(missing_features)} features:")
+                for col in missing_features[:10]:
+                    logger.warning(f"      - {col}")
+                if len(missing_features) > 10:
+                    logger.warning(f"      ... and {len(missing_features) - 10} more")
+                if self.config.get('fill_missing_with_zero', True):
+                    # Ajouter avec 0 (LightGBM gère NaN)
+                    for col in missing_features:
+                        features_df[col] = 0
+                    logger.info(f"   ✓ {len(missing_features)} features manquantes remplies avec 0")
+                else:
+                    logger.error(f"   ❌ {len(missing_features)} features manquantes non remplies")
+                    raise ValueError(f"Missing {len(missing_features)} required features")
+            else:
+                logger.info(f"   ✓ All {len(self.feature_cols)} features present")
+
+            # 3. Ordonner features
+            logger.info("3. Ordering features...")
+            features_ordered = features_df[self.feature_cols]
+            logger.info(f"   ✓ Ordered shape: {features_ordered.shape}")
+
+            # Gérer NaN/Inf
+            features_ordered = features_ordered.fillna(0).replace([np.inf, -np.inf], 0)
+            logger.info("   ✓ NaN/Inf handled")
+
+            # ⭐ PRÉDICTION
+            logger.info("4. Calling model.predict()...")
+            # ⚠️ CRITIQUE: LightGBM Booster utilise predict() avec raw_score=False pour probabilités
+            # Si c'est un LGBMClassifier (sklearn wrapper), utiliser predict_proba()
+            if hasattr(self.model, 'predict_proba'):
+                # LGBMClassifier (sklearn wrapper)
+                proba = self.model.predict_proba(features_ordered)
+                logger.info(f"   ✓ Using predict_proba() (LGBMClassifier)")
+            else:
+                # Booster (native LightGBM)
+                # predict() retourne les probabilités pour chaque classe
+                proba_raw = self.model.predict(features_ordered, raw_score=False)
+                logger.info(f"   ✓ Using predict() (Booster)")
+                # Convertir en array 2D si nécessaire
+                if proba_raw.ndim == 1:
+                    # Une seule prédiction, reshape en (1, n_classes)
+                    proba = proba_raw.reshape(1, -1)
+                else:
+                    proba = proba_raw
+
+            logger.info(f"   ✓ Prediction shape: {proba.shape}")
+            logger.info(f"   ✓ Prediction values: {proba[0]}")
+            logger.info(f"   ✓ Prediction sum: {proba[0].sum():.3f} (should be ~1.0)")
+
+            # Extraire première prédiction
+            proba = proba[0]
+
+            # ✅ VÉRIFICATION: S'assurer que proba est valide
+            if proba is None:
+                logger.error(f"   ❌ [ML] Prédiction invalide: proba={proba} (None)")
+                raise ValueError("Prédiction invalide: proba est None")
+
+            if len(proba) == 0:
+                logger.error(f"   ❌ [ML] Prédiction vide: proba={proba} (length=0)")
+                raise ValueError("Prédiction invalide: proba est vide")
+
+            # Vérifier que proba est un array numpy
+            if not isinstance(proba, np.ndarray):
+                logger.error(f"   ❌ [ML] proba n'est pas un numpy array: type={type(proba)}")
+                raise ValueError(f"proba doit être un numpy array, reçu: {type(proba)}")
+
+            logger.info(f"   ✓ Prediction valid: shape={proba.shape}, sum={proba.sum():.3f}")
+
+            # 5. Décoder outcome
+            logger.info("5. Decoding outcome...")
+            outcome_idx = np.argmax(proba)
+            logger.info(f"   ✓ Outcome index: {outcome_idx}")
+
+            # ✅ VÉRIFICATION: S'assurer que label_encoder est disponible
+            if self.label_encoder is None:
+                logger.error(f"   ❌ [ML] LabelEncoder non initialisé!")
+                raise ValueError("LabelEncoder non initialisé")
+
+            outcome = self.label_encoder.inverse_transform([outcome_idx])[0]
+            confidence = float(proba[outcome_idx])
+
+            logger.info(f"   ✓ Outcome: {outcome}")
+            logger.info(f"   ✓ Confidence: {confidence:.1%}")
+
+            # ✅ VÉRIFICATION: S'assurer que outcome est valide
+            if outcome is None or outcome == '':
+                logger.error(f"   ❌ [ML] Outcome invalide après inverse_transform: outcome={outcome}, outcome_idx={outcome_idx}")
+                logger.error(f"   Classes disponibles: {list(self.label_encoder.classes_)}")
+                raise ValueError(f"Outcome invalide: {outcome}")
+
+            # 4. Probabilités par classe
+            probabilities = {
+                cls: float(proba[idx])
+                for idx, cls in enumerate(self.label_encoder.classes_)
+            }
+
+            # 6. Décision
+            logger.info("6. Making decision...")
+            action, reason = self._make_decision(outcome, confidence, probabilities)
+            logger.info(f"   ✓ Action: {action}")
+            if action == 'BLOCK':
+                logger.warning(f"   🚫 Reason: {reason}")
+
+            # 7. Update stats
+            if action == 'BLOCK':
+                self.stats['blocked'] += 1
+                if outcome == 'STOP_HUNT':
+                    self.stats['stop_hunt_predicted'] += 1
+                elif outcome == 'TIMEOUT':
+                    self.stats['timeout_predicted'] += 1
+            else:
+                self.stats['executed'] += 1
+
+            # ✅ LOG: Résultat prédiction
+            logger.info("=" * 80)
+            logger.info(f"✅ ML PREDICTION SUCCESS")
+            logger.info("=" * 80)
+            logger.info(f"Outcome: {outcome}")
+            logger.info(f"Confidence: {confidence:.1%}")
+            logger.info(f"Action: {action}")
+            logger.info(f"Probabilités: WIN={probabilities.get('WIN', 0):.1%}, LOSS={probabilities.get('LOSS', 0):.1%}, "
+                       f"STOP_HUNT={probabilities.get('STOP_HUNT', 0):.1%}, TIMEOUT={probabilities.get('TIMEOUT', 0):.1%}")
+            if action == 'BLOCK':
+                logger.warning(f"🚫 Raison: {reason}")
+            logger.info("=" * 80)
+
+            # 8. Log détaillé (fichier)
+            if self.config.get('log_predictions', False):
+                self._log_prediction(outcome, confidence, probabilities, action, signal)
+
+            return {
+                'outcome': outcome,
+                'confidence': confidence,
+                'probabilities': probabilities,
+                'action': action,
+                'reason': reason
+            }
+
+        except Exception as e:
+            logger.error("=" * 80)
+            logger.error("❌ ML PREDICTION ERROR")
+            logger.error("=" * 80)
+            logger.error(f"Exception: {type(e).__name__}")
+            logger.error(f"Message: {str(e)}")
+            logger.error(f"Traceback:")
+            import traceback
+            logger.error(traceback.format_exc())
+            logger.error("=" * 80)
+            self.stats['errors'] += 1
+
+            # En cas d'erreur, utiliser fallback
+            fallback = self.config.get('fallback_on_error', 'EXECUTE')
+
+            # ✅ CORRIGÉ 19/11: Retourner outcome et confidence même en cas d'erreur
+            # ⚠️ IMPORTANT: Ne JAMAIS retourner None pour outcome!
+            # Mais on retourne None pour indiquer l'erreur, avec un fallback EXECUTE
+            return {
+                'outcome': None,  # Indique une erreur
+                'confidence': 0.0,  # Confiance nulle en cas d'erreur
+                'probabilities': {
+                    'WIN': 0.5,
+                    'LOSS': 0.3,
+                    'STOP_HUNT': 0.1,
+                    'TIMEOUT': 0.1
+                },
+                'action': fallback,  # Fallback sécurisé
+                'reason': f'ML error: {str(e)}',
+                'error': str(e)
+            }
+
+    def _extract_features(self, snapshot: Dict[str, Any], signal: Any) -> pd.DataFrame:
+        """
+        Extrait features pour prédiction depuis snapshot et signal.
+
+        Args:
+            snapshot: Données marché ML_READY
+            signal: Signal trading (dict ou objet)
+
+        Returns:
+            DataFrame avec features
+        """
+        # Convertir signal en dict si objet
+        if hasattr(signal, '__dict__'):
+            signal_dict = signal.__dict__
+        elif isinstance(signal, dict):
+            signal_dict = signal
+        else:
+            signal_dict = {}
+
+        # Construire dict de features
+        features = {}
+
+        # Features depuis snapshot (priorité)
+        for col in self.feature_cols:
+            if col in snapshot:
+                features[col] = snapshot[col]
+            elif col in signal_dict:
+                features[col] = signal_dict[col]
+            else:
+                # Utiliser getattr si signal est objet
+                features[col] = getattr(signal, col, None)
+
+        # Features spécifiques depuis signal
+        if 'symbol' not in features or features['symbol'] is None:
+            features['symbol'] = getattr(signal, 'symbol', None) or \
+                                signal_dict.get('symbol') or \
+                                snapshot.get('symbol', 'NQ')
+
+        if 'direction' not in features or features['direction'] is None:
+            features['direction'] = getattr(signal, 'direction', None) or \
+                                   signal_dict.get('direction') or \
+                                   getattr(signal, 'action', None) or \
+                                   signal_dict.get('action') or \
+                                   snapshot.get('side', 'LONG')
+
+        # ✅ FIX 19/11/2025: Dataset corrigé - Plus besoin de mapping
+        # Le modèle a été réentraîné avec les bons noms de stratégies
+        # 'vwap_sd_options_confluence_strategy' est maintenant reconnu directement
+
+        if 'entry_price' not in features or features['entry_price'] is None:
+            features['entry_price'] = getattr(signal, 'entry_price', None) or \
+                                     signal_dict.get('entry_price') or \
+                                     getattr(signal, 'entry', None) or \
+                                     signal_dict.get('entry') or \
+                                     snapshot.get('mid', 0)
+
+        if 'sl_price' not in features or features['sl_price'] is None:
+            features['sl_price'] = getattr(signal, 'stop_loss', None) or \
+                                  signal_dict.get('stop_loss') or \
+                                  getattr(signal, 'stop', None) or \
+                                  signal_dict.get('stop') or \
+                                  snapshot.get('sl_price', 0)
+
+        if 'tp_price' not in features or features['tp_price'] is None:
+            features['tp_price'] = getattr(signal, 'take_profit', None) or \
+                                   signal_dict.get('take_profit') or \
+                                   getattr(signal, 'targets', [None])[0] if hasattr(signal, 'targets') else None or \
+                                   signal_dict.get('targets', [None])[0] if isinstance(signal_dict.get('targets'), list) else None or \
+                                   snapshot.get('tp_price', 0)
+
+        # Encoder catégorielles (comme lors de l'entraînement)
+        if 'symbol' in features and isinstance(features['symbol'], str):
+            symbol_map = {'ES': 0, 'NQ': 1, 'RTY': 2}
+            features['symbol'] = symbol_map.get(features['symbol'], 1)
+
+        if 'direction' in features and isinstance(features['direction'], str):
+            side_map = {'LONG': 1, 'SHORT': -1, 'long': 1, 'short': -1, 'UNKNOWN': 0}
+            features['direction'] = side_map.get(features['direction'], 0)
+
+        # ⭐ FIX CRITIQUE: Encoder 'strategy' (LabelEncoder utilisé lors de l'entraînement)
+        # ⚠️ CRITIQUE: La colonne 'strategy' DOIT être présente et encodée!
+        if 'strategy' in self.feature_cols:
+            # Essayer d'extraire strategy depuis signal
+            if 'strategy' not in features or features.get('strategy') is None:
+                # Essayer depuis signal
+                if hasattr(signal, 'strategy'):
+                    features['strategy'] = signal.strategy
+                    logger.debug(f"Strategy from signal.strategy: {signal.strategy}")
+                elif isinstance(signal, dict) and 'strategy' in signal:
+                    features['strategy'] = signal['strategy']
+                    logger.debug(f"Strategy from signal dict: {signal['strategy']}")
+                elif isinstance(signal_dict, dict) and 'strategy' in signal_dict:
+                    features['strategy'] = signal_dict['strategy']
+                    logger.debug(f"Strategy from signal_dict: {signal_dict['strategy']}")
+                else:
+                    logger.warning("⚠️ Signal has NO 'strategy' attribute!")
+                    # ⭐ DÉTECTION INTELLIGENTE depuis type de signal et features
+                    strategy_detected = None
+
+                    # 1. Détection depuis type de signal
+                    if hasattr(signal, '__class__'):
+                        class_name = signal.__class__.__name__
+                        if class_name == 'ConfluenceSignal':
+                            strategy_detected = 'vwap_sd_options_confluence_strategy'
+                            logger.warning(f"   ✅ Stratégie détectée depuis ConfluenceSignal: {strategy_detected}")
+                        elif 'MenthorQ' in class_name or 'menthorq' in class_name.lower():
+                            strategy_detected = 'menthorq_3layer_strategy'
+                            logger.warning(f"   ✅ Stratégie détectée depuis class name: {strategy_detected}")
+                        elif 'ML' in class_name or 'ml' in class_name.lower():
+                            strategy_detected = 'ml_3layer_strategy'
+                            logger.warning(f"   ✅ Stratégie détectée depuis class name: {strategy_detected}")
+
+                    # 2. Détection depuis confluence score (si pas encore détecté)
+                    if not strategy_detected:
+                        confluence = snapshot.get('confluence', 0)
+                        if confluence > 0.6:
+                            strategy_detected = 'vwap_sd_options_confluence_strategy'
+                            logger.warning(f"   ✅ Stratégie détectée depuis confluence élevée ({confluence:.2f}): {strategy_detected}")
+                        elif confluence > 0.3:
+                            # Confluence moyenne → probablement menthorq
+                            strategy_detected = 'menthorq_3layer_strategy'
+                            logger.warning(f"   ✅ Stratégie détectée depuis confluence moyenne ({confluence:.2f}): {strategy_detected}")
+
+                    # 3. Fallback par défaut (si toujours pas détecté)
+                    if not strategy_detected:
+                        # Par défaut, utiliser menthorq (plus commun)
+                        strategy_detected = 'menthorq_3layer_strategy'
+                        logger.warning(f"   ⚠️ Stratégie non détectée, utilisation par défaut: {strategy_detected}")
+
+                    features['strategy'] = strategy_detected
+
+            # Encoder strategy en numérique
+            if isinstance(features.get('strategy'), str):
+                # Ordre alphabétique: ml_3layer_strategy=0, menthorq_3layer_strategy=1, vwap_sd_options_confluence_strategy=2
+                strategy_map = {
+                    'ml_3layer_strategy': 0,
+                    'menthorq_3layer_strategy': 1,
+                    'vwap_sd_options_confluence_strategy': 2,
+                    'unknown': 2,  # Fallback vers vwap_sd (ancien nom)
+                    'UNKNOWN': 2,  # ⚠️ ATTENTION: UNKNOWN mappé à vwap_sd par défaut
+                    'ConfluenceSignal': 2
+                }
+                strategy_value = features['strategy']
+
+                # ✅ LOG: Vérifier stratégie reçue
+                logger.info(f"   [ML] Stratégie reçue: {strategy_value}")
+
+                if strategy_value in strategy_map:
+                    encoded_value = strategy_map[strategy_value]
+                    features['strategy'] = encoded_value
+                    logger.info(f"   [ML] Stratégie encodée: {strategy_value} → {encoded_value}")
+
+                    # ⚠️ WARNING si UNKNOWN (peut donner prédiction incorrecte)
+                    if strategy_value in ['UNKNOWN', 'unknown']:
+                        logger.warning(f"   ⚠️ [ML] ATTENTION: Stratégie UNKNOWN mappée à {encoded_value} (vwap_sd)")
+                        logger.warning(f"   ⚠️ [ML] Cela peut donner des prédictions incorrectes si c'est vraiment menthorq!")
+                else:
+                    # Si stratégie inconnue, utiliser 2 (vwap_sd) par défaut
+                    logger.warning(f"   ⚠️ [ML] Stratégie inconnue: {strategy_value}, utilisation mapping par défaut (2)")
+                    logger.warning(f"   ⚠️ [ML] RISQUE: Prédiction peut être incorrecte!")
+                    features['strategy'] = 2
+            elif 'strategy' not in features:
+                # Si stratégie absente, utiliser 2 par défaut
+                logger.warning(f"   ⚠️ [ML] Colonne 'strategy' absente des features, utilisation valeur par défaut (2)")
+                features['strategy'] = 2
+
+        # Convertir en DataFrame
+        df = pd.DataFrame([features])
+
+        logger.debug(f"Features extracted: {len(df.columns)} columns")
+        logger.debug(f"Features shape: {df.shape}")
+
+        # ⭐ FIX CRITIQUE: S'assurer que toutes les colonnes catégorielles sont numériques
+        # Encoder autres colonnes catégorielles si présentes
+        for col in df.columns:
+            if df[col].dtype == 'object':
+                # Si c'est une colonne catégorielle non encodée, encoder avec LabelEncoder
+                from sklearn.preprocessing import LabelEncoder
+                le_temp = LabelEncoder()
+                df[col] = le_temp.fit_transform(df[col].astype(str).fillna('MISSING'))
+                logger.debug(f"   Colonne {col} encodée avec LabelEncoder")
+
+        return df
+
+    def _make_decision(self, outcome: str, confidence: float, probabilities: Dict[str, float]) -> tuple:
+        """
+        Décision EXECUTE/BLOCK basée sur prédiction.
+
+        Returns:
+            (action, reason)
+        """
+        # 1. STOP_HUNT prédit → BLOCK!
+        if outcome == 'STOP_HUNT':
+            threshold = self.config.get('threshold_stop_hunt', 0.75)
+            if confidence >= threshold and self.config.get('block_on_stop_hunt', True):
+                return ('BLOCK', f'STOP_HUNT predicted ({confidence:.1%} >= {threshold:.1%})')
+
+        # 2. TIMEOUT prédit → BLOCK si confiance élevée
+        if outcome == 'TIMEOUT':
+            threshold = self.config.get('threshold_timeout', 0.60)
+            if confidence >= threshold and self.config.get('block_on_timeout', True):
+                return ('BLOCK', f'TIMEOUT predicted ({confidence:.1%} >= {threshold:.1%})')
+
+        # 3. WIN/LOSS → EXECUTE (le trade peut être bon)
+        return ('EXECUTE', f'{outcome} predicted ({confidence:.1%})')
+
+    def _log_prediction(self, outcome: str, confidence: float, probabilities: Dict[str, float],
+                       action: str, signal: Any):
+        """Log prédiction ML"""
+        symbol = getattr(signal, 'symbol', None) or (signal.get('symbol') if isinstance(signal, dict) else 'N/A')
+        direction = getattr(signal, 'direction', None) or (signal.get('direction') if isinstance(signal, dict) else 'N/A')
+
+        logger.info(f"🧠 ML Prediction: {outcome} ({confidence:.1%}) → {action}")
+        logger.info(f"   Probabilities: {probabilities}")
+        logger.info(f"   Signal: {symbol} {direction}")
+
+        # Log dans fichier si configuré
+        if self.config.get('log_path'):
+            try:
+                log_path = Path(self.config['log_path'])
+                log_path.parent.mkdir(parents=True, exist_ok=True)
+
+                with open(log_path, 'a', encoding='utf-8') as f:
+                    log_entry = {
+                        'timestamp': pd.Timestamp.now().isoformat(),
+                        'outcome': outcome,
+                        'confidence': confidence,
+                        'probabilities': probabilities,
+                        'action': action,
+                        'symbol': symbol,
+                        'direction': direction
+                    }
+                    f.write(json.dumps(log_entry) + '\n')
+            except Exception as e:
+                logger.warning(f"Erreur écriture log ML: {e}")
+
+    def get_stats(self) -> Dict[str, Any]:
+        """Retourne statistiques du filtre"""
+        total = self.stats['predictions']
+        if total == 0:
+            return self.stats.copy()
+
+        stats = self.stats.copy()
+        stats['block_rate'] = self.stats['blocked'] / total if total > 0 else 0.0
+        stats['execute_rate'] = self.stats['executed'] / total if total > 0 else 0.0
+        stats['error_rate'] = self.stats['errors'] / total if total > 0 else 0.0
+
+        return stats

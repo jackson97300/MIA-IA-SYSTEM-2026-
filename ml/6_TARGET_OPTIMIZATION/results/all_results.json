@@ -1,0 +1,149 @@
+{
+  "all_results": [
+    {
+      "target_name": "T1_binary_simple",
+      "pnl_net": 401.99999999998374,
+      "pnl_gross": 1279.9199999999837,
+      "pnl_per_trade": 0.2838983050847343,
+      "n_trades": 1416,
+      "winrate": 0.4837570621468927,
+      "sharpe": 15.982037894954841,
+      "max_dd": 27.15081041055309,
+      "metrics": {
+        "accuracy": 0.4837570621468927,
+        "precision": 0.4837570621468927,
+        "recall": 1.0,
+        "f1_score": 0.6520704426463588,
+        "multi_objective_score": 87.03527545561896
+      }
+    },
+    {
+      "target_name": "T2_binary_strong",
+      "pnl_net": 205.21999999998366,
+      "pnl_gross": 970.9199999999837,
+      "pnl_per_trade": 0.16617004048581674,
+      "n_trades": 1235,
+      "winrate": 0.48097165991902835,
+      "sharpe": 10.38995858679211,
+      "max_dd": 27.965370541159583,
+      "metrics": {
+        "accuracy": 0.48097165991902835,
+        "precision": 0.48097165991902835,
+        "recall": 1.0,
+        "f1_score": 0.6495352651722253,
+        "multi_objective_score": 64.7851063244257
+      }
+    },
+    {
+      "target_name": "T3_pnl_ratio_reg",
+      "pnl_net": 27.820000000004086,
+      "pnl_gross": 452.5200000000041,
+      "pnl_per_trade": 0.04061313868613735,
+      "n_trades": 685,
+      "winrate": 0.4744525547445255,
+      "sharpe": 15.65812531806848,
+      "max_dd": 49.73194130925436,
+      "metrics": {
+        "mae": 16.32718041270546,
+        "rmse": 16.405577121034817,
+        "multi_objective_score": 51.6215482841553
+      }
+    },
+    {
+      "target_name": "T4_pnl_ticks_capped",
+      "pnl_net": 295.4799999999959,
+      "pnl_gross": 915.4799999999959,
+      "pnl_per_trade": 0.2954799999999959,
+      "n_trades": 1000,
+      "winrate": 0.484,
+      "sharpe": 13.917085755969907,
+      "max_dd": 29.008539807758478,
+      "metrics": {
+        "mae": 16.57169861334964,
+        "rmse": 17.565765239981864,
+        "multi_objective_score": 73.95602661023904
+      }
+    },
+    {
+      "target_name": "T5_multiclass",
+      "pnl_net": -191.86000000001223,
+      "pnl_gross": 282.4399999999878,
+      "pnl_per_trade": -0.250797385620931,
+      "n_trades": 765,
+      "winrate": 0.469281045751634,
+      "sharpe": 7.967836619812011,
+      "max_dd": 79.8780487804878,
+      "metrics": {
+        "multi_objective_score": 23.530934422721206
+      }
+    },
+    {
+      "target_name": "T6_quality_simplified",
+      "pnl_net": -45.799999999995926,
+      "pnl_gross": -23.479999999995925,
+      "pnl_per_trade": -1.2722222222221091,
+      "n_trades": 36,
+      "winrate": 0.4444444444444444,
+      "sharpe": -1.6489697305135196,
+      "max_dd": 150.72347266880413,
+      "metrics": {
+        "mae": 63.51875670776602,
+        "rmse": 65.62730005565443,
+        "multi_objective_score": 10.907814553711273
+      }
+    },
+    {
+      "target_name": "T7_expected_value",
+      "pnl_net": 477.6599999999919,
+      "pnl_gross": 2005.9599999999919,
+      "pnl_per_trade": 0.1937768762677452,
+      "n_trades": 2465,
+      "winrate": 0.4795131845841785,
+      "sharpe": 15.226710836597471,
+      "max_dd": 19.853191938548353,
+      "metrics": {
+        "mae": 16.44787557954341,
+        "rmse": 16.58365245473023,
+        "multi_objective_score": 99.1431833342681
+      }
+    },
+    {
+      "target_name": "T8_sharpe_simplified",
+      "pnl_net": -92.53999999999593,
+      "pnl_gross": 101.52000000000407,
+      "pnl_per_trade": -0.2956549520766643,
+      "n_trades": 313,
+      "winrate": 0.46645367412140576,
+      "sharpe": 2.9763374576844557,
+      "max_dd": 72.87368561160557,
+      "metrics": {
+        "mae": 16.250505986789925,
+        "rmse": 16.341617797330418,
+        "multi_objective_score": 23.29755521284835
+      }
+    }
+  ],
+  "best_target": {
+    "target_name": "T7_expected_value",
+    "pnl_net": 477.6599999999919,
+    "pnl_gross": 2005.9599999999919,
+    "pnl_per_trade": 0.1937768762677452,
+    "n_trades": 2465,
+    "winrate": 0.4795131845841785,
+    "sharpe": 15.226710836597471,
+    "max_dd": 19.853191938548353,
+    "metrics": {
+      "mae": 16.44787557954341,
+      "rmse": 16.58365245473023,
+      "multi_objective_score": 99.1431833342681
+    }
+  },
+  "validation": {
+    "mean_pnl_net": 477.6599999999919,
+    "std_pnl_net": 0.0,
+    "min_pnl_net": 477.6599999999919,
+    "max_pnl_net": 477.6599999999919,
+    "stability_pct": 0.0
+  },
+  "timestamp": "2025-11-15T13:22:54.271695"
+}

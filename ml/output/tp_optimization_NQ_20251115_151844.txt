@@ -1,0 +1,33 @@
+================================================================================
+RAPPORT OPTIMISATION TP - NQ
+================================================================================
+
+## MEILLEUR TP (selon P&L/trade)
+
+TP Optimal:      20.0 ticks
+R:R:             1.67:1
+P&L/trade:       +2.071 ticks
+P&L Net:         +12177.20 ticks
+WinRate:         45.9%
+Profit Factor:   1.36
+TP Hit Rate:     29.7%
+
+## COMPARAISON vs BASELINE
+
+Baseline (TP actuel):  +0.80 t/trade
+TP Optimise:           +2.071 t/trade
+Amelioration:          +1.271 ticks (+158.8%)
+
+## OBJECTIF +1.0 t/trade
+
+OBJECTIF ATTEINT ! (+1.071t au-dessus)
+
+## TOP 5 MEILLEURS TP
+
+1. TP=20t | P&L=+2.071t | WR=45.9% | PF=1.36 | R:R=1.67:1
+2. TP=21t | P&L=+2.021t | WR=45.3% | PF=1.35 | R:R=1.75:1
+3. TP=19t | P&L=+1.992t | WR=46.4% | PF=1.35 | R:R=1.58:1
+4. TP=22t | P&L=+1.969t | WR=44.9% | PF=1.34 | R:R=1.83:1
+5. TP=23t | P&L=+1.903t | WR=44.6% | PF=1.33 | R:R=1.92:1
+
+================================================================================

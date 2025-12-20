@@ -1,0 +1,44 @@
+{
+  "test_date": "2025-12-15T16:47:02.450119",
+  "config_a": {
+    "name": "STRICT (actuel)",
+    "max_distance": 5,
+    "min_level_score": 3,
+    "min_confidence": 0.6,
+    "tp_ticks": 12,
+    "sl_ticks": 12
+  },
+  "config_b": {
+    "name": "ASSOUPLIE (test)",
+    "max_distance": 12,
+    "min_level_score": 2,
+    "min_confidence": 0.6,
+    "tp_ticks": 12,
+    "sl_ticks": 12
+  },
+  "results_a": {
+    "config_name": "STRICT (actuel)",
+    "n_trades": 0,
+    "n_wins": 0,
+    "n_losses": 0,
+    "pnl_ticks": 0,
+    "pnl_usd": 0.0,
+    "signals_rejected": 0,
+    "rejection_reasons": {},
+    "levels_used": {},
+    "winrate": 0
+  },
+  "results_b": {
+    "config_name": "ASSOUPLIE (test)",
+    "n_trades": 0,
+    "n_wins": 0,
+    "n_losses": 0,
+    "pnl_ticks": 0,
+    "pnl_usd": 0.0,
+    "signals_rejected": 0,
+    "rejection_reasons": {},
+    "levels_used": {},
+    "winrate": 0
+  },
+  "conclusion": "CONFIG_A"
+}

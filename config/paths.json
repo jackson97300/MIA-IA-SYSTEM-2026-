@@ -1,0 +1,46 @@
+{
+  "description": "Chemins standards du système MIA - Accès rapide aux logs et données",
+  "version": "1.0.0",
+  "date": "2025-11-26",
+
+  "logs": {
+    "main_dir": "D:\\MIA_IA_system\\LAUNCH\\logs",
+    "trades": "D:\\MIA_IA_system\\LAUNCH\\logs\\trades",
+    "discord": "D:\\MIA_IA_system\\LAUNCH\\logs\\discord",
+    "signals": "D:\\MIA_IA_system\\LAUNCH\\logs\\signals",
+    "dtc_orders": "D:\\MIA_IA_system\\LAUNCH\\logs\\dtc",
+    "performance": "D:\\MIA_IA_system\\LAUNCH\\logs\\performance",
+    "summaries": "D:\\MIA_IA_system\\LAUNCH\\logs\\summaries",
+    "current_log_pointer": "D:\\MIA_IA_system\\LAUNCH\\logs\\.current_log"
+  },
+
+  "data": {
+    "daily_trades": "D:\\MIA_IA_system\\data\\daily_summaries",
+    "snapshots": "D:\\MIA_IA_system\\CALIBRAGE_PHASE\\SNAPSHOTS\\daily",
+    "ml_ready": "D:\\MIA_IA_system\\ML_READY",
+    "training": "D:\\MIA_IA_system\\ENTRAINEMENT"
+  },
+
+  "external": {
+    "sierra_message_log": "C:\\SierraChart\\Data\\MessageLog.log",
+    "sierra_data": "C:\\SierraChart\\Data"
+  },
+
+  "patterns": {
+    "main_log": "bot_production_{date}_{time}.log",
+    "trade_log": "trades_{date}.log",
+    "discord_log": "discord_{date}.log",
+    "signal_log": "signals_{date}.log",
+    "dtc_log": "dtc_orders_{date}.log",
+    "summary": "SUMMARY_{date}.txt",
+    "json_log": "events_{date}.jsonl"
+  }
+}
+
+
+
+
+
+
+
+

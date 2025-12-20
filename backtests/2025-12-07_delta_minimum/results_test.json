@@ -1,0 +1,186 @@
+{
+  "test_name": "Delta Minimum",
+  "test_date": "2025-12-06T15:24:01.670768",
+  "results": {
+    "ES_DELTA_0_ACTUEL": {
+      "trades": 16,
+      "wins": 4,
+      "losses": 10,
+      "pnl": -1250.0,
+      "win_rate": 25.0,
+      "avg_delta": 144.1875,
+      "min_delta": 0,
+      "symbol": "ES"
+    },
+    "ES_DELTA_25": {
+      "trades": 16,
+      "wins": 4,
+      "losses": 10,
+      "pnl": -1250.0,
+      "win_rate": 25.0,
+      "avg_delta": 144.1875,
+      "min_delta": 25,
+      "symbol": "ES"
+    },
+    "ES_DELTA_50": {
+      "trades": 15,
+      "wins": 4,
+      "losses": 9,
+      "pnl": -975.0,
+      "win_rate": 26.666666666666668,
+      "avg_delta": 156.73333333333332,
+      "min_delta": 50,
+      "symbol": "ES"
+    },
+    "ES_DELTA_75": {
+      "trades": 14,
+      "wins": 3,
+      "losses": 10,
+      "pnl": -1625.0,
+      "win_rate": 21.428571428571427,
+      "avg_delta": 168.85714285714286,
+      "min_delta": 75,
+      "symbol": "ES"
+    },
+    "ES_DELTA_100": {
+      "trades": 14,
+      "wins": 3,
+      "losses": 10,
+      "pnl": -1625.0,
+      "win_rate": 21.428571428571427,
+      "avg_delta": 179.92857142857142,
+      "min_delta": 100,
+      "symbol": "ES"
+    },
+    "ES_DELTA_150": {
+      "trades": 12,
+      "wins": 3,
+      "losses": 9,
+      "pnl": -1350.0,
+      "win_rate": 25.0,
+      "avg_delta": 254.75,
+      "min_delta": 150,
+      "symbol": "ES"
+    },
+    "ES_DELTA_200": {
+      "trades": 10,
+      "wins": 2,
+      "losses": 8,
+      "pnl": -1450.0,
+      "win_rate": 20.0,
+      "avg_delta": 295.5,
+      "min_delta": 200,
+      "symbol": "ES"
+    },
+    "ES_DELTA_300": {
+      "trades": 8,
+      "wins": 2,
+      "losses": 6,
+      "pnl": -900.0,
+      "win_rate": 25.0,
+      "avg_delta": 385.375,
+      "min_delta": 300,
+      "symbol": "ES"
+    },
+    "ES_DELTA_500": {
+      "trades": 3,
+      "wins": 1,
+      "losses": 2,
+      "pnl": -175.0,
+      "win_rate": 33.33333333333333,
+      "avg_delta": 531.3333333333334,
+      "min_delta": 500,
+      "symbol": "ES"
+    },
+    "NQ_DELTA_0_ACTUEL": {
+      "trades": 2,
+      "wins": 1,
+      "losses": 1,
+      "pnl": 100.0,
+      "win_rate": 50.0,
+      "avg_delta": 201.5,
+      "min_delta": 0,
+      "symbol": "NQ"
+    },
+    "NQ_DELTA_25": {
+      "trades": 2,
+      "wins": 1,
+      "losses": 1,
+      "pnl": 100.0,
+      "win_rate": 50.0,
+      "avg_delta": 201.5,
+      "min_delta": 25,
+      "symbol": "NQ"
+    },
+    "NQ_DELTA_50": {
+      "trades": 2,
+      "wins": 1,
+      "losses": 1,
+      "pnl": 100.0,
+      "win_rate": 50.0,
+      "avg_delta": 201.5,
+      "min_delta": 50,
+      "symbol": "NQ"
+    },
+    "NQ_DELTA_75": {
+      "trades": 2,
+      "wins": 1,
+      "losses": 1,
+      "pnl": 100.0,
+      "win_rate": 50.0,
+      "avg_delta": 201.5,
+      "min_delta": 75,
+      "symbol": "NQ"
+    },
+    "NQ_DELTA_100": {
+      "trades": 2,
+      "wins": 1,
+      "losses": 1,
+      "pnl": 100.0,
+      "win_rate": 50.0,
+      "avg_delta": 201.5,
+      "min_delta": 100,
+      "symbol": "NQ"
+    },
+    "NQ_DELTA_150": {
+      "trades": 1,
+      "wins": 1,
+      "losses": 0,
+      "pnl": 300.0,
+      "win_rate": 100.0,
+      "avg_delta": 270.0,
+      "min_delta": 150,
+      "symbol": "NQ"
+    },
+    "NQ_DELTA_200": {
+      "trades": 1,
+      "wins": 1,
+      "losses": 0,
+      "pnl": 300.0,
+      "win_rate": 100.0,
+      "avg_delta": 270.0,
+      "min_delta": 200,
+      "symbol": "NQ"
+    },
+    "NQ_DELTA_300": {
+      "trades": 1,
+      "wins": 1,
+      "losses": 0,
+      "pnl": 300.0,
+      "win_rate": 100.0,
+      "avg_delta": 302.0,
+      "min_delta": 300,
+      "symbol": "NQ"
+    },
+    "NQ_DELTA_500": {
+      "trades": 0,
+      "wins": 0,
+      "losses": 0,
+      "pnl": 0.0,
+      "win_rate": 0.0,
+      "avg_delta": 0.0,
+      "min_delta": 500,
+      "symbol": "NQ"
+    }
+  }
+}

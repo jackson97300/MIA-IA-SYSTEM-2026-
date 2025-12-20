@@ -1,0 +1,99 @@
+{
+  "date": "2025-12-06T18:55:25.518175",
+  "period": [
+    "20251202",
+    "20251203",
+    "20251204",
+    "20251205"
+  ],
+  "es_config": {
+    "tick_size": 0.25,
+    "tick_value": 12.5,
+    "tp_ticks": 20,
+    "sl_ticks": 20,
+    "min_delta": 100,
+    "min_pressure": 0.2,
+    "min_layer1": 0.4,
+    "max_distance": 15
+  },
+  "total_trades": 182,
+  "divergences": {
+    "count": 2,
+    "wins": 1,
+    "losses": 1,
+    "pnl": 0.0
+  },
+  "confirmed": {
+    "count": 41,
+    "wins": 17,
+    "losses": 14,
+    "pnl": 750.0
+  },
+  "results": [
+    {
+      "name": "Sans corr\u00e9lation (actuel)",
+      "trades": 182,
+      "wins": 48,
+      "losses": 51,
+      "win_rate": 26.373626373626376,
+      "total_pnl": -750.0,
+      "profit_factor": 0.9411764705882353
+    },
+    {
+      "name": "Confirmation NQ obligatoire",
+      "trades": 22,
+      "wins": 10,
+      "losses": 10,
+      "win_rate": 45.45454545454545,
+      "total_pnl": 0.0,
+      "profit_factor": 1.0
+    },
+    {
+      "name": "Skip si divergence",
+      "trades": 180,
+      "wins": 47,
+      "losses": 50,
+      "win_rate": 26.111111111111114,
+      "total_pnl": -750.0,
+      "profit_factor": 0.94
+    },
+    {
+      "name": "R\u00e9duire taille si divergence",
+      "trades": 182,
+      "wins": 48,
+      "losses": 51,
+      "win_rate": 26.373626373626376,
+      "total_pnl": -750.0,
+      "profit_factor": 0.9405940594059405
+    },
+    {
+      "name": "Score corr\u00e9lation >= 50",
+      "trades": 60,
+      "wins": 24,
+      "losses": 20,
+      "win_rate": 40.0,
+      "total_pnl": 1000.0,
+      "profit_factor": 1.2
+    },
+    {
+      "name": "Score corr\u00e9lation >= 60",
+      "trades": 35,
+      "wins": 15,
+      "losses": 14,
+      "win_rate": 42.857142857142854,
+      "total_pnl": 250.0,
+      "profit_factor": 1.0714285714285714
+    },
+    {
+      "name": "Hybride (skip divergence + score>=50)",
+      "trades": 60,
+      "wins": 24,
+      "losses": 20,
+      "win_rate": 40.0,
+      "total_pnl": 1000.0,
+      "profit_factor": 1.2
+    }
+  ],
+  "best_config": "Score corr\u00e9lation >= 50",
+  "recommendation": "Gain attendu: +$1,750.00"
+}

@@ -1,0 +1,96 @@
+{
+  "version": "3.0.0_FROM_HISTORY",
+  "description": "R\u00e8gles g\u00e9n\u00e9r\u00e9es automatiquement depuis donn\u00e9es historiques",
+  "generated_on": "2025-10-31T05:46:51.480906",
+  "criteria": {
+    "min_win_rate": 0.6,
+    "min_trades": 8
+  },
+  "symbols": [
+    "ES",
+    "NQ"
+  ],
+  "rules": [
+    {
+      "id": "HIST_BLIND_SPOT_0_UP",
+      "name": "\ud83d\udcca Historical: BLIND_SPOT_0_UP",
+      "description": "Pattern identifi\u00e9 dans donn\u00e9es historiques (WR: 74.3%, N=389)",
+      "priority": 10,
+      "enabled": true,
+      "conditions": {
+        "and": [
+          {
+            "comment": "Distance MenthorQ <= 8 ticks",
+            "field": "menthor_distances.near_gex_up",
+            "operator": "<=",
+            "value": 8
+          },
+          {
+            "comment": "Smart Money Flow <= 0.05",
+            "field": "smart_money_flow",
+            "operator": "<=",
+            "value": 0.05
+          },
+          {
+            "comment": "DOM L1 Imbalance <= -0.10",
+            "field": "level1_imbalance",
+            "operator": "<=",
+            "value": -0.1
+          }
+        ]
+      },
+      "entry": {
+        "side": "SELL",
+        "type": "LIMIT",
+        "price_strategy": "current_price"
+      },
+      "risk_management": {
+        "stop_loss": {
+          "strategy": "fixed_ticks",
+          "ticks": 12
+        },
+        "take_profit": [
+          {
+            "target": 1,
+            "strategy": "fixed_ticks",
+            "ticks": 20,
+            "quantity_percent": 70
+          },
+          {
+            "target": 2,
+            "strategy": "fixed_ticks",
+            "ticks": 35,
+            "quantity_percent": 30
+          }
+        ],
+        "breakeven": {
+          "enabled": true,
+          "trigger_ticks": 12,
+          "offset_ticks": 3
+        }
+      },
+      "position_sizing": {
+        "base_size": 1,
+        "confidence_scaling": false
+      },
+      "cooldown": {
+        "bars": 300,
+        "same_direction_only": true,
+        "comment": "5 minutes de cooldown (300 barres @ 1s)"
+      },
+      "historical_performance": {
+        "win_rate": 0.743,
+        "total_trades": 389,
+        "avg_win_ticks": 10.0,
+        "avg_loss_ticks": 0,
+        "avg_rr": 0,
+        "avg_duration_bars": 20.5
+      }
+    }
+  ],
+  "metadata": {
+    "total_patterns_analyzed": 6,
+    "winning_patterns": 1,
+    "total_virtual_trades": 1239
+  }
+}

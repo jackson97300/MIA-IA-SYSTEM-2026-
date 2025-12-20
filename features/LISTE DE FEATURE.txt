@@ -1,0 +1,204 @@
+Parfait — tu as déjà tout ce qu’il faut pour que le ML filtre **intelligemment** tes signaux. Voilà comment on transforme ta liste de 162+ features en **règles d’entrée claires**, un **pipeline d’entraînement propre** et un **filtre ML robuste** qui améliore réellement ton win rate (sans sur-apprendre).
+
+---
+
+# 🎯 Ce que le ML doit décider
+
+**Le ML ne crée pas de signaux** : il **VALIDE ou REJETTE** tes signaux existants (VWAP, Gamma, VPOC, Battle Navale, etc.), conformément à ton workflow documenté (confluence, Dealer’s Bias, Smart Money…). 
+
+* Entrée = snapshot features (≈ 160 manuelles + lags/rolling) au **moment du signal**.
+* Cible = « est-ce qu’un **retour N secondes ou M ticks** plus tard aurait payé ? »
+* Sortie = probabilité de réussite + **raisonnement explicable** (features top-K).
+
+---
+
+# ✅ Règles d’entrée (version “opération ML”)
+
+Le filtre ML **approuve** un signal si TOUT est vrai :
+
+1. **Qualité modèle**
+
+   * `proba_ml ≥ seuil_dyn` (calibré par régime de volatilité + session).
+   * `confidence_interval width ≤ 0.25` (éviter les prédictions incertaines).
+
+2. **Contexte marché cohérent**
+
+   * `volatility_regime ∈ {MED, HIGH}` (pas de LOW sauf set-ups mean-revert).
+   * `session_progress ∈ [0.05, 0.85]` (éviter tout début/fin si non backtesté).
+
+3. **Risque exécutable**
+
+   * `spread_ticks ≤ 2` (≤1 idéal ES/NQ).
+   * `q_bq1 + q_aq1 ≥ seuil_liquidité` (p.ex. ES ≥ 200 cumulés).
+   * Pas de **gamma_flip** en cours **contre** ton sens (flag `gamma_flip_*`).
+
+> Ces 3 blocs suppriment 30–50 % de trades qui **auraient** dégradé ton PF — c’est exactement le rôle du filtre. 
+
+---
+
+# 🧱 Setups « validables par ML » (prêts à coder)
+
+Tu as déjà décrit les patterns ; ci-dessous la **version compacte** à brancher dans ton `signal_generator` (le ML ne voit que les features, pas le nom du setup).
+
+### 1) VWAP Weekly Bounce + OF acheteur
+
+* **Gate** (règle dure) :
+  `d_vwap_weekly_ticks ∈ [-30, -10]` & `d_vwap_ticks ≥ 0` & `is_1tick_spread = True`
+* **Features clefs pour ML** :
+  `confluence_strength, level1_imbalance, pressure_strength, smart_money_flow, near_blind`
+* **Labeling conseillé** : +8 à +12 ticks sous 90s (ES) / 60–90s (NQ).
+
+### 2) Gamma wall touch (near_gex_up) + flux acheteur
+
+* **Gate** : `d_nearest_gex_up_ticks ≤ 30` & `menthorq_impact_score ≥ 0.7`
+* **ML top-K** : `delta, cum_delta_session, depth_imbalance, tick_momentum, smart_money_flow`
+* **Label** : +10 ticks/120s (ES) | +20 ticks/180s (NQ).
+
+### 3) VPOC retest in-value + smart money
+
+* **Gate** : `in_value_area = True` & `|d_vpoc_ticks| ≤ 20`
+* **ML top-K** : `smart_money_flow, confluence_proximity, pressure_strength_depth, ob_center_tanh`
+* **Label** : +6 à +10 ticks/90s.
+
+### 4) Orderflow triple confluence (DOM+Delta+Instit)
+
+* **Gate** : `level1_imbalance ≤ -0.65` & `delta ≥ 200` & `institutional_pressure ≥ 0.65`
+* **ML top-K** : `cum_delta_session, stacked_imbalance_bid_rows, delta_burst, upper/lower_wick_ticks`
+* **Label** : +8–12 ticks/60–120s.
+
+### 5) Mean-revert post faux breakout (rejet ML attendu si mauvais contexte)
+
+* **Gate** : `d_vwap_ticks ≥ 30` **ET** (`confluence_strength ≤ 0.3` **OU** `smart_money_flow ≤ -0.5`)
+* **Attente ML** : proba **basse** → **REJET** (sécurité anti-FOMO).
+
+> Ces 5 couvrent 80 % de tes cas à forte valeur. Les autres (Battle Navale, Blind Spots, etc.) se branchent de la même manière — garder 1–2 règles dures (« gates ») + top-K features pour la partie ML. 
+
+---
+
+# 🔬 Labeling propre (évite le leakage)
+
+**Option A – “fixed horizon”** (simple & rapide)
+
+* Horizon : 60–120 s (ES), 60–180 s (NQ).
+* Label = 1 si `max_forward_move ≥ +RR_ticks` AVANT `-SL_ticks` (p.ex. +10/−6 ES).
+
+**Option B – “triple-barrier”** (propre en toutes phases)
+
+* Barrières : +TP (en ticks/ATR), −SL (ticks/ATR), **temps** (horizon).
+* Le premier touché définit le label.
+* Embargo purgé (purged-KFold) pour supprimer la fuite temporelle entre splits.
+
+> Évite d’utiliser **toutes** les lags proches de la cible (≤2–3 s) si tes données sont à haute fréquence : c’est une source subtile de leakage.
+
+---
+
+# 🏗️ Pipeline d’entraînement (clair et reproductible)
+
+1. **Split temporel**
+
+   * Train = 80 % (début→avant-hier), Test = 20 % (hier).
+   * Cross-val = **PurgedGroupTimeSeriesSplit (K=5, embargo=H)**.
+
+2. **Features finales (≈ 80–120)**
+
+   * Conserver **distances** (VWAP/GEX/VP/VPOC), **flux** (delta, cum_delta), **DOM** (imbalance), **scores** (confluence/menthorq/battle_navale), **volatilité** (ATR, regime), **spread/liquidité**.
+   * Limiter les **lags** à 1,5,10,20,60 s uniquement pour ~20 features clés.
+   * Rolling (20/60/300 s) pour delta, smart_money_flow, pressure_strength, d_vwap_weekly_ticks.
+   * One-hot `next_wall_side`.
+
+3. **Modèle**
+
+   * **LightGBM** (rapide, explicable)
+
+     ```
+     num_leaves=63
+     max_depth=-1
+     learning_rate=0.03
+     n_estimators=1200
+     subsample=0.8
+     colsample_bytree=0.7
+     min_child_samples=80
+     reg_lambda=5
+     metric="auc"
+     ```
+   * Calibration **Platt/Isotonic** sur le **validation set** (jamais vu).
+
+4. **Objectif & coût**
+
+   * Loss = logloss pondérée par **coût** (fausses acceptations coûtent plus cher que fausses rejets).
+   * Pondération exemple = fonction(ATR, spread, session) pour refléter la **valeur** du trade.
+
+5. **Seuil dynamique** (production)
+
+   * `seuil_base=0.70`
+   * +0.05 si `volatility_regime == LOW`, −0.05 si `POWER_HOUR` ou `OPENING_BELL`.
+   * +0.05 si `spread_ticks ≥ 2` ; −0.05 si `is_1tick_spread=True`.
+
+---
+
+# 🔎 Explicabilité (indispensable en live)
+
+* **Top-features par décision (SHAP fast)** : afficher **3 raisons** « pour/contre ».
+* **Tableau bord** : `proba_ml`, `seuil_actuel`, `features_top3`, **règle gate déclenchée**, **risque exécutable**.
+* **Logs** : sauver `uuid_signal, proba, seuil, decision, pnl_ex_post, top_features`.
+
+---
+
+# 🧰 Garde-fous “exécution”
+
+* **Auto-reject** si : `spread_ticks>3` **ou** `q_bq1+q_aq1` sous seuil **ou** `latency > 200ms` **ou** news-flags.
+* **Kill-switch** si : 3 rejets du ML contournés manuellement → pertes consécutives.
+
+---
+
+# 📈 Validation qui compte (pas que l’AUC)
+
+* **AUC hors échantillon** + **Brier score** (calibration)
+* **Lift** sur PF : `PF(signaux validés) / PF(signaux bruts)`
+* **Hit-rate par régime** (LOW/MED/HIGH vol), par **session** (Open/Power), par **setup**.
+* **Stabilité des features** (drift) : top-20 **doivent rester** stables entre semaines.
+
+---
+
+# 🚀 Intégration “prod” en 5 points
+
+1. Dans `signal_generator`, ajoute un **“gate layer”** (règles dures) **avant** le ML.
+2. Sérialise un **vectorizer** identique train→prod (ordre des features garanti).
+3. **Calibre & freez** le seuil dynamique (mapping par régime/session/spread).
+4. Écris un **micro-service** d’inférence (≤100 ms), avec **timeout** et **fallback = REJET**.
+5. **Monitoring** live : proba moyenne, % rejetés, PnL des validés, drift features.
+
+---
+
+# 🧩 Bonus — raccourcis efficaces sur tes features
+
+* **VWAP multi-TF** : garde `d_vwap_ticks`, `d_vwap_weekly_ticks`, `d_vwap_monthly_ticks` + leurs **rolling(60s)** ; inutile d’empiler toutes les bandes si tu as déjà **distance/ATR**.
+* **Gamma** : privilégie `d_nearest_gex_{up,down}_ticks`, `menthorq_impact_score`, `confluence_proximity` ; les 10 niveaux absolus GEX (prix) sont souvent redondants → remplace par **distances**.
+* **Orderflow** : `delta`, `cum_delta_session`, `delta_burst`, `level1_imbalance`, `depth_imbalance`, `stacked_imbalance_*` (+ rolling 20/60s).
+* **Exécution** : `spread_ticks`, `is_1tick_spread`, `q_bq1/q_aq1` → **indispensables** pour éviter le slippage.
+* **Session/Vol** : `session_progress`, `atr`, `volatility_regime(_cont)` contrôlent le **seuil dynamique**.
+
+---
+
+# 📝 Mini-checklist (copie/colle pour passer en revue)
+
+* [ ] Labeling **triple-barrier** (TP/SL/temps) par **setup**
+* [ ] Split **temporel + embargo**
+* [ ] Sélection **80–120 features** (distances/flux/DOM/scores/vol)
+* [ ] Lags limités (1,5,10,20,60s) sur ~20 features clés
+* [ ] LightGBM + **calibration**
+* [ ] **Seuil dynamique** (volatilité, session, spread)
+* [ ] **Gates** durs (exéc./contexte) avant ML
+* [ ] **Explicabilité** (top-3 raisons)
+* [ ] **Monitoring** PnL validés vs bruts, drift, hit-rate par régime
+* [ ] **Kill-switch** & auto-reject conditions
+
+---
+
+Si tu veux, je peux te livrer **dans la foulée** :
+
+* un **fichier de config** des gates + seuils dynamiques (par symbole ES/NQ),
+* un **script d’entraînement** LightGBM prêt à brancher sur ton `ML_READY`,
+* et le **schéma d’export** des top-features + proba pour ton dashboard Streamlit (avec la section “résumé compact”/visual_zones dont tu parlais). 
+
+On y va ?

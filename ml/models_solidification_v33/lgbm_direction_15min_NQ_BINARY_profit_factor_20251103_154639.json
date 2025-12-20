@@ -1,0 +1,62 @@
+{
+  "0.55": {
+    "n_trades": 8094,
+    "n_wins": 6017,
+    "n_losses": 2077,
+    "win_rate": 0.7433901655547319,
+    "profit_factor_before": 5.79393355801637,
+    "profit_factor": 4.864896677900819,
+    "net_ticks_before": 49785,
+    "net_ticks": 40136.952000000005,
+    "total_costs_ticks": 9648.047999999999,
+    "reliable": true
+  },
+  "0.6": {
+    "n_trades": 5837,
+    "n_wins": 4721,
+    "n_losses": 1116,
+    "win_rate": 0.8088058934384101,
+    "profit_factor_before": 8.460573476702509,
+    "profit_factor": 7.21367311827957,
+    "net_ticks_before": 41630,
+    "net_ticks": 34672.296,
+    "total_costs_ticks": 6957.704,
+    "reliable": true
+  },
+  "0.65": {
+    "n_trades": 3455,
+    "n_wins": 3205,
+    "n_losses": 250,
+    "win_rate": 0.9276410998552822,
+    "profit_factor_before": 25.64,
+    "profit_factor": 22.345312,
+    "net_ticks_before": 30800,
+    "net_ticks": 26681.64,
+    "total_costs_ticks": 4118.36,
+    "reliable": true
+  },
+  "0.7": {
+    "n_trades": 3446,
+    "n_wins": 3199,
+    "n_losses": 247,
+    "win_rate": 0.928322692977365,
+    "profit_factor_before": 25.902834008097166,
+    "profit_factor": 22.576816194331986,
+    "net_ticks_before": 30755,
+    "net_ticks": 26647.368000000002,
+    "total_costs_ticks": 4107.632,
+    "reliable": true
+  },
+  "0.75": {
+    "n_trades": 3325,
+    "n_wins": 3112,
+    "n_losses": 213,
+    "win_rate": 0.9359398496240602,
+    "profit_factor_before": 29.220657276995304,
+    "profit_factor": 25.499154929577465,
+    "net_ticks_before": 30055,
+    "net_ticks": 26091.6,
+    "total_costs_ticks": 3963.3999999999996,
+    "reliable": true
+  }
+}

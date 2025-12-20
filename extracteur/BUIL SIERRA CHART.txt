@@ -1,0 +1,3217 @@
+-- Starting remote build of Custom Studies Source files: MIA_Dumper_G3_Unifier.cpp. 64-bit --     12:48:44
+
+Allow time for the server to compile the files and build the DLL.
+
+Server: https://build2.sierrachart.com
+The remote build is complete.
+The build failed.
+MIA_Dumper_G3_Unifier.cpp: In function 'void AppendUnifiedEvent(const char*, int, const char*, double, const char*, const char*, double, double, const string&)':
+MIA_Dumper_G3_Unifier.cpp:400:34: error: 'sc' was not declared in this scope
+  400 |     if (!IsChartSymbolConsistent(sc, chart, sc.Symbol.GetChars())) return;
+      |                                  ^~
+MIA_Dumper_G3_Unifier.cpp: In function 'void AppendUnifiedSnapshot(s_sc&, int, const char*, const char*, int)':
+MIA_Dumper_G3_Unifier.cpp:1106:31: error: 'NormalizePx' was not declared in this scope
+ 1106 |     const double l1_bid_now = NormalizePx(sc, sc.Bid);
+      |                               ^~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:1113:9: error: 'g_l2' was not declared in this scope
+ 1113 |     if (g_l2.bid1 > 0.0) { bid1 = g_l2.bid1; }
+      |         ^~~~
+MIA_Dumper_G3_Unifier.cpp:1114:9: error: 'g_l2' was not declared in this scope
+ 1114 |     if (g_l2.ask1 > 0.0) { ask1 = g_l2.ask1; }
+      |         ^~~~
+MIA_Dumper_G3_Unifier.cpp:1191:29: error: 'g_tradesSummaryByChart' was not declared in this scope
+ 1191 |         (unsigned long long)g_tradesSummaryByChart[sc.ChartNumber].buy_trades,
+      |                             ^~~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp: In function 'void scsf_MIA_Dumper_G3_Unifier(SCStudyInterfaceRef)':
+MIA_Dumper_G3_Unifier.cpp:3673:86: error: 'ymd' was not declared in this scope
+ 3673 |           TryEmitUnifiedMetrics(sc, GetLogicalChartFromSymbol(sc.Symbol.GetChars()), ymd, symbol_family);
+      |                                                                                      ^~~
+MIA_Dumper_G3_Unifier.cpp:3673:91: error: 'symbol_family' was not declared in this scope
+ 3673 |           TryEmitUnifiedMetrics(sc, GetLogicalChartFromSymbol(sc.Symbol.GetChars()), ymd, symbol_family);
+      |                                                                                           ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:3894:86: error: 'ymd' was not declared in this scope
+ 3894 |           TryEmitUnifiedMetrics(sc, GetLogicalChartFromSymbol(sc.Symbol.GetChars()), ymd, symbol_family);
+      |                                                                                      ^~~
+MIA_Dumper_G3_Unifier.cpp:3894:91: error: 'symbol_family' was not declared in this scope
+ 3894 |           TryEmitUnifiedMetrics(sc, GetLogicalChartFromSymbol(sc.Symbol.GetChars()), ymd, symbol_family);
+      |                                                                                           ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp: At global scope:
+MIA_Dumper_G3_Unifier.cpp:4932:3: error: expected unqualified-id before 'if'
+ 4932 |   if (sc.Input[14].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:5034:3: error: expected unqualified-id before 'if'
+ 5034 |   if (sc.Input[22].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:5111:3: error: expected unqualified-id before 'if'
+ 5111 |   if (sc.Input[28].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:5232:17: error: expected constructor, destructor, or type conversion before '(' token
+ 5232 |   CheckAutoFlush(sc);
+      |                 ^
+MIA_Dumper_G3_Unifier.cpp:5233:16: error: expected constructor, destructor, or type conversion before '(' token
+ 5233 |   UpdateMetrics(sc, "study");
+      |                ^
+MIA_Dumper_G3_Unifier.cpp:5236:3: error: expected unqualified-id before 'if'
+ 5236 |   if (sc.Input[25].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:5309:3: error: expected unqualified-id before 'if'
+ 5309 |   if (sc.Input[33].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:5410:3: error: expected unqualified-id before 'if'
+ 5410 |   if (sc.Input[35].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:5490:3: error: expected unqualified-id before 'if'
+ 5490 |   if (sc.Input[37].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:5585:3: error: expected unqualified-id before 'if'
+ 5585 |   if (sc.LastCallToFunction) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:5783:3: error: expected unqualified-id before 'if'
+ 5783 |   if (sc.Input[14].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:5885:3: error: expected unqualified-id before 'if'
+ 5885 |   if (sc.Input[22].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:5962:3: error: expected unqualified-id before 'if'
+ 5962 |   if (sc.Input[28].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:6083:17: error: expected constructor, destructor, or type conversion before '(' token
+ 6083 |   CheckAutoFlush(sc);
+      |                 ^
+MIA_Dumper_G3_Unifier.cpp:6084:16: error: expected constructor, destructor, or type conversion before '(' token
+ 6084 |   UpdateMetrics(sc, "study");
+      |                ^
+MIA_Dumper_G3_Unifier.cpp:6087:3: error: expected unqualified-id before 'if'
+ 6087 |   if (sc.Input[25].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:6160:3: error: expected unqualified-id before 'if'
+ 6160 |   if (sc.Input[33].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:6261:3: error: expected unqualified-id before 'if'
+ 6261 |   if (sc.Input[35].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:6341:3: error: expected unqualified-id before 'if'
+ 6341 |   if (sc.Input[37].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:6436:3: error: expected unqualified-id before 'if'
+ 6436 |   if (sc.LastCallToFunction) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:6599:1: error: expected declaration before '}' token
+ 6599 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:6601:9: error: 'g_lastMetrics' does not name a type
+ 6601 |         g_lastMetrics.pvwap = pvwap; g_lastMetrics.pvwap_up1 = pvwap_up1; g_lastMetrics.pvwap_dn1 = pvwap_dn1;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6601:38: error: 'g_lastMetrics' does not name a type
+ 6601 |         g_lastMetrics.pvwap = pvwap; g_lastMetrics.pvwap_up1 = pvwap_up1; g_lastMetrics.pvwap_dn1 = pvwap_dn1;
+      |                                      ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6601:75: error: 'g_lastMetrics' does not name a type
+ 6601 |         g_lastMetrics.pvwap = pvwap; g_lastMetrics.pvwap_up1 = pvwap_up1; g_lastMetrics.pvwap_dn1 = pvwap_dn1;
+      |                                                                           ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6602:9: error: 'g_lastMetrics' does not name a type
+ 6602 |         g_lastMetrics.pvwap_up2 = pvwap_up2; g_lastMetrics.pvwap_dn2 = pvwap_dn2;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6602:46: error: 'g_lastMetrics' does not name a type
+ 6602 |         g_lastMetrics.pvwap_up2 = pvwap_up2; g_lastMetrics.pvwap_dn2 = pvwap_dn2;
+      |                                              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6604:9: error: 'g_lastMetrics' does not name a type
+ 6604 |         g_lastMetrics.cum_delta = cum_delta; g_lastMetrics.cum_delta_day = cum_delta_day; g_lastMetrics.cum_delta_session = cum_delta_session;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6604:46: error: 'g_lastMetrics' does not name a type
+ 6604 |         g_lastMetrics.cum_delta = cum_delta; g_lastMetrics.cum_delta_day = cum_delta_day; g_lastMetrics.cum_delta_session = cum_delta_session;
+      |                                              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6604:91: error: 'g_lastMetrics' does not name a type
+ 6604 |         g_lastMetrics.cum_delta = cum_delta; g_lastMetrics.cum_delta_day = cum_delta_day; g_lastMetrics.cum_delta_session = cum_delta_session;
+      |                                                                                           ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6606:9: error: 'g_lastMetrics' does not name a type
+ 6606 |         g_lastMetrics.nbcv = nbcv; g_lastMetrics.correlation = correlation;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6606:36: error: 'g_lastMetrics' does not name a type
+ 6606 |         g_lastMetrics.nbcv = nbcv; g_lastMetrics.correlation = correlation;
+      |                                    ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6608:9: error: 'g_lastMetrics' does not name a type
+ 6608 |         g_lastMetrics.blind_spot_1 = blind_spot_1; g_lastMetrics.blind_spot_2 = blind_spot_2; g_lastMetrics.blind_spot_3 = blind_spot_3;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6608:52: error: 'g_lastMetrics' does not name a type
+ 6608 |         g_lastMetrics.blind_spot_1 = blind_spot_1; g_lastMetrics.blind_spot_2 = blind_spot_2; g_lastMetrics.blind_spot_3 = blind_spot_3;
+      |                                                    ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6608:95: error: 'g_lastMetrics' does not name a type
+ 6608 |         g_lastMetrics.blind_spot_1 = blind_spot_1; g_lastMetrics.blind_spot_2 = blind_spot_2; g_lastMetrics.blind_spot_3 = blind_spot_3;
+      |                                                                                               ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6609:9: error: 'g_lastMetrics' does not name a type
+ 6609 |         g_lastMetrics.blind_spot_4 = blind_spot_4; g_lastMetrics.blind_spot_5 = blind_spot_5;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6609:52: error: 'g_lastMetrics' does not name a type
+ 6609 |         g_lastMetrics.blind_spot_4 = blind_spot_4; g_lastMetrics.blind_spot_5 = blind_spot_5;
+      |                                                    ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6611:9: error: 'g_lastMetrics' does not name a type
+ 6611 |         g_lastMetrics.ohlc_o = ohlc_o; g_lastMetrics.ohlc_h = ohlc_h; g_lastMetrics.ohlc_l = ohlc_l; g_lastMetrics.ohlc_c = ohlc_c; g_lastMetrics.ohlc_v = ohlc_v;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6611:40: error: 'g_lastMetrics' does not name a type
+ 6611 |         g_lastMetrics.ohlc_o = ohlc_o; g_lastMetrics.ohlc_h = ohlc_h; g_lastMetrics.ohlc_l = ohlc_l; g_lastMetrics.ohlc_c = ohlc_c; g_lastMetrics.ohlc_v = ohlc_v;
+      |                                        ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6611:71: error: 'g_lastMetrics' does not name a type
+ 6611 |         g_lastMetrics.ohlc_o = ohlc_o; g_lastMetrics.ohlc_h = ohlc_h; g_lastMetrics.ohlc_l = ohlc_l; g_lastMetrics.ohlc_c = ohlc_c; g_lastMetrics.ohlc_v = ohlc_v;
+      |                                                                       ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6611:102: error: 'g_lastMetrics' does not name a type
+ 6611 |         g_lastMetrics.ohlc_o = ohlc_o; g_lastMetrics.ohlc_h = ohlc_h; g_lastMetrics.ohlc_l = ohlc_l; g_lastMetrics.ohlc_c = ohlc_c; g_lastMetrics.ohlc_v = ohlc_v;
+      |                                                                                                      ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6611:133: error: 'g_lastMetrics' does not name a type
+ 6611 |         g_lastMetrics.ohlc_o = ohlc_o; g_lastMetrics.ohlc_h = ohlc_h; g_lastMetrics.ohlc_l = ohlc_l; g_lastMetrics.ohlc_c = ohlc_c; g_lastMetrics.ohlc_v = ohlc_v;
+      |                                                                                                                                     ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6612:9: error: 'g_lastMetrics' does not name a type
+ 6612 |         g_lastMetrics.ohlc_bidvol = ohlc_bidvol; g_lastMetrics.ohlc_askvol = ohlc_askvol;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6612:50: error: 'g_lastMetrics' does not name a type
+ 6612 |         g_lastMetrics.ohlc_bidvol = ohlc_bidvol; g_lastMetrics.ohlc_askvol = ohlc_askvol;
+      |                                                  ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6614:9: error: 'g_lastMetrics' does not name a type
+ 6614 |         g_lastMetrics.trade_buy_trades = trade_buy_trades; g_lastMetrics.trade_sell_trades = trade_sell_trades;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6614:60: error: 'g_lastMetrics' does not name a type
+ 6614 |         g_lastMetrics.trade_buy_trades = trade_buy_trades; g_lastMetrics.trade_sell_trades = trade_sell_trades;
+      |                                                            ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6615:9: error: 'g_lastMetrics' does not name a type
+ 6615 |         g_lastMetrics.trade_buy_vol = trade_buy_vol; g_lastMetrics.trade_sell_vol = trade_sell_vol;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6615:54: error: 'g_lastMetrics' does not name a type
+ 6615 |         g_lastMetrics.trade_buy_vol = trade_buy_vol; g_lastMetrics.trade_sell_vol = trade_sell_vol;
+      |                                                      ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6616:5: error: expected declaration before '}' token
+ 6616 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:6619:19: error: expected constructor, destructor, or type conversion before ';' token
+ 6619 |     CloseUnified();
+      |                   ^
+MIA_Dumper_G3_Unifier.cpp:6621:5: error: expected unqualified-id before 'if'
+ 6621 |     if (ShouldLog(sc, LOG_KEY)) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:6625:5: error: expected unqualified-id before 'if'
+ 6625 |     if (sc.Input[45].GetYesNo()) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:6629:3: error: expected declaration before '}' token
+ 6629 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:6630:1: error: expected declaration before '}' token
+ 6630 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:6634:7: error: expected unqualified-id before 'if'
+ 6634 |       if (s_stale_loops_by_chart[sc.ChartNumber] >= STALE_LIMIT) {
+      |       ^~
+MIA_Dumper_G3_Unifier.cpp:6643:5: error: expected declaration before '}' token
+ 6643 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:6646:19: error: 'sz' was not declared in this scope
+ 6646 |     int end = min(sz, start + BATCH_SIZE);
+      |                   ^~
+MIA_Dumper_G3_Unifier.cpp:6646:23: error: 'start' was not declared in this scope; did you mean 'stat'?
+ 6646 |     int end = min(sz, start + BATCH_SIZE);
+      |                       ^~~~~
+      |                       stat
+MIA_Dumper_G3_Unifier.cpp:6646:31: error: 'BATCH_SIZE' was not declared in this scope; did you mean 'IDC_SIZE'?
+ 6646 |     int end = min(sz, start + BATCH_SIZE);
+      |                               ^~~~~~~~~~
+      |                               IDC_SIZE
+MIA_Dumper_G3_Unifier.cpp:6649:30: error: 'g_LastSeq_by_chart' was not declared in this scope
+ 6649 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6649:49: error: 'sc' was not declared in this scope; did you mean 's_sc'?
+ 6649 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                                                 ^~
+      |                                                 s_sc
+MIA_Dumper_G3_Unifier.cpp:6650:30: error: 's_LastTsTime_by_chart' was not declared in this scope
+ 6650 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6650:52: error: 'sc' was not declared in this scope; did you mean 's_sc'?
+ 6650 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                                                    ^~
+      |                                                    s_sc
+MIA_Dumper_G3_Unifier.cpp:6653:5: error: expected unqualified-id before 'for'
+ 6653 |     for (int i = start; i < end; ++i) {
+      |     ^~~
+MIA_Dumper_G3_Unifier.cpp:6653:25: error: 'i' does not name a type
+ 6653 |     for (int i = start; i < end; ++i) {
+      |                         ^
+MIA_Dumper_G3_Unifier.cpp:6653:34: error: expected unqualified-id before '++' token
+ 6653 |     for (int i = start; i < end; ++i) {
+      |                                  ^~
+MIA_Dumper_G3_Unifier.cpp:6666:5: error: expected unqualified-id before 'if'
+ 6666 |     if (g_UseSeq) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:6673:7: error: expected unqualified-id before 'else'
+ 6673 |     } else {
+      |       ^~~~
+MIA_Dumper_G3_Unifier.cpp:6684:5: error: 's_LastTsTime_by_chart' does not name a type
+ 6684 |     s_LastTsTime_by_chart[sc.ChartNumber] = last_time;
+      |     ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6687:5: error: expected unqualified-id before 'if'
+ 6687 |     if (ShouldLog(sc, LOG_VERBOSE) && processed_count > 0) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:6693:3: error: expected declaration before '}' token
+ 6693 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:6696:3: error: expected unqualified-id before 'if'
+ 6696 |   if (sc.Input[14].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:6798:3: error: expected unqualified-id before 'if'
+ 6798 |   if (sc.Input[22].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:6875:3: error: expected unqualified-id before 'if'
+ 6875 |   if (sc.Input[28].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:6996:17: error: expected constructor, destructor, or type conversion before '(' token
+ 6996 |   CheckAutoFlush(sc);
+      |                 ^
+MIA_Dumper_G3_Unifier.cpp:6997:16: error: expected constructor, destructor, or type conversion before '(' token
+ 6997 |   UpdateMetrics(sc, "study");
+      |                ^
+MIA_Dumper_G3_Unifier.cpp:7000:3: error: expected unqualified-id before 'if'
+ 7000 |   if (sc.Input[25].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:7073:3: error: expected unqualified-id before 'if'
+ 7073 |   if (sc.Input[33].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:7174:3: error: expected unqualified-id before 'if'
+ 7174 |   if (sc.Input[35].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:7254:3: error: expected unqualified-id before 'if'
+ 7254 |   if (sc.Input[37].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:7349:3: error: expected unqualified-id before 'if'
+ 7349 |   if (sc.LastCallToFunction) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:7512:1: error: expected declaration before '}' token
+ 7512 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:7516:7: error: expected unqualified-id before 'if'
+ 7516 |       if (s_stale_loops_by_chart[sc.ChartNumber] >= STALE_LIMIT) {
+      |       ^~
+MIA_Dumper_G3_Unifier.cpp:7525:5: error: expected declaration before '}' token
+ 7525 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:7528:9: error: redefinition of 'int end'
+ 7528 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:6646:9: note: 'int end' previously defined here
+ 6646 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:7528:19: error: 'sz' was not declared in this scope
+ 7528 |     int end = min(sz, start + BATCH_SIZE);
+      |                   ^~
+MIA_Dumper_G3_Unifier.cpp:7528:23: error: 'start' was not declared in this scope; did you mean 'stat'?
+ 7528 |     int end = min(sz, start + BATCH_SIZE);
+      |                       ^~~~~
+      |                       stat
+MIA_Dumper_G3_Unifier.cpp:7528:31: error: 'BATCH_SIZE' was not declared in this scope; did you mean 'IDC_SIZE'?
+ 7528 |     int end = min(sz, start + BATCH_SIZE);
+      |                               ^~~~~~~~~~
+      |                               IDC_SIZE
+MIA_Dumper_G3_Unifier.cpp:7531:14: error: redefinition of 'uint32_t last_seq_seen'
+ 7531 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6649:14: note: 'uint32_t last_seq_seen' previously defined here
+ 6649 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:7531:30: error: 'g_LastSeq_by_chart' was not declared in this scope
+ 7531 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:7531:49: error: 'sc' was not declared in this scope; did you mean 's_sc'?
+ 7531 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                                                 ^~
+      |                                                 s_sc
+MIA_Dumper_G3_Unifier.cpp:7532:16: error: redefinition of 'SCDateTime last_time'
+ 7532 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6650:16: note: 'SCDateTime last_time' previously declared here
+ 6650 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:7532:30: error: 's_LastTsTime_by_chart' was not declared in this scope
+ 7532 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:7532:52: error: 'sc' was not declared in this scope; did you mean 's_sc'?
+ 7532 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                                                    ^~
+      |                                                    s_sc
+MIA_Dumper_G3_Unifier.cpp:7533:9: error: redefinition of 'int processed_count'
+ 7533 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6651:9: note: 'int processed_count' previously defined here
+ 6651 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:7535:5: error: expected unqualified-id before 'for'
+ 7535 |     for (int i = start; i < end; ++i) {
+      |     ^~~
+MIA_Dumper_G3_Unifier.cpp:7535:25: error: 'i' does not name a type
+ 7535 |     for (int i = start; i < end; ++i) {
+      |                         ^
+MIA_Dumper_G3_Unifier.cpp:7535:34: error: expected unqualified-id before '++' token
+ 7535 |     for (int i = start; i < end; ++i) {
+      |                                  ^~
+MIA_Dumper_G3_Unifier.cpp:7548:5: error: expected unqualified-id before 'if'
+ 7548 |     if (g_UseSeq) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:7555:7: error: expected unqualified-id before 'else'
+ 7555 |     } else {
+      |       ^~~~
+MIA_Dumper_G3_Unifier.cpp:7566:5: error: 's_LastTsTime_by_chart' does not name a type
+ 7566 |     s_LastTsTime_by_chart[sc.ChartNumber] = last_time;
+      |     ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:7569:5: error: expected unqualified-id before 'if'
+ 7569 |     if (ShouldLog(sc, LOG_VERBOSE) && processed_count > 0) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:7575:3: error: expected declaration before '}' token
+ 7575 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:7578:3: error: expected unqualified-id before 'if'
+ 7578 |   if (sc.Input[14].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:7680:3: error: expected unqualified-id before 'if'
+ 7680 |   if (sc.Input[22].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:7757:3: error: expected unqualified-id before 'if'
+ 7757 |   if (sc.Input[28].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:7878:17: error: expected constructor, destructor, or type conversion before '(' token
+ 7878 |   CheckAutoFlush(sc);
+      |                 ^
+MIA_Dumper_G3_Unifier.cpp:7879:16: error: expected constructor, destructor, or type conversion before '(' token
+ 7879 |   UpdateMetrics(sc, "study");
+      |                ^
+MIA_Dumper_G3_Unifier.cpp:7882:3: error: expected unqualified-id before 'if'
+ 7882 |   if (sc.Input[25].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:7955:3: error: expected unqualified-id before 'if'
+ 7955 |   if (sc.Input[33].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:8056:3: error: expected unqualified-id before 'if'
+ 8056 |   if (sc.Input[35].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:8136:3: error: expected unqualified-id before 'if'
+ 8136 |   if (sc.Input[37].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:8231:3: error: expected unqualified-id before 'if'
+ 8231 |   if (sc.LastCallToFunction) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:8394:1: error: expected declaration before '}' token
+ 8394 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:8398:7: error: expected unqualified-id before 'if'
+ 8398 |       if (s_stale_loops_by_chart[sc.ChartNumber] >= STALE_LIMIT) {
+      |       ^~
+MIA_Dumper_G3_Unifier.cpp:8407:5: error: expected declaration before '}' token
+ 8407 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:8410:9: error: redefinition of 'int end'
+ 8410 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:6646:9: note: 'int end' previously defined here
+ 6646 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:8410:19: error: 'sz' was not declared in this scope
+ 8410 |     int end = min(sz, start + BATCH_SIZE);
+      |                   ^~
+MIA_Dumper_G3_Unifier.cpp:8410:23: error: 'start' was not declared in this scope; did you mean 'stat'?
+ 8410 |     int end = min(sz, start + BATCH_SIZE);
+      |                       ^~~~~
+      |                       stat
+MIA_Dumper_G3_Unifier.cpp:8410:31: error: 'BATCH_SIZE' was not declared in this scope; did you mean 'IDC_SIZE'?
+ 8410 |     int end = min(sz, start + BATCH_SIZE);
+      |                               ^~~~~~~~~~
+      |                               IDC_SIZE
+MIA_Dumper_G3_Unifier.cpp:8413:14: error: redefinition of 'uint32_t last_seq_seen'
+ 8413 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6649:14: note: 'uint32_t last_seq_seen' previously defined here
+ 6649 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:8413:30: error: 'g_LastSeq_by_chart' was not declared in this scope
+ 8413 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:8413:49: error: 'sc' was not declared in this scope; did you mean 's_sc'?
+ 8413 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                                                 ^~
+      |                                                 s_sc
+MIA_Dumper_G3_Unifier.cpp:8414:16: error: redefinition of 'SCDateTime last_time'
+ 8414 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6650:16: note: 'SCDateTime last_time' previously declared here
+ 6650 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:8414:30: error: 's_LastTsTime_by_chart' was not declared in this scope
+ 8414 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:8414:52: error: 'sc' was not declared in this scope; did you mean 's_sc'?
+ 8414 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                                                    ^~
+      |                                                    s_sc
+MIA_Dumper_G3_Unifier.cpp:8415:9: error: redefinition of 'int processed_count'
+ 8415 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6651:9: note: 'int processed_count' previously defined here
+ 6651 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:8417:5: error: expected unqualified-id before 'for'
+ 8417 |     for (int i = start; i < end; ++i) {
+      |     ^~~
+MIA_Dumper_G3_Unifier.cpp:8417:25: error: 'i' does not name a type
+ 8417 |     for (int i = start; i < end; ++i) {
+      |                         ^
+MIA_Dumper_G3_Unifier.cpp:8417:34: error: expected unqualified-id before '++' token
+ 8417 |     for (int i = start; i < end; ++i) {
+      |                                  ^~
+MIA_Dumper_G3_Unifier.cpp:8430:5: error: expected unqualified-id before 'if'
+ 8430 |     if (g_UseSeq) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:8437:7: error: expected unqualified-id before 'else'
+ 8437 |     } else {
+      |       ^~~~
+MIA_Dumper_G3_Unifier.cpp:8448:5: error: 's_LastTsTime_by_chart' does not name a type
+ 8448 |     s_LastTsTime_by_chart[sc.ChartNumber] = last_time;
+      |     ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:8451:5: error: expected unqualified-id before 'if'
+ 8451 |     if (ShouldLog(sc, LOG_VERBOSE) && processed_count > 0) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:8457:3: error: expected declaration before '}' token
+ 8457 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:8460:3: error: expected unqualified-id before 'if'
+ 8460 |   if (sc.Input[14].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:8562:3: error: expected unqualified-id before 'if'
+ 8562 |   if (sc.Input[22].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:8639:3: error: expected unqualified-id before 'if'
+ 8639 |   if (sc.Input[28].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:8760:17: error: expected constructor, destructor, or type conversion before '(' token
+ 8760 |   CheckAutoFlush(sc);
+      |                 ^
+MIA_Dumper_G3_Unifier.cpp:8761:16: error: expected constructor, destructor, or type conversion before '(' token
+ 8761 |   UpdateMetrics(sc, "study");
+      |                ^
+MIA_Dumper_G3_Unifier.cpp:8764:3: error: expected unqualified-id before 'if'
+ 8764 |   if (sc.Input[25].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:8837:3: error: expected unqualified-id before 'if'
+ 8837 |   if (sc.Input[33].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:8938:3: error: expected unqualified-id before 'if'
+ 8938 |   if (sc.Input[35].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:9018:3: error: expected unqualified-id before 'if'
+ 9018 |   if (sc.Input[37].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:9113:3: error: expected unqualified-id before 'if'
+ 9113 |   if (sc.LastCallToFunction) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:9276:1: error: expected declaration before '}' token
+ 9276 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:9278:9: error: expected declaration before '}' token
+ 9278 |         }
+      |         ^
+MIA_Dumper_G3_Unifier.cpp:9279:5: error: expected declaration before '}' token
+ 9279 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:9280:3: error: expected declaration before '}' token
+ 9280 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:9283:3: error: expected unqualified-id before 'if'
+ 9283 |   if (sc.LastCallToFunction) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:9446:1: error: expected declaration before '}' token
+ 9446 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:9450:7: error: expected unqualified-id before 'if'
+ 9450 |       if (s_stale_loops_by_chart[sc.ChartNumber] >= STALE_LIMIT) {
+      |       ^~
+MIA_Dumper_G3_Unifier.cpp:9459:5: error: expected declaration before '}' token
+ 9459 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:9462:9: error: redefinition of 'int end'
+ 9462 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:6646:9: note: 'int end' previously defined here
+ 6646 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:9462:19: error: 'sz' was not declared in this scope
+ 9462 |     int end = min(sz, start + BATCH_SIZE);
+      |                   ^~
+MIA_Dumper_G3_Unifier.cpp:9462:23: error: 'start' was not declared in this scope; did you mean 'stat'?
+ 9462 |     int end = min(sz, start + BATCH_SIZE);
+      |                       ^~~~~
+      |                       stat
+MIA_Dumper_G3_Unifier.cpp:9462:31: error: 'BATCH_SIZE' was not declared in this scope; did you mean 'IDC_SIZE'?
+ 9462 |     int end = min(sz, start + BATCH_SIZE);
+      |                               ^~~~~~~~~~
+      |                               IDC_SIZE
+MIA_Dumper_G3_Unifier.cpp:9465:14: error: redefinition of 'uint32_t last_seq_seen'
+ 9465 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6649:14: note: 'uint32_t last_seq_seen' previously defined here
+ 6649 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:9465:30: error: 'g_LastSeq_by_chart' was not declared in this scope
+ 9465 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:9465:49: error: 'sc' was not declared in this scope; did you mean 's_sc'?
+ 9465 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                                                 ^~
+      |                                                 s_sc
+MIA_Dumper_G3_Unifier.cpp:9466:16: error: redefinition of 'SCDateTime last_time'
+ 9466 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6650:16: note: 'SCDateTime last_time' previously declared here
+ 6650 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:9466:30: error: 's_LastTsTime_by_chart' was not declared in this scope
+ 9466 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:9466:52: error: 'sc' was not declared in this scope; did you mean 's_sc'?
+ 9466 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                                                    ^~
+      |                                                    s_sc
+MIA_Dumper_G3_Unifier.cpp:9467:9: error: redefinition of 'int processed_count'
+ 9467 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6651:9: note: 'int processed_count' previously defined here
+ 6651 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:9469:5: error: expected unqualified-id before 'for'
+ 9469 |     for (int i = start; i < end; ++i) {
+      |     ^~~
+MIA_Dumper_G3_Unifier.cpp:9469:25: error: 'i' does not name a type
+ 9469 |     for (int i = start; i < end; ++i) {
+      |                         ^
+MIA_Dumper_G3_Unifier.cpp:9469:34: error: expected unqualified-id before '++' token
+ 9469 |     for (int i = start; i < end; ++i) {
+      |                                  ^~
+MIA_Dumper_G3_Unifier.cpp:9482:5: error: expected unqualified-id before 'if'
+ 9482 |     if (g_UseSeq) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:9489:7: error: expected unqualified-id before 'else'
+ 9489 |     } else {
+      |       ^~~~
+MIA_Dumper_G3_Unifier.cpp:9500:5: error: 's_LastTsTime_by_chart' does not name a type
+ 9500 |     s_LastTsTime_by_chart[sc.ChartNumber] = last_time;
+      |     ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:9503:5: error: expected unqualified-id before 'if'
+ 9503 |     if (ShouldLog(sc, LOG_VERBOSE) && processed_count > 0) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:9509:3: error: expected declaration before '}' token
+ 9509 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:9512:3: error: expected unqualified-id before 'if'
+ 9512 |   if (sc.Input[14].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:9614:3: error: expected unqualified-id before 'if'
+ 9614 |   if (sc.Input[22].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:9691:3: error: expected unqualified-id before 'if'
+ 9691 |   if (sc.Input[28].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:9812:17: error: expected constructor, destructor, or type conversion before '(' token
+ 9812 |   CheckAutoFlush(sc);
+      |                 ^
+MIA_Dumper_G3_Unifier.cpp:9813:16: error: expected constructor, destructor, or type conversion before '(' token
+ 9813 |   UpdateMetrics(sc, "study");
+      |                ^
+MIA_Dumper_G3_Unifier.cpp:9816:3: error: expected unqualified-id before 'if'
+ 9816 |   if (sc.Input[25].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:9889:3: error: expected unqualified-id before 'if'
+ 9889 |   if (sc.Input[33].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:9990:3: error: expected unqualified-id before 'if'
+ 9990 |   if (sc.Input[35].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:10070:3: error: expected unqualified-id before 'if'
+10070 |   if (sc.Input[37].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:10165:3: error: expected unqualified-id before 'if'
+10165 |   if (sc.LastCallToFunction) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:10328:1: error: expected declaration before '}' token
+10328 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:10330:9: error: 'g_lastMetrics' does not name a type
+10330 |         g_lastMetrics.pvwap = pvwap; g_lastMetrics.pvwap_up1 = pvwap_up1; g_lastMetrics.pvwap_dn1 = pvwap_dn1;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10330:38: error: 'g_lastMetrics' does not name a type
+10330 |         g_lastMetrics.pvwap = pvwap; g_lastMetrics.pvwap_up1 = pvwap_up1; g_lastMetrics.pvwap_dn1 = pvwap_dn1;
+      |                                      ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10330:75: error: 'g_lastMetrics' does not name a type
+10330 |         g_lastMetrics.pvwap = pvwap; g_lastMetrics.pvwap_up1 = pvwap_up1; g_lastMetrics.pvwap_dn1 = pvwap_dn1;
+      |                                                                           ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10331:9: error: 'g_lastMetrics' does not name a type
+10331 |         g_lastMetrics.pvwap_up2 = pvwap_up2; g_lastMetrics.pvwap_dn2 = pvwap_dn2;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10331:46: error: 'g_lastMetrics' does not name a type
+10331 |         g_lastMetrics.pvwap_up2 = pvwap_up2; g_lastMetrics.pvwap_dn2 = pvwap_dn2;
+      |                                              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10333:9: error: 'g_lastMetrics' does not name a type
+10333 |         g_lastMetrics.cum_delta = cum_delta; g_lastMetrics.cum_delta_day = cum_delta_day; g_lastMetrics.cum_delta_session = cum_delta_session;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10333:46: error: 'g_lastMetrics' does not name a type
+10333 |         g_lastMetrics.cum_delta = cum_delta; g_lastMetrics.cum_delta_day = cum_delta_day; g_lastMetrics.cum_delta_session = cum_delta_session;
+      |                                              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10333:91: error: 'g_lastMetrics' does not name a type
+10333 |         g_lastMetrics.cum_delta = cum_delta; g_lastMetrics.cum_delta_day = cum_delta_day; g_lastMetrics.cum_delta_session = cum_delta_session;
+      |                                                                                           ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10335:9: error: 'g_lastMetrics' does not name a type
+10335 |         g_lastMetrics.nbcv = nbcv; g_lastMetrics.correlation = correlation;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10335:36: error: 'g_lastMetrics' does not name a type
+10335 |         g_lastMetrics.nbcv = nbcv; g_lastMetrics.correlation = correlation;
+      |                                    ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10337:9: error: 'g_lastMetrics' does not name a type
+10337 |         g_lastMetrics.blind_spot_1 = blind_spot_1; g_lastMetrics.blind_spot_2 = blind_spot_2; g_lastMetrics.blind_spot_3 = blind_spot_3;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10337:52: error: 'g_lastMetrics' does not name a type
+10337 |         g_lastMetrics.blind_spot_1 = blind_spot_1; g_lastMetrics.blind_spot_2 = blind_spot_2; g_lastMetrics.blind_spot_3 = blind_spot_3;
+      |                                                    ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10337:95: error: 'g_lastMetrics' does not name a type
+10337 |         g_lastMetrics.blind_spot_1 = blind_spot_1; g_lastMetrics.blind_spot_2 = blind_spot_2; g_lastMetrics.blind_spot_3 = blind_spot_3;
+      |                                                                                               ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10338:9: error: 'g_lastMetrics' does not name a type
+10338 |         g_lastMetrics.blind_spot_4 = blind_spot_4; g_lastMetrics.blind_spot_5 = blind_spot_5;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10338:52: error: 'g_lastMetrics' does not name a type
+10338 |         g_lastMetrics.blind_spot_4 = blind_spot_4; g_lastMetrics.blind_spot_5 = blind_spot_5;
+      |                                                    ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10340:9: error: 'g_lastMetrics' does not name a type
+10340 |         g_lastMetrics.ohlc_o = ohlc_o; g_lastMetrics.ohlc_h = ohlc_h; g_lastMetrics.ohlc_l = ohlc_l; g_lastMetrics.ohlc_c = ohlc_c; g_lastMetrics.ohlc_v = ohlc_v;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10340:40: error: 'g_lastMetrics' does not name a type
+10340 |         g_lastMetrics.ohlc_o = ohlc_o; g_lastMetrics.ohlc_h = ohlc_h; g_lastMetrics.ohlc_l = ohlc_l; g_lastMetrics.ohlc_c = ohlc_c; g_lastMetrics.ohlc_v = ohlc_v;
+      |                                        ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10340:71: error: 'g_lastMetrics' does not name a type
+10340 |         g_lastMetrics.ohlc_o = ohlc_o; g_lastMetrics.ohlc_h = ohlc_h; g_lastMetrics.ohlc_l = ohlc_l; g_lastMetrics.ohlc_c = ohlc_c; g_lastMetrics.ohlc_v = ohlc_v;
+      |                                                                       ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10340:102: error: 'g_lastMetrics' does not name a type
+10340 |         g_lastMetrics.ohlc_o = ohlc_o; g_lastMetrics.ohlc_h = ohlc_h; g_lastMetrics.ohlc_l = ohlc_l; g_lastMetrics.ohlc_c = ohlc_c; g_lastMetrics.ohlc_v = ohlc_v;
+      |                                                                                                      ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10340:133: error: 'g_lastMetrics' does not name a type
+10340 |         g_lastMetrics.ohlc_o = ohlc_o; g_lastMetrics.ohlc_h = ohlc_h; g_lastMetrics.ohlc_l = ohlc_l; g_lastMetrics.ohlc_c = ohlc_c; g_lastMetrics.ohlc_v = ohlc_v;
+      |                                                                                                                                     ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10341:9: error: 'g_lastMetrics' does not name a type
+10341 |         g_lastMetrics.ohlc_bidvol = ohlc_bidvol; g_lastMetrics.ohlc_askvol = ohlc_askvol;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10341:50: error: 'g_lastMetrics' does not name a type
+10341 |         g_lastMetrics.ohlc_bidvol = ohlc_bidvol; g_lastMetrics.ohlc_askvol = ohlc_askvol;
+      |                                                  ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10343:9: error: 'g_lastMetrics' does not name a type
+10343 |         g_lastMetrics.trade_buy_trades = trade_buy_trades; g_lastMetrics.trade_sell_trades = trade_sell_trades;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10343:60: error: 'g_lastMetrics' does not name a type
+10343 |         g_lastMetrics.trade_buy_trades = trade_buy_trades; g_lastMetrics.trade_sell_trades = trade_sell_trades;
+      |                                                            ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10344:9: error: 'g_lastMetrics' does not name a type
+10344 |         g_lastMetrics.trade_buy_vol = trade_buy_vol; g_lastMetrics.trade_sell_vol = trade_sell_vol;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10344:54: error: 'g_lastMetrics' does not name a type
+10344 |         g_lastMetrics.trade_buy_vol = trade_buy_vol; g_lastMetrics.trade_sell_vol = trade_sell_vol;
+      |                                                      ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10345:5: error: expected declaration before '}' token
+10345 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:10348:19: error: expected constructor, destructor, or type conversion before ';' token
+10348 |     CloseUnified();
+      |                   ^
+MIA_Dumper_G3_Unifier.cpp:10350:5: error: expected unqualified-id before 'if'
+10350 |     if (ShouldLog(sc, LOG_KEY)) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:10354:5: error: expected unqualified-id before 'if'
+10354 |     if (sc.Input[45].GetYesNo()) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:10358:3: error: expected declaration before '}' token
+10358 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:10359:1: error: expected declaration before '}' token
+10359 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:10363:7: error: expected unqualified-id before 'if'
+10363 |       if (s_stale_loops_by_chart[sc.ChartNumber] >= STALE_LIMIT) {
+      |       ^~
+MIA_Dumper_G3_Unifier.cpp:10372:5: error: expected declaration before '}' token
+10372 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:10375:9: error: redefinition of 'int end'
+10375 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:6646:9: note: 'int end' previously defined here
+ 6646 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:10375:19: error: 'sz' was not declared in this scope
+10375 |     int end = min(sz, start + BATCH_SIZE);
+      |                   ^~
+MIA_Dumper_G3_Unifier.cpp:10375:23: error: 'start' was not declared in this scope; did you mean 'stat'?
+10375 |     int end = min(sz, start + BATCH_SIZE);
+      |                       ^~~~~
+      |                       stat
+MIA_Dumper_G3_Unifier.cpp:10375:31: error: 'BATCH_SIZE' was not declared in this scope; did you mean 'IDC_SIZE'?
+10375 |     int end = min(sz, start + BATCH_SIZE);
+      |                               ^~~~~~~~~~
+      |                               IDC_SIZE
+MIA_Dumper_G3_Unifier.cpp:10378:14: error: redefinition of 'uint32_t last_seq_seen'
+10378 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6649:14: note: 'uint32_t last_seq_seen' previously defined here
+ 6649 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10378:30: error: 'g_LastSeq_by_chart' was not declared in this scope
+10378 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10378:49: error: 'sc' was not declared in this scope; did you mean 's_sc'?
+10378 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                                                 ^~
+      |                                                 s_sc
+MIA_Dumper_G3_Unifier.cpp:10379:16: error: redefinition of 'SCDateTime last_time'
+10379 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6650:16: note: 'SCDateTime last_time' previously declared here
+ 6650 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10379:30: error: 's_LastTsTime_by_chart' was not declared in this scope
+10379 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10379:52: error: 'sc' was not declared in this scope; did you mean 's_sc'?
+10379 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                                                    ^~
+      |                                                    s_sc
+MIA_Dumper_G3_Unifier.cpp:10380:9: error: redefinition of 'int processed_count'
+10380 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6651:9: note: 'int processed_count' previously defined here
+ 6651 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10382:5: error: expected unqualified-id before 'for'
+10382 |     for (int i = start; i < end; ++i) {
+      |     ^~~
+MIA_Dumper_G3_Unifier.cpp:10382:25: error: 'i' does not name a type
+10382 |     for (int i = start; i < end; ++i) {
+      |                         ^
+MIA_Dumper_G3_Unifier.cpp:10382:34: error: expected unqualified-id before '++' token
+10382 |     for (int i = start; i < end; ++i) {
+      |                                  ^~
+MIA_Dumper_G3_Unifier.cpp:10395:5: error: expected unqualified-id before 'if'
+10395 |     if (g_UseSeq) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:10402:7: error: expected unqualified-id before 'else'
+10402 |     } else {
+      |       ^~~~
+MIA_Dumper_G3_Unifier.cpp:10413:5: error: 's_LastTsTime_by_chart' does not name a type
+10413 |     s_LastTsTime_by_chart[sc.ChartNumber] = last_time;
+      |     ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:10416:5: error: expected unqualified-id before 'if'
+10416 |     if (ShouldLog(sc, LOG_VERBOSE) && processed_count > 0) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:10422:3: error: expected declaration before '}' token
+10422 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:10425:3: error: expected unqualified-id before 'if'
+10425 |   if (sc.Input[14].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:10527:3: error: expected unqualified-id before 'if'
+10527 |   if (sc.Input[22].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:10604:3: error: expected unqualified-id before 'if'
+10604 |   if (sc.Input[28].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:10725:17: error: expected constructor, destructor, or type conversion before '(' token
+10725 |   CheckAutoFlush(sc);
+      |                 ^
+MIA_Dumper_G3_Unifier.cpp:10726:16: error: expected constructor, destructor, or type conversion before '(' token
+10726 |   UpdateMetrics(sc, "study");
+      |                ^
+MIA_Dumper_G3_Unifier.cpp:10729:3: error: expected unqualified-id before 'if'
+10729 |   if (sc.Input[25].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:10802:3: error: expected unqualified-id before 'if'
+10802 |   if (sc.Input[33].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:10903:3: error: expected unqualified-id before 'if'
+10903 |   if (sc.Input[35].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:10983:3: error: expected unqualified-id before 'if'
+10983 |   if (sc.Input[37].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:11078:3: error: expected unqualified-id before 'if'
+11078 |   if (sc.LastCallToFunction) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:11241:1: error: expected declaration before '}' token
+11241 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:11245:7: error: expected unqualified-id before 'if'
+11245 |       if (s_stale_loops_by_chart[sc.ChartNumber] >= STALE_LIMIT) {
+      |       ^~
+MIA_Dumper_G3_Unifier.cpp:11254:5: error: expected declaration before '}' token
+11254 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:11257:9: error: redefinition of 'int end'
+11257 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:6646:9: note: 'int end' previously defined here
+ 6646 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:11257:19: error: 'sz' was not declared in this scope
+11257 |     int end = min(sz, start + BATCH_SIZE);
+      |                   ^~
+MIA_Dumper_G3_Unifier.cpp:11257:23: error: 'start' was not declared in this scope; did you mean 'stat'?
+11257 |     int end = min(sz, start + BATCH_SIZE);
+      |                       ^~~~~
+      |                       stat
+MIA_Dumper_G3_Unifier.cpp:11257:31: error: 'BATCH_SIZE' was not declared in this scope; did you mean 'IDC_SIZE'?
+11257 |     int end = min(sz, start + BATCH_SIZE);
+      |                               ^~~~~~~~~~
+      |                               IDC_SIZE
+MIA_Dumper_G3_Unifier.cpp:11260:14: error: redefinition of 'uint32_t last_seq_seen'
+11260 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6649:14: note: 'uint32_t last_seq_seen' previously defined here
+ 6649 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:11260:30: error: 'g_LastSeq_by_chart' was not declared in this scope
+11260 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:11260:49: error: 'sc' was not declared in this scope; did you mean 's_sc'?
+11260 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                                                 ^~
+      |                                                 s_sc
+MIA_Dumper_G3_Unifier.cpp:11261:16: error: redefinition of 'SCDateTime last_time'
+11261 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6650:16: note: 'SCDateTime last_time' previously declared here
+ 6650 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:11261:30: error: 's_LastTsTime_by_chart' was not declared in this scope
+11261 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:11261:52: error: 'sc' was not declared in this scope; did you mean 's_sc'?
+11261 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                                                    ^~
+      |                                                    s_sc
+MIA_Dumper_G3_Unifier.cpp:11262:9: error: redefinition of 'int processed_count'
+11262 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6651:9: note: 'int processed_count' previously defined here
+ 6651 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:11264:5: error: expected unqualified-id before 'for'
+11264 |     for (int i = start; i < end; ++i) {
+      |     ^~~
+MIA_Dumper_G3_Unifier.cpp:11264:25: error: 'i' does not name a type
+11264 |     for (int i = start; i < end; ++i) {
+      |                         ^
+MIA_Dumper_G3_Unifier.cpp:11264:34: error: expected unqualified-id before '++' token
+11264 |     for (int i = start; i < end; ++i) {
+      |                                  ^~
+MIA_Dumper_G3_Unifier.cpp:11277:5: error: expected unqualified-id before 'if'
+11277 |     if (g_UseSeq) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:11284:7: error: expected unqualified-id before 'else'
+11284 |     } else {
+      |       ^~~~
+MIA_Dumper_G3_Unifier.cpp:11295:5: error: 's_LastTsTime_by_chart' does not name a type
+11295 |     s_LastTsTime_by_chart[sc.ChartNumber] = last_time;
+      |     ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:11298:5: error: expected unqualified-id before 'if'
+11298 |     if (ShouldLog(sc, LOG_VERBOSE) && processed_count > 0) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:11304:3: error: expected declaration before '}' token
+11304 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:11307:3: error: expected unqualified-id before 'if'
+11307 |   if (sc.Input[14].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:11409:3: error: expected unqualified-id before 'if'
+11409 |   if (sc.Input[22].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:11486:3: error: expected unqualified-id before 'if'
+11486 |   if (sc.Input[28].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:11607:17: error: expected constructor, destructor, or type conversion before '(' token
+11607 |   CheckAutoFlush(sc);
+      |                 ^
+MIA_Dumper_G3_Unifier.cpp:11608:16: error: expected constructor, destructor, or type conversion before '(' token
+11608 |   UpdateMetrics(sc, "study");
+      |                ^
+MIA_Dumper_G3_Unifier.cpp:11611:3: error: expected unqualified-id before 'if'
+11611 |   if (sc.Input[25].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:11684:3: error: expected unqualified-id before 'if'
+11684 |   if (sc.Input[33].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:11785:3: error: expected unqualified-id before 'if'
+11785 |   if (sc.Input[35].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:11865:3: error: expected unqualified-id before 'if'
+11865 |   if (sc.Input[37].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:11960:3: error: expected unqualified-id before 'if'
+11960 |   if (sc.LastCallToFunction) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:12123:1: error: expected declaration before '}' token
+12123 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:12127:7: error: expected unqualified-id before 'if'
+12127 |       if (s_stale_loops_by_chart[sc.ChartNumber] >= STALE_LIMIT) {
+      |       ^~
+MIA_Dumper_G3_Unifier.cpp:12136:5: error: expected declaration before '}' token
+12136 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:12139:9: error: redefinition of 'int end'
+12139 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:6646:9: note: 'int end' previously defined here
+ 6646 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:12139:19: error: 'sz' was not declared in this scope
+12139 |     int end = min(sz, start + BATCH_SIZE);
+      |                   ^~
+MIA_Dumper_G3_Unifier.cpp:12139:23: error: 'start' was not declared in this scope; did you mean 'stat'?
+12139 |     int end = min(sz, start + BATCH_SIZE);
+      |                       ^~~~~
+      |                       stat
+MIA_Dumper_G3_Unifier.cpp:12139:31: error: 'BATCH_SIZE' was not declared in this scope; did you mean 'IDC_SIZE'?
+12139 |     int end = min(sz, start + BATCH_SIZE);
+      |                               ^~~~~~~~~~
+      |                               IDC_SIZE
+MIA_Dumper_G3_Unifier.cpp:12142:14: error: redefinition of 'uint32_t last_seq_seen'
+12142 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6649:14: note: 'uint32_t last_seq_seen' previously defined here
+ 6649 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:12142:30: error: 'g_LastSeq_by_chart' was not declared in this scope
+12142 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:12142:49: error: 'sc' was not declared in this scope; did you mean 's_sc'?
+12142 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                                                 ^~
+      |                                                 s_sc
+MIA_Dumper_G3_Unifier.cpp:12143:16: error: redefinition of 'SCDateTime last_time'
+12143 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6650:16: note: 'SCDateTime last_time' previously declared here
+ 6650 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:12143:30: error: 's_LastTsTime_by_chart' was not declared in this scope
+12143 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:12143:52: error: 'sc' was not declared in this scope; did you mean 's_sc'?
+12143 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                                                    ^~
+      |                                                    s_sc
+MIA_Dumper_G3_Unifier.cpp:12144:9: error: redefinition of 'int processed_count'
+12144 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6651:9: note: 'int processed_count' previously defined here
+ 6651 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:12146:5: error: expected unqualified-id before 'for'
+12146 |     for (int i = start; i < end; ++i) {
+      |     ^~~
+MIA_Dumper_G3_Unifier.cpp:12146:25: error: 'i' does not name a type
+12146 |     for (int i = start; i < end; ++i) {
+      |                         ^
+MIA_Dumper_G3_Unifier.cpp:12146:34: error: expected unqualified-id before '++' token
+12146 |     for (int i = start; i < end; ++i) {
+      |                                  ^~
+MIA_Dumper_G3_Unifier.cpp:12159:5: error: expected unqualified-id before 'if'
+12159 |     if (g_UseSeq) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:12166:7: error: expected unqualified-id before 'else'
+12166 |     } else {
+      |       ^~~~
+MIA_Dumper_G3_Unifier.cpp:12177:5: error: 's_LastTsTime_by_chart' does not name a type
+12177 |     s_LastTsTime_by_chart[sc.ChartNumber] = last_time;
+      |     ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:12180:5: error: expected unqualified-id before 'if'
+12180 |     if (ShouldLog(sc, LOG_VERBOSE) && processed_count > 0) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:12186:3: error: expected declaration before '}' token
+12186 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:12189:3: error: expected unqualified-id before 'if'
+12189 |   if (sc.Input[14].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:12291:3: error: expected unqualified-id before 'if'
+12291 |   if (sc.Input[22].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:12368:3: error: expected unqualified-id before 'if'
+12368 |   if (sc.Input[28].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:12489:17: error: expected constructor, destructor, or type conversion before '(' token
+12489 |   CheckAutoFlush(sc);
+      |                 ^
+MIA_Dumper_G3_Unifier.cpp:12490:16: error: expected constructor, destructor, or type conversion before '(' token
+12490 |   UpdateMetrics(sc, "study");
+      |                ^
+MIA_Dumper_G3_Unifier.cpp:12493:3: error: expected unqualified-id before 'if'
+12493 |   if (sc.Input[25].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:12566:3: error: expected unqualified-id before 'if'
+12566 |   if (sc.Input[33].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:12667:3: error: expected unqualified-id before 'if'
+12667 |   if (sc.Input[35].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:12747:3: error: expected unqualified-id before 'if'
+12747 |   if (sc.Input[37].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:12842:3: error: expected unqualified-id before 'if'
+12842 |   if (sc.LastCallToFunction) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:13005:1: error: expected declaration before '}' token
+13005 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:13086:5: error: expected unqualified-id before 'if'
+13086 |     if (period_ok || changed) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:13135:19: error: expected constructor, destructor, or type conversion before ';' token
+13135 |     CloseUnified();
+      |                   ^
+MIA_Dumper_G3_Unifier.cpp:13137:5: error: expected unqualified-id before 'if'
+13137 |     if (ShouldLog(sc, LOG_KEY)) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:13141:5: error: expected unqualified-id before 'if'
+13141 |     if (sc.Input[45].GetYesNo()) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:13145:3: error: expected declaration before '}' token
+13145 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:13146:1: error: expected declaration before '}' token
+13146 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:13150:7: error: expected unqualified-id before 'if'
+13150 |       if (s_stale_loops_by_chart[sc.ChartNumber] >= STALE_LIMIT) {
+      |       ^~
+MIA_Dumper_G3_Unifier.cpp:13159:5: error: expected declaration before '}' token
+13159 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:13162:9: error: redefinition of 'int end'
+13162 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:6646:9: note: 'int end' previously defined here
+ 6646 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:13162:19: error: 'sz' was not declared in this scope
+13162 |     int end = min(sz, start + BATCH_SIZE);
+      |                   ^~
+MIA_Dumper_G3_Unifier.cpp:13162:23: error: 'start' was not declared in this scope; did you mean 'stat'?
+13162 |     int end = min(sz, start + BATCH_SIZE);
+      |                       ^~~~~
+      |                       stat
+MIA_Dumper_G3_Unifier.cpp:13162:31: error: 'BATCH_SIZE' was not declared in this scope; did you mean 'IDC_SIZE'?
+13162 |     int end = min(sz, start + BATCH_SIZE);
+      |                               ^~~~~~~~~~
+      |                               IDC_SIZE
+MIA_Dumper_G3_Unifier.cpp:13165:14: error: redefinition of 'uint32_t last_seq_seen'
+13165 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6649:14: note: 'uint32_t last_seq_seen' previously defined here
+ 6649 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13165:30: error: 'g_LastSeq_by_chart' was not declared in this scope
+13165 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13165:49: error: 'sc' was not declared in this scope
+13165 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                                                 ^~
+MIA_Dumper_G3_Unifier.cpp:13166:16: error: redefinition of 'SCDateTime last_time'
+13166 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6650:16: note: 'SCDateTime last_time' previously declared here
+ 6650 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13166:30: error: 's_LastTsTime_by_chart' was not declared in this scope
+13166 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13166:52: error: 'sc' was not declared in this scope
+13166 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                                                    ^~
+MIA_Dumper_G3_Unifier.cpp:13167:9: error: redefinition of 'int processed_count'
+13167 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6651:9: note: 'int processed_count' previously defined here
+ 6651 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13169:5: error: expected unqualified-id before 'for'
+13169 |     for (int i = start; i < end; ++i) {
+      |     ^~~
+MIA_Dumper_G3_Unifier.cpp:13169:25: error: 'i' does not name a type
+13169 |     for (int i = start; i < end; ++i) {
+      |                         ^
+MIA_Dumper_G3_Unifier.cpp:13169:34: error: expected unqualified-id before '++' token
+13169 |     for (int i = start; i < end; ++i) {
+      |                                  ^~
+MIA_Dumper_G3_Unifier.cpp:13182:5: error: expected unqualified-id before 'if'
+13182 |     if (g_UseSeq) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:13189:7: error: expected unqualified-id before 'else'
+13189 |     } else {
+      |       ^~~~
+MIA_Dumper_G3_Unifier.cpp:13200:5: error: 's_LastTsTime_by_chart' does not name a type
+13200 |     s_LastTsTime_by_chart[sc.ChartNumber] = last_time;
+      |     ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13203:5: error: expected unqualified-id before 'if'
+13203 |     if (ShouldLog(sc, LOG_VERBOSE) && processed_count > 0) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:13209:3: error: expected declaration before '}' token
+13209 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:13212:3: error: expected unqualified-id before 'if'
+13212 |   if (sc.Input[14].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:13314:3: error: expected unqualified-id before 'if'
+13314 |   if (sc.Input[22].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:13391:3: error: expected unqualified-id before 'if'
+13391 |   if (sc.Input[28].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:13512:17: error: expected constructor, destructor, or type conversion before '(' token
+13512 |   CheckAutoFlush(sc);
+      |                 ^
+MIA_Dumper_G3_Unifier.cpp:13513:16: error: expected constructor, destructor, or type conversion before '(' token
+13513 |   UpdateMetrics(sc, "study");
+      |                ^
+MIA_Dumper_G3_Unifier.cpp:13516:3: error: expected unqualified-id before 'if'
+13516 |   if (sc.Input[25].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:13589:3: error: expected unqualified-id before 'if'
+13589 |   if (sc.Input[33].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:13690:3: error: expected unqualified-id before 'if'
+13690 |   if (sc.Input[35].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:13770:3: error: expected unqualified-id before 'if'
+13770 |   if (sc.Input[37].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:13865:3: error: expected unqualified-id before 'if'
+13865 |   if (sc.LastCallToFunction) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:14028:1: error: expected declaration before '}' token
+14028 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:14032:12: error: redefinition of 'double vwap'
+14032 |     double vwap = NAN; // ton VWAP courant ou NAN
+      |            ^~~~
+MIA_Dumper_G3_Unifier.cpp:13009:12: note: 'double vwap' previously defined here
+13009 |     double vwap = NAN; // ton VWAP courant ou NAN
+      |            ^~~~
+MIA_Dumper_G3_Unifier.cpp:14033:12: error: redefinition of 'double vva'
+14033 |     double vva  = NAN; // ton VVA  courant ou NAN
+      |            ^~~
+MIA_Dumper_G3_Unifier.cpp:13010:12: note: 'double vva' previously defined here
+13010 |     double vva  = NAN; // ton VVA  courant ou NAN
+      |            ^~~
+MIA_Dumper_G3_Unifier.cpp:14034:12: error: redefinition of 'double atr'
+14034 |     double atr  = NAN; // ton ATR  courant ou NAN
+      |            ^~~
+MIA_Dumper_G3_Unifier.cpp:13011:12: note: 'double atr' previously defined here
+13011 |     double atr  = NAN; // ton ATR  courant ou NAN
+      |            ^~~
+MIA_Dumper_G3_Unifier.cpp:14035:12: error: redefinition of 'double vix'
+14035 |     double vix  = NAN; // ton VIX  courant ou NAN
+      |            ^~~
+MIA_Dumper_G3_Unifier.cpp:13012:12: note: 'double vix' previously defined here
+13012 |     double vix  = NAN; // ton VIX  courant ou NAN
+      |            ^~~
+MIA_Dumper_G3_Unifier.cpp:14037:12: error: redefinition of 'double g1'
+14037 |     double g1 = NAN, g2 = NAN, g3 = NAN, g4 = NAN, g5 = NAN;
+      |            ^~
+MIA_Dumper_G3_Unifier.cpp:13014:12: note: 'double g1' previously defined here
+13014 |     double g1 = NAN, g2 = NAN, g3 = NAN, g4 = NAN, g5 = NAN;
+      |            ^~
+MIA_Dumper_G3_Unifier.cpp:14037:22: error: redefinition of 'double g2'
+14037 |     double g1 = NAN, g2 = NAN, g3 = NAN, g4 = NAN, g5 = NAN;
+      |                      ^~
+MIA_Dumper_G3_Unifier.cpp:13014:22: note: 'double g2' previously defined here
+13014 |     double g1 = NAN, g2 = NAN, g3 = NAN, g4 = NAN, g5 = NAN;
+      |                      ^~
+MIA_Dumper_G3_Unifier.cpp:14037:32: error: redefinition of 'double g3'
+14037 |     double g1 = NAN, g2 = NAN, g3 = NAN, g4 = NAN, g5 = NAN;
+      |                                ^~
+MIA_Dumper_G3_Unifier.cpp:13014:32: note: 'double g3' previously defined here
+13014 |     double g1 = NAN, g2 = NAN, g3 = NAN, g4 = NAN, g5 = NAN;
+      |                                ^~
+MIA_Dumper_G3_Unifier.cpp:14037:42: error: redefinition of 'double g4'
+14037 |     double g1 = NAN, g2 = NAN, g3 = NAN, g4 = NAN, g5 = NAN;
+      |                                          ^~
+MIA_Dumper_G3_Unifier.cpp:13014:42: note: 'double g4' previously defined here
+13014 |     double g1 = NAN, g2 = NAN, g3 = NAN, g4 = NAN, g5 = NAN;
+      |                                          ^~
+MIA_Dumper_G3_Unifier.cpp:14037:52: error: redefinition of 'double g5'
+14037 |     double g1 = NAN, g2 = NAN, g3 = NAN, g4 = NAN, g5 = NAN;
+      |                                                    ^~
+MIA_Dumper_G3_Unifier.cpp:13014:52: note: 'double g5' previously defined here
+13014 |     double g1 = NAN, g2 = NAN, g3 = NAN, g4 = NAN, g5 = NAN;
+      |                                                    ^~
+MIA_Dumper_G3_Unifier.cpp:14038:12: error: redefinition of 'double g6'
+14038 |     double g6 = NAN, g7 = NAN, g8 = NAN, g9 = NAN, g10 = NAN;
+      |            ^~
+MIA_Dumper_G3_Unifier.cpp:13015:12: note: 'double g6' previously defined here
+13015 |     double g6 = NAN, g7 = NAN, g8 = NAN, g9 = NAN, g10 = NAN;
+      |            ^~
+MIA_Dumper_G3_Unifier.cpp:14038:22: error: redefinition of 'double g7'
+14038 |     double g6 = NAN, g7 = NAN, g8 = NAN, g9 = NAN, g10 = NAN;
+      |                      ^~
+MIA_Dumper_G3_Unifier.cpp:13015:22: note: 'double g7' previously defined here
+13015 |     double g6 = NAN, g7 = NAN, g8 = NAN, g9 = NAN, g10 = NAN;
+      |                      ^~
+MIA_Dumper_G3_Unifier.cpp:14038:32: error: redefinition of 'double g8'
+14038 |     double g6 = NAN, g7 = NAN, g8 = NAN, g9 = NAN, g10 = NAN;
+      |                                ^~
+MIA_Dumper_G3_Unifier.cpp:13015:32: note: 'double g8' previously defined here
+13015 |     double g6 = NAN, g7 = NAN, g8 = NAN, g9 = NAN, g10 = NAN;
+      |                                ^~
+MIA_Dumper_G3_Unifier.cpp:14038:42: error: redefinition of 'double g9'
+14038 |     double g6 = NAN, g7 = NAN, g8 = NAN, g9 = NAN, g10 = NAN;
+      |                                          ^~
+MIA_Dumper_G3_Unifier.cpp:13015:42: note: 'double g9' previously defined here
+13015 |     double g6 = NAN, g7 = NAN, g8 = NAN, g9 = NAN, g10 = NAN;
+      |                                          ^~
+MIA_Dumper_G3_Unifier.cpp:14038:52: error: redefinition of 'double g10'
+14038 |     double g6 = NAN, g7 = NAN, g8 = NAN, g9 = NAN, g10 = NAN;
+      |                                                    ^~~
+MIA_Dumper_G3_Unifier.cpp:13015:52: note: 'double g10' previously defined here
+13015 |     double g6 = NAN, g7 = NAN, g8 = NAN, g9 = NAN, g10 = NAN;
+      |                                                    ^~~
+MIA_Dumper_G3_Unifier.cpp:14040:12: error: redefinition of 'double mq_call_resistance'
+14040 |     double mq_call_resistance = NAN, mq_put_support = NAN, mq_hvl = NAN;
+      |            ^~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13017:12: note: 'double mq_call_resistance' previously defined here
+13017 |     double mq_call_resistance = NAN, mq_put_support = NAN, mq_hvl = NAN;
+      |            ^~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14040:38: error: redefinition of 'double mq_put_support'
+14040 |     double mq_call_resistance = NAN, mq_put_support = NAN, mq_hvl = NAN;
+      |                                      ^~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13017:38: note: 'double mq_put_support' previously defined here
+13017 |     double mq_call_resistance = NAN, mq_put_support = NAN, mq_hvl = NAN;
+      |                                      ^~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14040:60: error: redefinition of 'double mq_hvl'
+14040 |     double mq_call_resistance = NAN, mq_put_support = NAN, mq_hvl = NAN;
+      |                                                            ^~~~~~
+MIA_Dumper_G3_Unifier.cpp:13017:60: note: 'double mq_hvl' previously defined here
+13017 |     double mq_call_resistance = NAN, mq_put_support = NAN, mq_hvl = NAN;
+      |                                                            ^~~~~~
+MIA_Dumper_G3_Unifier.cpp:14042:12: error: redefinition of 'double pvwap'
+14042 |     double pvwap = NAN, pvwap_up1 = NAN, pvwap_dn1 = NAN, pvwap_up2 = NAN, pvwap_dn2 = NAN;
+      |            ^~~~~
+MIA_Dumper_G3_Unifier.cpp:13019:12: note: 'double pvwap' previously defined here
+13019 |     double pvwap = NAN, pvwap_up1 = NAN, pvwap_dn1 = NAN, pvwap_up2 = NAN, pvwap_dn2 = NAN;
+      |            ^~~~~
+MIA_Dumper_G3_Unifier.cpp:14042:25: error: redefinition of 'double pvwap_up1'
+14042 |     double pvwap = NAN, pvwap_up1 = NAN, pvwap_dn1 = NAN, pvwap_up2 = NAN, pvwap_dn2 = NAN;
+      |                         ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13019:25: note: 'double pvwap_up1' previously defined here
+13019 |     double pvwap = NAN, pvwap_up1 = NAN, pvwap_dn1 = NAN, pvwap_up2 = NAN, pvwap_dn2 = NAN;
+      |                         ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14042:42: error: redefinition of 'double pvwap_dn1'
+14042 |     double pvwap = NAN, pvwap_up1 = NAN, pvwap_dn1 = NAN, pvwap_up2 = NAN, pvwap_dn2 = NAN;
+      |                                          ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13019:42: note: 'double pvwap_dn1' previously defined here
+13019 |     double pvwap = NAN, pvwap_up1 = NAN, pvwap_dn1 = NAN, pvwap_up2 = NAN, pvwap_dn2 = NAN;
+      |                                          ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14042:59: error: redefinition of 'double pvwap_up2'
+14042 |     double pvwap = NAN, pvwap_up1 = NAN, pvwap_dn1 = NAN, pvwap_up2 = NAN, pvwap_dn2 = NAN;
+      |                                                           ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13019:59: note: 'double pvwap_up2' previously defined here
+13019 |     double pvwap = NAN, pvwap_up1 = NAN, pvwap_dn1 = NAN, pvwap_up2 = NAN, pvwap_dn2 = NAN;
+      |                                                           ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14042:76: error: redefinition of 'double pvwap_dn2'
+14042 |     double pvwap = NAN, pvwap_up1 = NAN, pvwap_dn1 = NAN, pvwap_up2 = NAN, pvwap_dn2 = NAN;
+      |                                                                            ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13019:76: note: 'double pvwap_dn2' previously defined here
+13019 |     double pvwap = NAN, pvwap_up1 = NAN, pvwap_dn1 = NAN, pvwap_up2 = NAN, pvwap_dn2 = NAN;
+      |                                                                            ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14044:12: error: redefinition of 'double cum_delta'
+14044 |     double cum_delta = NAN, cum_delta_day = NAN, cum_delta_session = NAN;
+      |            ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13021:12: note: 'double cum_delta' previously defined here
+13021 |     double cum_delta = NAN, cum_delta_day = NAN, cum_delta_session = NAN;
+      |            ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14044:29: error: redefinition of 'double cum_delta_day'
+14044 |     double cum_delta = NAN, cum_delta_day = NAN, cum_delta_session = NAN;
+      |                             ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13021:29: note: 'double cum_delta_day' previously defined here
+13021 |     double cum_delta = NAN, cum_delta_day = NAN, cum_delta_session = NAN;
+      |                             ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14044:50: error: redefinition of 'double cum_delta_session'
+14044 |     double cum_delta = NAN, cum_delta_day = NAN, cum_delta_session = NAN;
+      |                                                  ^~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13021:50: note: 'double cum_delta_session' previously defined here
+13021 |     double cum_delta = NAN, cum_delta_day = NAN, cum_delta_session = NAN;
+      |                                                  ^~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14046:12: error: redefinition of 'double nbcv'
+14046 |     double nbcv = NAN, correlation = NAN;
+      |            ^~~~
+MIA_Dumper_G3_Unifier.cpp:13023:12: note: 'double nbcv' previously defined here
+13023 |     double nbcv = NAN, correlation = NAN;
+      |            ^~~~
+MIA_Dumper_G3_Unifier.cpp:14046:24: error: redefinition of 'double correlation'
+14046 |     double nbcv = NAN, correlation = NAN;
+      |                        ^~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13023:24: note: 'double correlation' previously defined here
+13023 |     double nbcv = NAN, correlation = NAN;
+      |                        ^~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14048:12: error: redefinition of 'double blind_spot_1'
+14048 |     double blind_spot_1 = NAN, blind_spot_2 = NAN, blind_spot_3 = NAN, blind_spot_4 = NAN, blind_spot_5 = NAN;
+      |            ^~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13025:12: note: 'double blind_spot_1' previously defined here
+13025 |     double blind_spot_1 = NAN, blind_spot_2 = NAN, blind_spot_3 = NAN, blind_spot_4 = NAN, blind_spot_5 = NAN;
+      |            ^~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14048:32: error: redefinition of 'double blind_spot_2'
+14048 |     double blind_spot_1 = NAN, blind_spot_2 = NAN, blind_spot_3 = NAN, blind_spot_4 = NAN, blind_spot_5 = NAN;
+      |                                ^~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13025:32: note: 'double blind_spot_2' previously defined here
+13025 |     double blind_spot_1 = NAN, blind_spot_2 = NAN, blind_spot_3 = NAN, blind_spot_4 = NAN, blind_spot_5 = NAN;
+      |                                ^~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14048:52: error: redefinition of 'double blind_spot_3'
+14048 |     double blind_spot_1 = NAN, blind_spot_2 = NAN, blind_spot_3 = NAN, blind_spot_4 = NAN, blind_spot_5 = NAN;
+      |                                                    ^~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13025:52: note: 'double blind_spot_3' previously defined here
+13025 |     double blind_spot_1 = NAN, blind_spot_2 = NAN, blind_spot_3 = NAN, blind_spot_4 = NAN, blind_spot_5 = NAN;
+      |                                                    ^~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14048:72: error: redefinition of 'double blind_spot_4'
+14048 |     double blind_spot_1 = NAN, blind_spot_2 = NAN, blind_spot_3 = NAN, blind_spot_4 = NAN, blind_spot_5 = NAN;
+      |                                                                        ^~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13025:72: note: 'double blind_spot_4' previously defined here
+13025 |     double blind_spot_1 = NAN, blind_spot_2 = NAN, blind_spot_3 = NAN, blind_spot_4 = NAN, blind_spot_5 = NAN;
+      |                                                                        ^~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14048:92: error: redefinition of 'double blind_spot_5'
+14048 |     double blind_spot_1 = NAN, blind_spot_2 = NAN, blind_spot_3 = NAN, blind_spot_4 = NAN, blind_spot_5 = NAN;
+      |                                                                                            ^~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13025:92: note: 'double blind_spot_5' previously defined here
+13025 |     double blind_spot_1 = NAN, blind_spot_2 = NAN, blind_spot_3 = NAN, blind_spot_4 = NAN, blind_spot_5 = NAN;
+      |                                                                                            ^~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14050:12: error: redefinition of 'double ohlc_o'
+14050 |     double ohlc_o = NAN, ohlc_h = NAN, ohlc_l = NAN, ohlc_c = NAN, ohlc_v = NAN;
+      |            ^~~~~~
+MIA_Dumper_G3_Unifier.cpp:13027:12: note: 'double ohlc_o' previously defined here
+13027 |     double ohlc_o = NAN, ohlc_h = NAN, ohlc_l = NAN, ohlc_c = NAN, ohlc_v = NAN;
+      |            ^~~~~~
+MIA_Dumper_G3_Unifier.cpp:14050:26: error: redefinition of 'double ohlc_h'
+14050 |     double ohlc_o = NAN, ohlc_h = NAN, ohlc_l = NAN, ohlc_c = NAN, ohlc_v = NAN;
+      |                          ^~~~~~
+MIA_Dumper_G3_Unifier.cpp:13027:26: note: 'double ohlc_h' previously defined here
+13027 |     double ohlc_o = NAN, ohlc_h = NAN, ohlc_l = NAN, ohlc_c = NAN, ohlc_v = NAN;
+      |                          ^~~~~~
+MIA_Dumper_G3_Unifier.cpp:14050:40: error: redefinition of 'double ohlc_l'
+14050 |     double ohlc_o = NAN, ohlc_h = NAN, ohlc_l = NAN, ohlc_c = NAN, ohlc_v = NAN;
+      |                                        ^~~~~~
+MIA_Dumper_G3_Unifier.cpp:13027:40: note: 'double ohlc_l' previously defined here
+13027 |     double ohlc_o = NAN, ohlc_h = NAN, ohlc_l = NAN, ohlc_c = NAN, ohlc_v = NAN;
+      |                                        ^~~~~~
+MIA_Dumper_G3_Unifier.cpp:14050:54: error: redefinition of 'double ohlc_c'
+14050 |     double ohlc_o = NAN, ohlc_h = NAN, ohlc_l = NAN, ohlc_c = NAN, ohlc_v = NAN;
+      |                                                      ^~~~~~
+MIA_Dumper_G3_Unifier.cpp:13027:54: note: 'double ohlc_c' previously defined here
+13027 |     double ohlc_o = NAN, ohlc_h = NAN, ohlc_l = NAN, ohlc_c = NAN, ohlc_v = NAN;
+      |                                                      ^~~~~~
+MIA_Dumper_G3_Unifier.cpp:14050:68: error: redefinition of 'double ohlc_v'
+14050 |     double ohlc_o = NAN, ohlc_h = NAN, ohlc_l = NAN, ohlc_c = NAN, ohlc_v = NAN;
+      |                                                                    ^~~~~~
+MIA_Dumper_G3_Unifier.cpp:13027:68: note: 'double ohlc_v' previously defined here
+13027 |     double ohlc_o = NAN, ohlc_h = NAN, ohlc_l = NAN, ohlc_c = NAN, ohlc_v = NAN;
+      |                                                                    ^~~~~~
+MIA_Dumper_G3_Unifier.cpp:14051:12: error: redefinition of 'double ohlc_bidvol'
+14051 |     double ohlc_bidvol = NAN, ohlc_askvol = NAN;
+      |            ^~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13028:12: note: 'double ohlc_bidvol' previously defined here
+13028 |     double ohlc_bidvol = NAN, ohlc_askvol = NAN;
+      |            ^~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14051:31: error: redefinition of 'double ohlc_askvol'
+14051 |     double ohlc_bidvol = NAN, ohlc_askvol = NAN;
+      |                               ^~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13028:31: note: 'double ohlc_askvol' previously defined here
+13028 |     double ohlc_bidvol = NAN, ohlc_askvol = NAN;
+      |                               ^~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14053:12: error: redefinition of 'double trade_buy_trades'
+14053 |     double trade_buy_trades = NAN, trade_sell_trades = NAN, trade_buy_vol = NAN, trade_sell_vol = NAN;
+      |            ^~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13030:12: note: 'double trade_buy_trades' previously defined here
+13030 |     double trade_buy_trades = NAN, trade_sell_trades = NAN, trade_buy_vol = NAN, trade_sell_vol = NAN;
+      |            ^~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14053:36: error: redefinition of 'double trade_sell_trades'
+14053 |     double trade_buy_trades = NAN, trade_sell_trades = NAN, trade_buy_vol = NAN, trade_sell_vol = NAN;
+      |                                    ^~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13030:36: note: 'double trade_sell_trades' previously defined here
+13030 |     double trade_buy_trades = NAN, trade_sell_trades = NAN, trade_buy_vol = NAN, trade_sell_vol = NAN;
+      |                                    ^~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14053:61: error: redefinition of 'double trade_buy_vol'
+14053 |     double trade_buy_trades = NAN, trade_sell_trades = NAN, trade_buy_vol = NAN, trade_sell_vol = NAN;
+      |                                                             ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13030:61: note: 'double trade_buy_vol' previously defined here
+13030 |     double trade_buy_trades = NAN, trade_sell_trades = NAN, trade_buy_vol = NAN, trade_sell_vol = NAN;
+      |                                                             ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14053:82: error: redefinition of 'double trade_sell_vol'
+14053 |     double trade_buy_trades = NAN, trade_sell_trades = NAN, trade_buy_vol = NAN, trade_sell_vol = NAN;
+      |                                                                                  ^~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13030:82: note: 'double trade_sell_vol' previously defined here
+13030 |     double trade_buy_trades = NAN, trade_sell_trades = NAN, trade_buy_vol = NAN, trade_sell_vol = NAN;
+      |                                                                                  ^~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14055:14: error: redefinition of 'uint64_t now'
+14055 |     uint64_t now = NowMs();
+      |              ^~~
+MIA_Dumper_G3_Unifier.cpp:13032:14: note: 'uint64_t now' previously declared here
+13032 |     uint64_t now = NowMs();
+      |              ^~~
+MIA_Dumper_G3_Unifier.cpp:14056:10: error: redefinition of 'bool period_ok'
+14056 |     bool period_ok = (now - g_lastMetricsEmitMs) >= g_metricsPeriodMs.load();
+      |          ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13033:10: note: 'bool period_ok' previously declared here
+13033 |     bool period_ok = (now - g_lastMetricsEmitMs) >= g_metricsPeriodMs.load();
+      |          ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14057:10: error: conflicting declaration 'auto _chg'
+14057 |     auto _chg = [](double a, double b, double eps) {
+      |          ^~~~
+MIA_Dumper_G3_Unifier.cpp:13034:10: note: previous declaration as '<lambda(double, double, double)> _chg'
+13034 |     auto _chg = [](double a, double b, double eps) {
+      |          ^~~~
+MIA_Dumper_G3_Unifier.cpp:14062:10: error: redefinition of 'bool changed'
+14062 |     bool changed = _chg(vwap, g_lastMetrics.vwap, 0.25)
+      |          ^~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13039:10: note: 'bool changed' previously declared here
+13039 |     bool changed = _chg(vwap, g_lastMetrics.vwap, 0.25)
+      |          ^~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14109:5: error: expected unqualified-id before 'if'
+14109 |     if (period_ok || changed) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:14158:19: error: expected constructor, destructor, or type conversion before ';' token
+14158 |     CloseUnified();
+      |                   ^
+MIA_Dumper_G3_Unifier.cpp:14160:5: error: expected unqualified-id before 'if'
+14160 |     if (ShouldLog(sc, LOG_KEY)) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:14164:5: error: expected unqualified-id before 'if'
+14164 |     if (sc.Input[45].GetYesNo()) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:14168:3: error: expected declaration before '}' token
+14168 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:14169:1: error: expected declaration before '}' token
+14169 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:14173:7: error: expected unqualified-id before 'if'
+14173 |       if (s_stale_loops_by_chart[sc.ChartNumber] >= STALE_LIMIT) {
+      |       ^~
+MIA_Dumper_G3_Unifier.cpp:14182:5: error: expected declaration before '}' token
+14182 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:14185:9: error: redefinition of 'int end'
+14185 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:6646:9: note: 'int end' previously defined here
+ 6646 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:14185:19: error: 'sz' was not declared in this scope
+14185 |     int end = min(sz, start + BATCH_SIZE);
+      |                   ^~
+MIA_Dumper_G3_Unifier.cpp:14185:23: error: 'start' was not declared in this scope; did you mean 'stat'?
+14185 |     int end = min(sz, start + BATCH_SIZE);
+      |                       ^~~~~
+      |                       stat
+MIA_Dumper_G3_Unifier.cpp:14185:31: error: 'BATCH_SIZE' was not declared in this scope; did you mean 'IDC_SIZE'?
+14185 |     int end = min(sz, start + BATCH_SIZE);
+      |                               ^~~~~~~~~~
+      |                               IDC_SIZE
+MIA_Dumper_G3_Unifier.cpp:14188:14: error: redefinition of 'uint32_t last_seq_seen'
+14188 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6649:14: note: 'uint32_t last_seq_seen' previously defined here
+ 6649 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14188:30: error: 'g_LastSeq_by_chart' was not declared in this scope
+14188 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14188:49: error: 'sc' was not declared in this scope
+14188 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                                                 ^~
+MIA_Dumper_G3_Unifier.cpp:14189:16: error: redefinition of 'SCDateTime last_time'
+14189 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6650:16: note: 'SCDateTime last_time' previously declared here
+ 6650 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14189:30: error: 's_LastTsTime_by_chart' was not declared in this scope
+14189 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14189:52: error: 'sc' was not declared in this scope
+14189 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                                                    ^~
+MIA_Dumper_G3_Unifier.cpp:14190:9: error: redefinition of 'int processed_count'
+14190 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6651:9: note: 'int processed_count' previously defined here
+ 6651 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14192:5: error: expected unqualified-id before 'for'
+14192 |     for (int i = start; i < end; ++i) {
+      |     ^~~
+MIA_Dumper_G3_Unifier.cpp:14192:25: error: 'i' does not name a type
+14192 |     for (int i = start; i < end; ++i) {
+      |                         ^
+MIA_Dumper_G3_Unifier.cpp:14192:34: error: expected unqualified-id before '++' token
+14192 |     for (int i = start; i < end; ++i) {
+      |                                  ^~
+MIA_Dumper_G3_Unifier.cpp:14205:5: error: expected unqualified-id before 'if'
+14205 |     if (g_UseSeq) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:14212:7: error: expected unqualified-id before 'else'
+14212 |     } else {
+      |       ^~~~
+MIA_Dumper_G3_Unifier.cpp:14223:5: error: 's_LastTsTime_by_chart' does not name a type
+14223 |     s_LastTsTime_by_chart[sc.ChartNumber] = last_time;
+      |     ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:14226:5: error: expected unqualified-id before 'if'
+14226 |     if (ShouldLog(sc, LOG_VERBOSE) && processed_count > 0) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:14232:3: error: expected declaration before '}' token
+14232 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:14235:3: error: expected unqualified-id before 'if'
+14235 |   if (sc.Input[14].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:14337:3: error: expected unqualified-id before 'if'
+14337 |   if (sc.Input[22].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:14414:3: error: expected unqualified-id before 'if'
+14414 |   if (sc.Input[28].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:14535:17: error: expected constructor, destructor, or type conversion before '(' token
+14535 |   CheckAutoFlush(sc);
+      |                 ^
+MIA_Dumper_G3_Unifier.cpp:14536:16: error: expected constructor, destructor, or type conversion before '(' token
+14536 |   UpdateMetrics(sc, "study");
+      |                ^
+MIA_Dumper_G3_Unifier.cpp:14539:3: error: expected unqualified-id before 'if'
+14539 |   if (sc.Input[25].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:14612:3: error: expected unqualified-id before 'if'
+14612 |   if (sc.Input[33].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:14713:3: error: expected unqualified-id before 'if'
+14713 |   if (sc.Input[35].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:14793:3: error: expected unqualified-id before 'if'
+14793 |   if (sc.Input[37].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:14888:3: error: expected unqualified-id before 'if'
+14888 |   if (sc.LastCallToFunction) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:15051:1: error: expected declaration before '}' token
+15051 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:15055:12: error: redefinition of 'double vwap'
+15055 |     double vwap = NAN; // ton VWAP courant ou NAN
+      |            ^~~~
+MIA_Dumper_G3_Unifier.cpp:13009:12: note: 'double vwap' previously defined here
+13009 |     double vwap = NAN; // ton VWAP courant ou NAN
+      |            ^~~~
+MIA_Dumper_G3_Unifier.cpp:15056:12: error: redefinition of 'double vva'
+15056 |     double vva  = NAN; // ton VVA  courant ou NAN
+      |            ^~~
+MIA_Dumper_G3_Unifier.cpp:13010:12: note: 'double vva' previously defined here
+13010 |     double vva  = NAN; // ton VVA  courant ou NAN
+      |            ^~~
+MIA_Dumper_G3_Unifier.cpp:15057:12: error: redefinition of 'double atr'
+15057 |     double atr  = NAN; // ton ATR  courant ou NAN
+      |            ^~~
+MIA_Dumper_G3_Unifier.cpp:13011:12: note: 'double atr' previously defined here
+13011 |     double atr  = NAN; // ton ATR  courant ou NAN
+      |            ^~~
+MIA_Dumper_G3_Unifier.cpp:15058:12: error: redefinition of 'double vix'
+15058 |     double vix  = NAN; // ton VIX  courant ou NAN
+      |            ^~~
+MIA_Dumper_G3_Unifier.cpp:13012:12: note: 'double vix' previously defined here
+13012 |     double vix  = NAN; // ton VIX  courant ou NAN
+      |            ^~~
+MIA_Dumper_G3_Unifier.cpp:15060:12: error: redefinition of 'double g1'
+15060 |     double g1 = NAN, g2 = NAN, g3 = NAN, g4 = NAN, g5 = NAN;
+      |            ^~
+MIA_Dumper_G3_Unifier.cpp:13014:12: note: 'double g1' previously defined here
+13014 |     double g1 = NAN, g2 = NAN, g3 = NAN, g4 = NAN, g5 = NAN;
+      |            ^~
+MIA_Dumper_G3_Unifier.cpp:15060:22: error: redefinition of 'double g2'
+15060 |     double g1 = NAN, g2 = NAN, g3 = NAN, g4 = NAN, g5 = NAN;
+      |                      ^~
+MIA_Dumper_G3_Unifier.cpp:13014:22: note: 'double g2' previously defined here
+13014 |     double g1 = NAN, g2 = NAN, g3 = NAN, g4 = NAN, g5 = NAN;
+      |                      ^~
+MIA_Dumper_G3_Unifier.cpp:15060:32: error: redefinition of 'double g3'
+15060 |     double g1 = NAN, g2 = NAN, g3 = NAN, g4 = NAN, g5 = NAN;
+      |                                ^~
+MIA_Dumper_G3_Unifier.cpp:13014:32: note: 'double g3' previously defined here
+13014 |     double g1 = NAN, g2 = NAN, g3 = NAN, g4 = NAN, g5 = NAN;
+      |                                ^~
+MIA_Dumper_G3_Unifier.cpp:15060:42: error: redefinition of 'double g4'
+15060 |     double g1 = NAN, g2 = NAN, g3 = NAN, g4 = NAN, g5 = NAN;
+      |                                          ^~
+MIA_Dumper_G3_Unifier.cpp:13014:42: note: 'double g4' previously defined here
+13014 |     double g1 = NAN, g2 = NAN, g3 = NAN, g4 = NAN, g5 = NAN;
+      |                                          ^~
+MIA_Dumper_G3_Unifier.cpp:15060:52: error: redefinition of 'double g5'
+15060 |     double g1 = NAN, g2 = NAN, g3 = NAN, g4 = NAN, g5 = NAN;
+      |                                                    ^~
+MIA_Dumper_G3_Unifier.cpp:13014:52: note: 'double g5' previously defined here
+13014 |     double g1 = NAN, g2 = NAN, g3 = NAN, g4 = NAN, g5 = NAN;
+      |                                                    ^~
+MIA_Dumper_G3_Unifier.cpp:15061:12: error: redefinition of 'double g6'
+15061 |     double g6 = NAN, g7 = NAN, g8 = NAN, g9 = NAN, g10 = NAN;
+      |            ^~
+MIA_Dumper_G3_Unifier.cpp:13015:12: note: 'double g6' previously defined here
+13015 |     double g6 = NAN, g7 = NAN, g8 = NAN, g9 = NAN, g10 = NAN;
+      |            ^~
+MIA_Dumper_G3_Unifier.cpp:15061:22: error: redefinition of 'double g7'
+15061 |     double g6 = NAN, g7 = NAN, g8 = NAN, g9 = NAN, g10 = NAN;
+      |                      ^~
+MIA_Dumper_G3_Unifier.cpp:13015:22: note: 'double g7' previously defined here
+13015 |     double g6 = NAN, g7 = NAN, g8 = NAN, g9 = NAN, g10 = NAN;
+      |                      ^~
+MIA_Dumper_G3_Unifier.cpp:15061:32: error: redefinition of 'double g8'
+15061 |     double g6 = NAN, g7 = NAN, g8 = NAN, g9 = NAN, g10 = NAN;
+      |                                ^~
+MIA_Dumper_G3_Unifier.cpp:13015:32: note: 'double g8' previously defined here
+13015 |     double g6 = NAN, g7 = NAN, g8 = NAN, g9 = NAN, g10 = NAN;
+      |                                ^~
+MIA_Dumper_G3_Unifier.cpp:15061:42: error: redefinition of 'double g9'
+15061 |     double g6 = NAN, g7 = NAN, g8 = NAN, g9 = NAN, g10 = NAN;
+      |                                          ^~
+MIA_Dumper_G3_Unifier.cpp:13015:42: note: 'double g9' previously defined here
+13015 |     double g6 = NAN, g7 = NAN, g8 = NAN, g9 = NAN, g10 = NAN;
+      |                                          ^~
+MIA_Dumper_G3_Unifier.cpp:15061:52: error: redefinition of 'double g10'
+15061 |     double g6 = NAN, g7 = NAN, g8 = NAN, g9 = NAN, g10 = NAN;
+      |                                                    ^~~
+MIA_Dumper_G3_Unifier.cpp:13015:52: note: 'double g10' previously defined here
+13015 |     double g6 = NAN, g7 = NAN, g8 = NAN, g9 = NAN, g10 = NAN;
+      |                                                    ^~~
+MIA_Dumper_G3_Unifier.cpp:15063:12: error: redefinition of 'double mq_call_resistance'
+15063 |     double mq_call_resistance = NAN, mq_put_support = NAN, mq_hvl = NAN;
+      |            ^~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13017:12: note: 'double mq_call_resistance' previously defined here
+13017 |     double mq_call_resistance = NAN, mq_put_support = NAN, mq_hvl = NAN;
+      |            ^~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15063:38: error: redefinition of 'double mq_put_support'
+15063 |     double mq_call_resistance = NAN, mq_put_support = NAN, mq_hvl = NAN;
+      |                                      ^~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13017:38: note: 'double mq_put_support' previously defined here
+13017 |     double mq_call_resistance = NAN, mq_put_support = NAN, mq_hvl = NAN;
+      |                                      ^~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15063:60: error: redefinition of 'double mq_hvl'
+15063 |     double mq_call_resistance = NAN, mq_put_support = NAN, mq_hvl = NAN;
+      |                                                            ^~~~~~
+MIA_Dumper_G3_Unifier.cpp:13017:60: note: 'double mq_hvl' previously defined here
+13017 |     double mq_call_resistance = NAN, mq_put_support = NAN, mq_hvl = NAN;
+      |                                                            ^~~~~~
+MIA_Dumper_G3_Unifier.cpp:15065:12: error: redefinition of 'double pvwap'
+15065 |     double pvwap = NAN, pvwap_up1 = NAN, pvwap_dn1 = NAN, pvwap_up2 = NAN, pvwap_dn2 = NAN;
+      |            ^~~~~
+MIA_Dumper_G3_Unifier.cpp:13019:12: note: 'double pvwap' previously defined here
+13019 |     double pvwap = NAN, pvwap_up1 = NAN, pvwap_dn1 = NAN, pvwap_up2 = NAN, pvwap_dn2 = NAN;
+      |            ^~~~~
+MIA_Dumper_G3_Unifier.cpp:15065:25: error: redefinition of 'double pvwap_up1'
+15065 |     double pvwap = NAN, pvwap_up1 = NAN, pvwap_dn1 = NAN, pvwap_up2 = NAN, pvwap_dn2 = NAN;
+      |                         ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13019:25: note: 'double pvwap_up1' previously defined here
+13019 |     double pvwap = NAN, pvwap_up1 = NAN, pvwap_dn1 = NAN, pvwap_up2 = NAN, pvwap_dn2 = NAN;
+      |                         ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15065:42: error: redefinition of 'double pvwap_dn1'
+15065 |     double pvwap = NAN, pvwap_up1 = NAN, pvwap_dn1 = NAN, pvwap_up2 = NAN, pvwap_dn2 = NAN;
+      |                                          ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13019:42: note: 'double pvwap_dn1' previously defined here
+13019 |     double pvwap = NAN, pvwap_up1 = NAN, pvwap_dn1 = NAN, pvwap_up2 = NAN, pvwap_dn2 = NAN;
+      |                                          ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15065:59: error: redefinition of 'double pvwap_up2'
+15065 |     double pvwap = NAN, pvwap_up1 = NAN, pvwap_dn1 = NAN, pvwap_up2 = NAN, pvwap_dn2 = NAN;
+      |                                                           ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13019:59: note: 'double pvwap_up2' previously defined here
+13019 |     double pvwap = NAN, pvwap_up1 = NAN, pvwap_dn1 = NAN, pvwap_up2 = NAN, pvwap_dn2 = NAN;
+      |                                                           ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15065:76: error: redefinition of 'double pvwap_dn2'
+15065 |     double pvwap = NAN, pvwap_up1 = NAN, pvwap_dn1 = NAN, pvwap_up2 = NAN, pvwap_dn2 = NAN;
+      |                                                                            ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13019:76: note: 'double pvwap_dn2' previously defined here
+13019 |     double pvwap = NAN, pvwap_up1 = NAN, pvwap_dn1 = NAN, pvwap_up2 = NAN, pvwap_dn2 = NAN;
+      |                                                                            ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15067:12: error: redefinition of 'double cum_delta'
+15067 |     double cum_delta = NAN, cum_delta_day = NAN, cum_delta_session = NAN;
+      |            ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13021:12: note: 'double cum_delta' previously defined here
+13021 |     double cum_delta = NAN, cum_delta_day = NAN, cum_delta_session = NAN;
+      |            ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15067:29: error: redefinition of 'double cum_delta_day'
+15067 |     double cum_delta = NAN, cum_delta_day = NAN, cum_delta_session = NAN;
+      |                             ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13021:29: note: 'double cum_delta_day' previously defined here
+13021 |     double cum_delta = NAN, cum_delta_day = NAN, cum_delta_session = NAN;
+      |                             ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15067:50: error: redefinition of 'double cum_delta_session'
+15067 |     double cum_delta = NAN, cum_delta_day = NAN, cum_delta_session = NAN;
+      |                                                  ^~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13021:50: note: 'double cum_delta_session' previously defined here
+13021 |     double cum_delta = NAN, cum_delta_day = NAN, cum_delta_session = NAN;
+      |                                                  ^~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15069:12: error: redefinition of 'double nbcv'
+15069 |     double nbcv = NAN, correlation = NAN;
+      |            ^~~~
+MIA_Dumper_G3_Unifier.cpp:13023:12: note: 'double nbcv' previously defined here
+13023 |     double nbcv = NAN, correlation = NAN;
+      |            ^~~~
+MIA_Dumper_G3_Unifier.cpp:15069:24: error: redefinition of 'double correlation'
+15069 |     double nbcv = NAN, correlation = NAN;
+      |                        ^~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13023:24: note: 'double correlation' previously defined here
+13023 |     double nbcv = NAN, correlation = NAN;
+      |                        ^~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15071:12: error: redefinition of 'double blind_spot_1'
+15071 |     double blind_spot_1 = NAN, blind_spot_2 = NAN, blind_spot_3 = NAN, blind_spot_4 = NAN, blind_spot_5 = NAN;
+      |            ^~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13025:12: note: 'double blind_spot_1' previously defined here
+13025 |     double blind_spot_1 = NAN, blind_spot_2 = NAN, blind_spot_3 = NAN, blind_spot_4 = NAN, blind_spot_5 = NAN;
+      |            ^~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15071:32: error: redefinition of 'double blind_spot_2'
+15071 |     double blind_spot_1 = NAN, blind_spot_2 = NAN, blind_spot_3 = NAN, blind_spot_4 = NAN, blind_spot_5 = NAN;
+      |                                ^~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13025:32: note: 'double blind_spot_2' previously defined here
+13025 |     double blind_spot_1 = NAN, blind_spot_2 = NAN, blind_spot_3 = NAN, blind_spot_4 = NAN, blind_spot_5 = NAN;
+      |                                ^~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15071:52: error: redefinition of 'double blind_spot_3'
+15071 |     double blind_spot_1 = NAN, blind_spot_2 = NAN, blind_spot_3 = NAN, blind_spot_4 = NAN, blind_spot_5 = NAN;
+      |                                                    ^~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13025:52: note: 'double blind_spot_3' previously defined here
+13025 |     double blind_spot_1 = NAN, blind_spot_2 = NAN, blind_spot_3 = NAN, blind_spot_4 = NAN, blind_spot_5 = NAN;
+      |                                                    ^~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15071:72: error: redefinition of 'double blind_spot_4'
+15071 |     double blind_spot_1 = NAN, blind_spot_2 = NAN, blind_spot_3 = NAN, blind_spot_4 = NAN, blind_spot_5 = NAN;
+      |                                                                        ^~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13025:72: note: 'double blind_spot_4' previously defined here
+13025 |     double blind_spot_1 = NAN, blind_spot_2 = NAN, blind_spot_3 = NAN, blind_spot_4 = NAN, blind_spot_5 = NAN;
+      |                                                                        ^~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15071:92: error: redefinition of 'double blind_spot_5'
+15071 |     double blind_spot_1 = NAN, blind_spot_2 = NAN, blind_spot_3 = NAN, blind_spot_4 = NAN, blind_spot_5 = NAN;
+      |                                                                                            ^~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13025:92: note: 'double blind_spot_5' previously defined here
+13025 |     double blind_spot_1 = NAN, blind_spot_2 = NAN, blind_spot_3 = NAN, blind_spot_4 = NAN, blind_spot_5 = NAN;
+      |                                                                                            ^~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15073:12: error: redefinition of 'double ohlc_o'
+15073 |     double ohlc_o = NAN, ohlc_h = NAN, ohlc_l = NAN, ohlc_c = NAN, ohlc_v = NAN;
+      |            ^~~~~~
+MIA_Dumper_G3_Unifier.cpp:13027:12: note: 'double ohlc_o' previously defined here
+13027 |     double ohlc_o = NAN, ohlc_h = NAN, ohlc_l = NAN, ohlc_c = NAN, ohlc_v = NAN;
+      |            ^~~~~~
+MIA_Dumper_G3_Unifier.cpp:15073:26: error: redefinition of 'double ohlc_h'
+15073 |     double ohlc_o = NAN, ohlc_h = NAN, ohlc_l = NAN, ohlc_c = NAN, ohlc_v = NAN;
+      |                          ^~~~~~
+MIA_Dumper_G3_Unifier.cpp:13027:26: note: 'double ohlc_h' previously defined here
+13027 |     double ohlc_o = NAN, ohlc_h = NAN, ohlc_l = NAN, ohlc_c = NAN, ohlc_v = NAN;
+      |                          ^~~~~~
+MIA_Dumper_G3_Unifier.cpp:15073:40: error: redefinition of 'double ohlc_l'
+15073 |     double ohlc_o = NAN, ohlc_h = NAN, ohlc_l = NAN, ohlc_c = NAN, ohlc_v = NAN;
+      |                                        ^~~~~~
+MIA_Dumper_G3_Unifier.cpp:13027:40: note: 'double ohlc_l' previously defined here
+13027 |     double ohlc_o = NAN, ohlc_h = NAN, ohlc_l = NAN, ohlc_c = NAN, ohlc_v = NAN;
+      |                                        ^~~~~~
+MIA_Dumper_G3_Unifier.cpp:15073:54: error: redefinition of 'double ohlc_c'
+15073 |     double ohlc_o = NAN, ohlc_h = NAN, ohlc_l = NAN, ohlc_c = NAN, ohlc_v = NAN;
+      |                                                      ^~~~~~
+MIA_Dumper_G3_Unifier.cpp:13027:54: note: 'double ohlc_c' previously defined here
+13027 |     double ohlc_o = NAN, ohlc_h = NAN, ohlc_l = NAN, ohlc_c = NAN, ohlc_v = NAN;
+      |                                                      ^~~~~~
+MIA_Dumper_G3_Unifier.cpp:15073:68: error: redefinition of 'double ohlc_v'
+15073 |     double ohlc_o = NAN, ohlc_h = NAN, ohlc_l = NAN, ohlc_c = NAN, ohlc_v = NAN;
+      |                                                                    ^~~~~~
+MIA_Dumper_G3_Unifier.cpp:13027:68: note: 'double ohlc_v' previously defined here
+13027 |     double ohlc_o = NAN, ohlc_h = NAN, ohlc_l = NAN, ohlc_c = NAN, ohlc_v = NAN;
+      |                                                                    ^~~~~~
+MIA_Dumper_G3_Unifier.cpp:15074:12: error: redefinition of 'double ohlc_bidvol'
+15074 |     double ohlc_bidvol = NAN, ohlc_askvol = NAN;
+      |            ^~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13028:12: note: 'double ohlc_bidvol' previously defined here
+13028 |     double ohlc_bidvol = NAN, ohlc_askvol = NAN;
+      |            ^~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15074:31: error: redefinition of 'double ohlc_askvol'
+15074 |     double ohlc_bidvol = NAN, ohlc_askvol = NAN;
+      |                               ^~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13028:31: note: 'double ohlc_askvol' previously defined here
+13028 |     double ohlc_bidvol = NAN, ohlc_askvol = NAN;
+      |                               ^~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15076:12: error: redefinition of 'double trade_buy_trades'
+15076 |     double trade_buy_trades = NAN, trade_sell_trades = NAN, trade_buy_vol = NAN, trade_sell_vol = NAN;
+      |            ^~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13030:12: note: 'double trade_buy_trades' previously defined here
+13030 |     double trade_buy_trades = NAN, trade_sell_trades = NAN, trade_buy_vol = NAN, trade_sell_vol = NAN;
+      |            ^~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15076:36: error: redefinition of 'double trade_sell_trades'
+15076 |     double trade_buy_trades = NAN, trade_sell_trades = NAN, trade_buy_vol = NAN, trade_sell_vol = NAN;
+      |                                    ^~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13030:36: note: 'double trade_sell_trades' previously defined here
+13030 |     double trade_buy_trades = NAN, trade_sell_trades = NAN, trade_buy_vol = NAN, trade_sell_vol = NAN;
+      |                                    ^~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15076:61: error: redefinition of 'double trade_buy_vol'
+15076 |     double trade_buy_trades = NAN, trade_sell_trades = NAN, trade_buy_vol = NAN, trade_sell_vol = NAN;
+      |                                                             ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13030:61: note: 'double trade_buy_vol' previously defined here
+13030 |     double trade_buy_trades = NAN, trade_sell_trades = NAN, trade_buy_vol = NAN, trade_sell_vol = NAN;
+      |                                                             ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15076:82: error: redefinition of 'double trade_sell_vol'
+15076 |     double trade_buy_trades = NAN, trade_sell_trades = NAN, trade_buy_vol = NAN, trade_sell_vol = NAN;
+      |                                                                                  ^~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13030:82: note: 'double trade_sell_vol' previously defined here
+13030 |     double trade_buy_trades = NAN, trade_sell_trades = NAN, trade_buy_vol = NAN, trade_sell_vol = NAN;
+      |                                                                                  ^~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15078:14: error: redefinition of 'uint64_t now'
+15078 |     uint64_t now = NowMs();
+      |              ^~~
+MIA_Dumper_G3_Unifier.cpp:13032:14: note: 'uint64_t now' previously declared here
+13032 |     uint64_t now = NowMs();
+      |              ^~~
+MIA_Dumper_G3_Unifier.cpp:15079:10: error: redefinition of 'bool period_ok'
+15079 |     bool period_ok = (now - g_lastMetricsEmitMs) >= g_metricsPeriodMs.load();
+      |          ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13033:10: note: 'bool period_ok' previously declared here
+13033 |     bool period_ok = (now - g_lastMetricsEmitMs) >= g_metricsPeriodMs.load();
+      |          ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15080:10: error: conflicting declaration 'auto _chg'
+15080 |     auto _chg = [](double a, double b, double eps) {
+      |          ^~~~
+MIA_Dumper_G3_Unifier.cpp:13034:10: note: previous declaration as '<lambda(double, double, double)> _chg'
+13034 |     auto _chg = [](double a, double b, double eps) {
+      |          ^~~~
+MIA_Dumper_G3_Unifier.cpp:15085:10: error: redefinition of 'bool changed'
+15085 |     bool changed = _chg(vwap, g_lastMetrics.vwap, 0.25)
+      |          ^~~~~~~
+MIA_Dumper_G3_Unifier.cpp:13039:10: note: 'bool changed' previously declared here
+13039 |     bool changed = _chg(vwap, g_lastMetrics.vwap, 0.25)
+      |          ^~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15132:5: error: expected unqualified-id before 'if'
+15132 |     if (period_ok || changed) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:15181:19: error: expected constructor, destructor, or type conversion before ';' token
+15181 |     CloseUnified();
+      |                   ^
+MIA_Dumper_G3_Unifier.cpp:15183:5: error: expected unqualified-id before 'if'
+15183 |     if (ShouldLog(sc, LOG_KEY)) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:15187:5: error: expected unqualified-id before 'if'
+15187 |     if (sc.Input[45].GetYesNo()) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:15191:3: error: expected declaration before '}' token
+15191 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:15192:1: error: expected declaration before '}' token
+15192 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:15196:7: error: expected unqualified-id before 'if'
+15196 |       if (s_stale_loops_by_chart[sc.ChartNumber] >= STALE_LIMIT) {
+      |       ^~
+MIA_Dumper_G3_Unifier.cpp:15205:5: error: expected declaration before '}' token
+15205 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:15208:9: error: redefinition of 'int end'
+15208 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:6646:9: note: 'int end' previously defined here
+ 6646 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:15208:19: error: 'sz' was not declared in this scope
+15208 |     int end = min(sz, start + BATCH_SIZE);
+      |                   ^~
+MIA_Dumper_G3_Unifier.cpp:15208:23: error: 'start' was not declared in this scope; did you mean 'stat'?
+15208 |     int end = min(sz, start + BATCH_SIZE);
+      |                       ^~~~~
+      |                       stat
+MIA_Dumper_G3_Unifier.cpp:15208:31: error: 'BATCH_SIZE' was not declared in this scope; did you mean 'IDC_SIZE'?
+15208 |     int end = min(sz, start + BATCH_SIZE);
+      |                               ^~~~~~~~~~
+      |                               IDC_SIZE
+MIA_Dumper_G3_Unifier.cpp:15211:14: error: redefinition of 'uint32_t last_seq_seen'
+15211 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6649:14: note: 'uint32_t last_seq_seen' previously defined here
+ 6649 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15211:30: error: 'g_LastSeq_by_chart' was not declared in this scope
+15211 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15211:49: error: 'sc' was not declared in this scope
+15211 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                                                 ^~
+MIA_Dumper_G3_Unifier.cpp:15212:16: error: redefinition of 'SCDateTime last_time'
+15212 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6650:16: note: 'SCDateTime last_time' previously declared here
+ 6650 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15212:30: error: 's_LastTsTime_by_chart' was not declared in this scope
+15212 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15212:52: error: 'sc' was not declared in this scope
+15212 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                                                    ^~
+MIA_Dumper_G3_Unifier.cpp:15213:9: error: redefinition of 'int processed_count'
+15213 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6651:9: note: 'int processed_count' previously defined here
+ 6651 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15215:5: error: expected unqualified-id before 'for'
+15215 |     for (int i = start; i < end; ++i) {
+      |     ^~~
+MIA_Dumper_G3_Unifier.cpp:15215:25: error: 'i' does not name a type
+15215 |     for (int i = start; i < end; ++i) {
+      |                         ^
+MIA_Dumper_G3_Unifier.cpp:15215:34: error: expected unqualified-id before '++' token
+15215 |     for (int i = start; i < end; ++i) {
+      |                                  ^~
+MIA_Dumper_G3_Unifier.cpp:15228:5: error: expected unqualified-id before 'if'
+15228 |     if (g_UseSeq) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:15235:7: error: expected unqualified-id before 'else'
+15235 |     } else {
+      |       ^~~~
+MIA_Dumper_G3_Unifier.cpp:15246:5: error: 's_LastTsTime_by_chart' does not name a type
+15246 |     s_LastTsTime_by_chart[sc.ChartNumber] = last_time;
+      |     ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:15249:5: error: expected unqualified-id before 'if'
+15249 |     if (ShouldLog(sc, LOG_VERBOSE) && processed_count > 0) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:15255:3: error: expected declaration before '}' token
+15255 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:15258:3: error: expected unqualified-id before 'if'
+15258 |   if (sc.Input[14].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:15360:3: error: expected unqualified-id before 'if'
+15360 |   if (sc.Input[22].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:15437:3: error: expected unqualified-id before 'if'
+15437 |   if (sc.Input[28].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:15558:17: error: expected constructor, destructor, or type conversion before '(' token
+15558 |   CheckAutoFlush(sc);
+      |                 ^
+MIA_Dumper_G3_Unifier.cpp:15559:16: error: expected constructor, destructor, or type conversion before '(' token
+15559 |   UpdateMetrics(sc, "study");
+      |                ^
+MIA_Dumper_G3_Unifier.cpp:15562:3: error: expected unqualified-id before 'if'
+15562 |   if (sc.Input[25].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:15635:3: error: expected unqualified-id before 'if'
+15635 |   if (sc.Input[33].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:15736:3: error: expected unqualified-id before 'if'
+15736 |   if (sc.Input[35].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:15816:3: error: expected unqualified-id before 'if'
+15816 |   if (sc.Input[37].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:15911:3: error: expected unqualified-id before 'if'
+15911 |   if (sc.LastCallToFunction) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:16074:1: error: expected declaration before '}' token
+16074 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:16078:7: error: expected unqualified-id before 'if'
+16078 |       if (s_stale_loops_by_chart[sc.ChartNumber] >= STALE_LIMIT) {
+      |       ^~
+MIA_Dumper_G3_Unifier.cpp:16087:5: error: expected declaration before '}' token
+16087 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:16090:9: error: redefinition of 'int end'
+16090 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:6646:9: note: 'int end' previously defined here
+ 6646 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:16090:19: error: 'sz' was not declared in this scope
+16090 |     int end = min(sz, start + BATCH_SIZE);
+      |                   ^~
+MIA_Dumper_G3_Unifier.cpp:16090:23: error: 'start' was not declared in this scope; did you mean 'stat'?
+16090 |     int end = min(sz, start + BATCH_SIZE);
+      |                       ^~~~~
+      |                       stat
+MIA_Dumper_G3_Unifier.cpp:16090:31: error: 'BATCH_SIZE' was not declared in this scope; did you mean 'IDC_SIZE'?
+16090 |     int end = min(sz, start + BATCH_SIZE);
+      |                               ^~~~~~~~~~
+      |                               IDC_SIZE
+MIA_Dumper_G3_Unifier.cpp:16093:14: error: redefinition of 'uint32_t last_seq_seen'
+16093 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6649:14: note: 'uint32_t last_seq_seen' previously defined here
+ 6649 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:16093:30: error: 'g_LastSeq_by_chart' was not declared in this scope
+16093 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:16093:49: error: 'sc' was not declared in this scope
+16093 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                                                 ^~
+MIA_Dumper_G3_Unifier.cpp:16094:16: error: redefinition of 'SCDateTime last_time'
+16094 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6650:16: note: 'SCDateTime last_time' previously declared here
+ 6650 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:16094:30: error: 's_LastTsTime_by_chart' was not declared in this scope
+16094 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:16094:52: error: 'sc' was not declared in this scope
+16094 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                                                    ^~
+MIA_Dumper_G3_Unifier.cpp:16095:9: error: redefinition of 'int processed_count'
+16095 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6651:9: note: 'int processed_count' previously defined here
+ 6651 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:16097:5: error: expected unqualified-id before 'for'
+16097 |     for (int i = start; i < end; ++i) {
+      |     ^~~
+MIA_Dumper_G3_Unifier.cpp:16097:25: error: 'i' does not name a type
+16097 |     for (int i = start; i < end; ++i) {
+      |                         ^
+MIA_Dumper_G3_Unifier.cpp:16097:34: error: expected unqualified-id before '++' token
+16097 |     for (int i = start; i < end; ++i) {
+      |                                  ^~
+MIA_Dumper_G3_Unifier.cpp:16110:5: error: expected unqualified-id before 'if'
+16110 |     if (g_UseSeq) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:16117:7: error: expected unqualified-id before 'else'
+16117 |     } else {
+      |       ^~~~
+MIA_Dumper_G3_Unifier.cpp:16128:5: error: 's_LastTsTime_by_chart' does not name a type
+16128 |     s_LastTsTime_by_chart[sc.ChartNumber] = last_time;
+      |     ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:16131:5: error: expected unqualified-id before 'if'
+16131 |     if (ShouldLog(sc, LOG_VERBOSE) && processed_count > 0) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:16137:3: error: expected declaration before '}' token
+16137 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:16140:3: error: expected unqualified-id before 'if'
+16140 |   if (sc.Input[14].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:16242:3: error: expected unqualified-id before 'if'
+16242 |   if (sc.Input[22].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:16319:3: error: expected unqualified-id before 'if'
+16319 |   if (sc.Input[28].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:16440:17: error: expected constructor, destructor, or type conversion before '(' token
+16440 |   CheckAutoFlush(sc);
+      |                 ^
+MIA_Dumper_G3_Unifier.cpp:16441:16: error: expected constructor, destructor, or type conversion before '(' token
+16441 |   UpdateMetrics(sc, "study");
+      |                ^
+MIA_Dumper_G3_Unifier.cpp:16444:3: error: expected unqualified-id before 'if'
+16444 |   if (sc.Input[25].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:16517:3: error: expected unqualified-id before 'if'
+16517 |   if (sc.Input[33].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:16618:3: error: expected unqualified-id before 'if'
+16618 |   if (sc.Input[35].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:16698:3: error: expected unqualified-id before 'if'
+16698 |   if (sc.Input[37].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:16793:3: error: expected unqualified-id before 'if'
+16793 |   if (sc.LastCallToFunction) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:16956:1: error: expected declaration before '}' token
+16956 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:16960:7: error: expected unqualified-id before 'if'
+16960 |       if (s_stale_loops_by_chart[sc.ChartNumber] >= STALE_LIMIT) {
+      |       ^~
+MIA_Dumper_G3_Unifier.cpp:16969:5: error: expected declaration before '}' token
+16969 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:16972:9: error: redefinition of 'int end'
+16972 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:6646:9: note: 'int end' previously defined here
+ 6646 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:16972:19: error: 'sz' was not declared in this scope
+16972 |     int end = min(sz, start + BATCH_SIZE);
+      |                   ^~
+MIA_Dumper_G3_Unifier.cpp:16972:23: error: 'start' was not declared in this scope; did you mean 'stat'?
+16972 |     int end = min(sz, start + BATCH_SIZE);
+      |                       ^~~~~
+      |                       stat
+MIA_Dumper_G3_Unifier.cpp:16972:31: error: 'BATCH_SIZE' was not declared in this scope; did you mean 'IDC_SIZE'?
+16972 |     int end = min(sz, start + BATCH_SIZE);
+      |                               ^~~~~~~~~~
+      |                               IDC_SIZE
+MIA_Dumper_G3_Unifier.cpp:16975:14: error: redefinition of 'uint32_t last_seq_seen'
+16975 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6649:14: note: 'uint32_t last_seq_seen' previously defined here
+ 6649 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:16975:30: error: 'g_LastSeq_by_chart' was not declared in this scope
+16975 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:16975:49: error: 'sc' was not declared in this scope
+16975 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                                                 ^~
+MIA_Dumper_G3_Unifier.cpp:16976:16: error: redefinition of 'SCDateTime last_time'
+16976 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6650:16: note: 'SCDateTime last_time' previously declared here
+ 6650 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:16976:30: error: 's_LastTsTime_by_chart' was not declared in this scope
+16976 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:16976:52: error: 'sc' was not declared in this scope
+16976 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                                                    ^~
+MIA_Dumper_G3_Unifier.cpp:16977:9: error: redefinition of 'int processed_count'
+16977 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6651:9: note: 'int processed_count' previously defined here
+ 6651 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:16979:5: error: expected unqualified-id before 'for'
+16979 |     for (int i = start; i < end; ++i) {
+      |     ^~~
+MIA_Dumper_G3_Unifier.cpp:16979:25: error: 'i' does not name a type
+16979 |     for (int i = start; i < end; ++i) {
+      |                         ^
+MIA_Dumper_G3_Unifier.cpp:16979:34: error: expected unqualified-id before '++' token
+16979 |     for (int i = start; i < end; ++i) {
+      |                                  ^~
+MIA_Dumper_G3_Unifier.cpp:16992:5: error: expected unqualified-id before 'if'
+16992 |     if (g_UseSeq) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:16999:7: error: expected unqualified-id before 'else'
+16999 |     } else {
+      |       ^~~~
+MIA_Dumper_G3_Unifier.cpp:17010:5: error: 's_LastTsTime_by_chart' does not name a type
+17010 |     s_LastTsTime_by_chart[sc.ChartNumber] = last_time;
+      |     ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17013:5: error: expected unqualified-id before 'if'
+17013 |     if (ShouldLog(sc, LOG_VERBOSE) && processed_count > 0) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:17019:3: error: expected declaration before '}' token
+17019 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:17022:3: error: expected unqualified-id before 'if'
+17022 |   if (sc.Input[14].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:17124:3: error: expected unqualified-id before 'if'
+17124 |   if (sc.Input[22].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:17201:3: error: expected unqualified-id before 'if'
+17201 |   if (sc.Input[28].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:17322:17: error: expected constructor, destructor, or type conversion before '(' token
+17322 |   CheckAutoFlush(sc);
+      |                 ^
+MIA_Dumper_G3_Unifier.cpp:17323:16: error: expected constructor, destructor, or type conversion before '(' token
+17323 |   UpdateMetrics(sc, "study");
+      |                ^
+MIA_Dumper_G3_Unifier.cpp:17326:3: error: expected unqualified-id before 'if'
+17326 |   if (sc.Input[25].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:17399:3: error: expected unqualified-id before 'if'
+17399 |   if (sc.Input[33].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:17500:3: error: expected unqualified-id before 'if'
+17500 |   if (sc.Input[35].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:17580:3: error: expected unqualified-id before 'if'
+17580 |   if (sc.Input[37].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:17675:3: error: expected unqualified-id before 'if'
+17675 |   if (sc.LastCallToFunction) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:17838:1: error: expected declaration before '}' token
+17838 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:17840:9: error: 'g_lastMetrics' does not name a type
+17840 |         g_lastMetrics.pvwap = pvwap; g_lastMetrics.pvwap_up1 = pvwap_up1; g_lastMetrics.pvwap_dn1 = pvwap_dn1;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17840:38: error: 'g_lastMetrics' does not name a type
+17840 |         g_lastMetrics.pvwap = pvwap; g_lastMetrics.pvwap_up1 = pvwap_up1; g_lastMetrics.pvwap_dn1 = pvwap_dn1;
+      |                                      ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17840:75: error: 'g_lastMetrics' does not name a type
+17840 |         g_lastMetrics.pvwap = pvwap; g_lastMetrics.pvwap_up1 = pvwap_up1; g_lastMetrics.pvwap_dn1 = pvwap_dn1;
+      |                                                                           ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17841:9: error: 'g_lastMetrics' does not name a type
+17841 |         g_lastMetrics.pvwap_up2 = pvwap_up2; g_lastMetrics.pvwap_dn2 = pvwap_dn2;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17841:46: error: 'g_lastMetrics' does not name a type
+17841 |         g_lastMetrics.pvwap_up2 = pvwap_up2; g_lastMetrics.pvwap_dn2 = pvwap_dn2;
+      |                                              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17843:9: error: 'g_lastMetrics' does not name a type
+17843 |         g_lastMetrics.cum_delta = cum_delta; g_lastMetrics.cum_delta_day = cum_delta_day; g_lastMetrics.cum_delta_session = cum_delta_session;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17843:46: error: 'g_lastMetrics' does not name a type
+17843 |         g_lastMetrics.cum_delta = cum_delta; g_lastMetrics.cum_delta_day = cum_delta_day; g_lastMetrics.cum_delta_session = cum_delta_session;
+      |                                              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17843:91: error: 'g_lastMetrics' does not name a type
+17843 |         g_lastMetrics.cum_delta = cum_delta; g_lastMetrics.cum_delta_day = cum_delta_day; g_lastMetrics.cum_delta_session = cum_delta_session;
+      |                                                                                           ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17845:9: error: 'g_lastMetrics' does not name a type
+17845 |         g_lastMetrics.nbcv = nbcv; g_lastMetrics.correlation = correlation;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17845:36: error: 'g_lastMetrics' does not name a type
+17845 |         g_lastMetrics.nbcv = nbcv; g_lastMetrics.correlation = correlation;
+      |                                    ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17847:9: error: 'g_lastMetrics' does not name a type
+17847 |         g_lastMetrics.blind_spot_1 = blind_spot_1; g_lastMetrics.blind_spot_2 = blind_spot_2; g_lastMetrics.blind_spot_3 = blind_spot_3;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17847:52: error: 'g_lastMetrics' does not name a type
+17847 |         g_lastMetrics.blind_spot_1 = blind_spot_1; g_lastMetrics.blind_spot_2 = blind_spot_2; g_lastMetrics.blind_spot_3 = blind_spot_3;
+      |                                                    ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17847:95: error: 'g_lastMetrics' does not name a type
+17847 |         g_lastMetrics.blind_spot_1 = blind_spot_1; g_lastMetrics.blind_spot_2 = blind_spot_2; g_lastMetrics.blind_spot_3 = blind_spot_3;
+      |                                                                                               ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17848:9: error: 'g_lastMetrics' does not name a type
+17848 |         g_lastMetrics.blind_spot_4 = blind_spot_4; g_lastMetrics.blind_spot_5 = blind_spot_5;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17848:52: error: 'g_lastMetrics' does not name a type
+17848 |         g_lastMetrics.blind_spot_4 = blind_spot_4; g_lastMetrics.blind_spot_5 = blind_spot_5;
+      |                                                    ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17850:9: error: 'g_lastMetrics' does not name a type
+17850 |         g_lastMetrics.ohlc_o = ohlc_o; g_lastMetrics.ohlc_h = ohlc_h; g_lastMetrics.ohlc_l = ohlc_l; g_lastMetrics.ohlc_c = ohlc_c; g_lastMetrics.ohlc_v = ohlc_v;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17850:40: error: 'g_lastMetrics' does not name a type
+17850 |         g_lastMetrics.ohlc_o = ohlc_o; g_lastMetrics.ohlc_h = ohlc_h; g_lastMetrics.ohlc_l = ohlc_l; g_lastMetrics.ohlc_c = ohlc_c; g_lastMetrics.ohlc_v = ohlc_v;
+      |                                        ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17850:71: error: 'g_lastMetrics' does not name a type
+17850 |         g_lastMetrics.ohlc_o = ohlc_o; g_lastMetrics.ohlc_h = ohlc_h; g_lastMetrics.ohlc_l = ohlc_l; g_lastMetrics.ohlc_c = ohlc_c; g_lastMetrics.ohlc_v = ohlc_v;
+      |                                                                       ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17850:102: error: 'g_lastMetrics' does not name a type
+17850 |         g_lastMetrics.ohlc_o = ohlc_o; g_lastMetrics.ohlc_h = ohlc_h; g_lastMetrics.ohlc_l = ohlc_l; g_lastMetrics.ohlc_c = ohlc_c; g_lastMetrics.ohlc_v = ohlc_v;
+      |                                                                                                      ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17850:133: error: 'g_lastMetrics' does not name a type
+17850 |         g_lastMetrics.ohlc_o = ohlc_o; g_lastMetrics.ohlc_h = ohlc_h; g_lastMetrics.ohlc_l = ohlc_l; g_lastMetrics.ohlc_c = ohlc_c; g_lastMetrics.ohlc_v = ohlc_v;
+      |                                                                                                                                     ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17851:9: error: 'g_lastMetrics' does not name a type
+17851 |         g_lastMetrics.ohlc_bidvol = ohlc_bidvol; g_lastMetrics.ohlc_askvol = ohlc_askvol;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17851:50: error: 'g_lastMetrics' does not name a type
+17851 |         g_lastMetrics.ohlc_bidvol = ohlc_bidvol; g_lastMetrics.ohlc_askvol = ohlc_askvol;
+      |                                                  ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17853:9: error: 'g_lastMetrics' does not name a type
+17853 |         g_lastMetrics.trade_buy_trades = trade_buy_trades; g_lastMetrics.trade_sell_trades = trade_sell_trades;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17853:60: error: 'g_lastMetrics' does not name a type
+17853 |         g_lastMetrics.trade_buy_trades = trade_buy_trades; g_lastMetrics.trade_sell_trades = trade_sell_trades;
+      |                                                            ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17854:9: error: 'g_lastMetrics' does not name a type
+17854 |         g_lastMetrics.trade_buy_vol = trade_buy_vol; g_lastMetrics.trade_sell_vol = trade_sell_vol;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17854:54: error: 'g_lastMetrics' does not name a type
+17854 |         g_lastMetrics.trade_buy_vol = trade_buy_vol; g_lastMetrics.trade_sell_vol = trade_sell_vol;
+      |                                                      ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17855:5: error: expected declaration before '}' token
+17855 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:17858:19: error: expected constructor, destructor, or type conversion before ';' token
+17858 |     CloseUnified();
+      |                   ^
+MIA_Dumper_G3_Unifier.cpp:17860:5: error: expected unqualified-id before 'if'
+17860 |     if (ShouldLog(sc, LOG_KEY)) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:17864:5: error: expected unqualified-id before 'if'
+17864 |     if (sc.Input[45].GetYesNo()) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:17868:3: error: expected declaration before '}' token
+17868 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:17869:1: error: expected declaration before '}' token
+17869 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:17873:7: error: expected unqualified-id before 'if'
+17873 |       if (s_stale_loops_by_chart[sc.ChartNumber] >= STALE_LIMIT) {
+      |       ^~
+MIA_Dumper_G3_Unifier.cpp:17882:5: error: expected declaration before '}' token
+17882 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:17885:9: error: redefinition of 'int end'
+17885 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:6646:9: note: 'int end' previously defined here
+ 6646 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:17885:19: error: 'sz' was not declared in this scope
+17885 |     int end = min(sz, start + BATCH_SIZE);
+      |                   ^~
+MIA_Dumper_G3_Unifier.cpp:17885:23: error: 'start' was not declared in this scope; did you mean 'stat'?
+17885 |     int end = min(sz, start + BATCH_SIZE);
+      |                       ^~~~~
+      |                       stat
+MIA_Dumper_G3_Unifier.cpp:17885:31: error: 'BATCH_SIZE' was not declared in this scope; did you mean 'IDC_SIZE'?
+17885 |     int end = min(sz, start + BATCH_SIZE);
+      |                               ^~~~~~~~~~
+      |                               IDC_SIZE
+MIA_Dumper_G3_Unifier.cpp:17888:14: error: redefinition of 'uint32_t last_seq_seen'
+17888 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6649:14: note: 'uint32_t last_seq_seen' previously defined here
+ 6649 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17888:30: error: 'g_LastSeq_by_chart' was not declared in this scope
+17888 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17888:49: error: 'sc' was not declared in this scope
+17888 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                                                 ^~
+MIA_Dumper_G3_Unifier.cpp:17889:16: error: redefinition of 'SCDateTime last_time'
+17889 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6650:16: note: 'SCDateTime last_time' previously declared here
+ 6650 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17889:30: error: 's_LastTsTime_by_chart' was not declared in this scope
+17889 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17889:52: error: 'sc' was not declared in this scope
+17889 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                                                    ^~
+MIA_Dumper_G3_Unifier.cpp:17890:9: error: redefinition of 'int processed_count'
+17890 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6651:9: note: 'int processed_count' previously defined here
+ 6651 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17892:5: error: expected unqualified-id before 'for'
+17892 |     for (int i = start; i < end; ++i) {
+      |     ^~~
+MIA_Dumper_G3_Unifier.cpp:17892:25: error: 'i' does not name a type
+17892 |     for (int i = start; i < end; ++i) {
+      |                         ^
+MIA_Dumper_G3_Unifier.cpp:17892:34: error: expected unqualified-id before '++' token
+17892 |     for (int i = start; i < end; ++i) {
+      |                                  ^~
+MIA_Dumper_G3_Unifier.cpp:17905:5: error: expected unqualified-id before 'if'
+17905 |     if (g_UseSeq) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:17912:7: error: expected unqualified-id before 'else'
+17912 |     } else {
+      |       ^~~~
+MIA_Dumper_G3_Unifier.cpp:17923:5: error: 's_LastTsTime_by_chart' does not name a type
+17923 |     s_LastTsTime_by_chart[sc.ChartNumber] = last_time;
+      |     ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:17926:5: error: expected unqualified-id before 'if'
+17926 |     if (ShouldLog(sc, LOG_VERBOSE) && processed_count > 0) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:17932:3: error: expected declaration before '}' token
+17932 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:17935:3: error: expected unqualified-id before 'if'
+17935 |   if (sc.Input[14].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:18037:3: error: expected unqualified-id before 'if'
+18037 |   if (sc.Input[22].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:18114:3: error: expected unqualified-id before 'if'
+18114 |   if (sc.Input[28].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:18235:17: error: expected constructor, destructor, or type conversion before '(' token
+18235 |   CheckAutoFlush(sc);
+      |                 ^
+MIA_Dumper_G3_Unifier.cpp:18236:16: error: expected constructor, destructor, or type conversion before '(' token
+18236 |   UpdateMetrics(sc, "study");
+      |                ^
+MIA_Dumper_G3_Unifier.cpp:18239:3: error: expected unqualified-id before 'if'
+18239 |   if (sc.Input[25].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:18312:3: error: expected unqualified-id before 'if'
+18312 |   if (sc.Input[33].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:18413:3: error: expected unqualified-id before 'if'
+18413 |   if (sc.Input[35].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:18493:3: error: expected unqualified-id before 'if'
+18493 |   if (sc.Input[37].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:18588:3: error: expected unqualified-id before 'if'
+18588 |   if (sc.LastCallToFunction) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:18751:1: error: expected declaration before '}' token
+18751 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:18755:7: error: expected unqualified-id before 'if'
+18755 |       if (s_stale_loops_by_chart[sc.ChartNumber] >= STALE_LIMIT) {
+      |       ^~
+MIA_Dumper_G3_Unifier.cpp:18764:5: error: expected declaration before '}' token
+18764 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:18767:9: error: redefinition of 'int end'
+18767 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:6646:9: note: 'int end' previously defined here
+ 6646 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:18767:19: error: 'sz' was not declared in this scope
+18767 |     int end = min(sz, start + BATCH_SIZE);
+      |                   ^~
+MIA_Dumper_G3_Unifier.cpp:18767:23: error: 'start' was not declared in this scope; did you mean 'stat'?
+18767 |     int end = min(sz, start + BATCH_SIZE);
+      |                       ^~~~~
+      |                       stat
+MIA_Dumper_G3_Unifier.cpp:18767:31: error: 'BATCH_SIZE' was not declared in this scope; did you mean 'IDC_SIZE'?
+18767 |     int end = min(sz, start + BATCH_SIZE);
+      |                               ^~~~~~~~~~
+      |                               IDC_SIZE
+MIA_Dumper_G3_Unifier.cpp:18770:14: error: redefinition of 'uint32_t last_seq_seen'
+18770 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6649:14: note: 'uint32_t last_seq_seen' previously defined here
+ 6649 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:18770:30: error: 'g_LastSeq_by_chart' was not declared in this scope
+18770 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:18770:49: error: 'sc' was not declared in this scope
+18770 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                                                 ^~
+MIA_Dumper_G3_Unifier.cpp:18771:16: error: redefinition of 'SCDateTime last_time'
+18771 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6650:16: note: 'SCDateTime last_time' previously declared here
+ 6650 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:18771:30: error: 's_LastTsTime_by_chart' was not declared in this scope
+18771 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:18771:52: error: 'sc' was not declared in this scope
+18771 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                                                    ^~
+MIA_Dumper_G3_Unifier.cpp:18772:9: error: redefinition of 'int processed_count'
+18772 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6651:9: note: 'int processed_count' previously defined here
+ 6651 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:18774:5: error: expected unqualified-id before 'for'
+18774 |     for (int i = start; i < end; ++i) {
+      |     ^~~
+MIA_Dumper_G3_Unifier.cpp:18774:25: error: 'i' does not name a type
+18774 |     for (int i = start; i < end; ++i) {
+      |                         ^
+MIA_Dumper_G3_Unifier.cpp:18774:34: error: expected unqualified-id before '++' token
+18774 |     for (int i = start; i < end; ++i) {
+      |                                  ^~
+MIA_Dumper_G3_Unifier.cpp:18787:5: error: expected unqualified-id before 'if'
+18787 |     if (g_UseSeq) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:18794:7: error: expected unqualified-id before 'else'
+18794 |     } else {
+      |       ^~~~
+MIA_Dumper_G3_Unifier.cpp:18805:5: error: 's_LastTsTime_by_chart' does not name a type
+18805 |     s_LastTsTime_by_chart[sc.ChartNumber] = last_time;
+      |     ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:18808:5: error: expected unqualified-id before 'if'
+18808 |     if (ShouldLog(sc, LOG_VERBOSE) && processed_count > 0) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:18814:3: error: expected declaration before '}' token
+18814 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:18817:3: error: expected unqualified-id before 'if'
+18817 |   if (sc.Input[14].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:18919:3: error: expected unqualified-id before 'if'
+18919 |   if (sc.Input[22].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:18996:3: error: expected unqualified-id before 'if'
+18996 |   if (sc.Input[28].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:19117:17: error: expected constructor, destructor, or type conversion before '(' token
+19117 |   CheckAutoFlush(sc);
+      |                 ^
+MIA_Dumper_G3_Unifier.cpp:19118:16: error: expected constructor, destructor, or type conversion before '(' token
+19118 |   UpdateMetrics(sc, "study");
+      |                ^
+MIA_Dumper_G3_Unifier.cpp:19121:3: error: expected unqualified-id before 'if'
+19121 |   if (sc.Input[25].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:19194:3: error: expected unqualified-id before 'if'
+19194 |   if (sc.Input[33].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:19295:3: error: expected unqualified-id before 'if'
+19295 |   if (sc.Input[35].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:19375:3: error: expected unqualified-id before 'if'
+19375 |   if (sc.Input[37].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:19470:3: error: expected unqualified-id before 'if'
+19470 |   if (sc.LastCallToFunction) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:19633:1: error: expected declaration before '}' token
+19633 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:19637:7: error: expected unqualified-id before 'if'
+19637 |       if (s_stale_loops_by_chart[sc.ChartNumber] >= STALE_LIMIT) {
+      |       ^~
+MIA_Dumper_G3_Unifier.cpp:19646:5: error: expected declaration before '}' token
+19646 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:19649:9: error: redefinition of 'int end'
+19649 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:6646:9: note: 'int end' previously defined here
+ 6646 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:19649:19: error: 'sz' was not declared in this scope
+19649 |     int end = min(sz, start + BATCH_SIZE);
+      |                   ^~
+MIA_Dumper_G3_Unifier.cpp:19649:23: error: 'start' was not declared in this scope; did you mean 'stat'?
+19649 |     int end = min(sz, start + BATCH_SIZE);
+      |                       ^~~~~
+      |                       stat
+MIA_Dumper_G3_Unifier.cpp:19649:31: error: 'BATCH_SIZE' was not declared in this scope; did you mean 'IDC_SIZE'?
+19649 |     int end = min(sz, start + BATCH_SIZE);
+      |                               ^~~~~~~~~~
+      |                               IDC_SIZE
+MIA_Dumper_G3_Unifier.cpp:19652:14: error: redefinition of 'uint32_t last_seq_seen'
+19652 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6649:14: note: 'uint32_t last_seq_seen' previously defined here
+ 6649 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:19652:30: error: 'g_LastSeq_by_chart' was not declared in this scope
+19652 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:19652:49: error: 'sc' was not declared in this scope
+19652 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                                                 ^~
+MIA_Dumper_G3_Unifier.cpp:19653:16: error: redefinition of 'SCDateTime last_time'
+19653 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6650:16: note: 'SCDateTime last_time' previously declared here
+ 6650 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:19653:30: error: 's_LastTsTime_by_chart' was not declared in this scope
+19653 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:19653:52: error: 'sc' was not declared in this scope
+19653 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                                                    ^~
+MIA_Dumper_G3_Unifier.cpp:19654:9: error: redefinition of 'int processed_count'
+19654 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6651:9: note: 'int processed_count' previously defined here
+ 6651 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:19656:5: error: expected unqualified-id before 'for'
+19656 |     for (int i = start; i < end; ++i) {
+      |     ^~~
+MIA_Dumper_G3_Unifier.cpp:19656:25: error: 'i' does not name a type
+19656 |     for (int i = start; i < end; ++i) {
+      |                         ^
+MIA_Dumper_G3_Unifier.cpp:19656:34: error: expected unqualified-id before '++' token
+19656 |     for (int i = start; i < end; ++i) {
+      |                                  ^~
+MIA_Dumper_G3_Unifier.cpp:19669:5: error: expected unqualified-id before 'if'
+19669 |     if (g_UseSeq) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:19676:7: error: expected unqualified-id before 'else'
+19676 |     } else {
+      |       ^~~~
+MIA_Dumper_G3_Unifier.cpp:19687:5: error: 's_LastTsTime_by_chart' does not name a type
+19687 |     s_LastTsTime_by_chart[sc.ChartNumber] = last_time;
+      |     ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:19690:5: error: expected unqualified-id before 'if'
+19690 |     if (ShouldLog(sc, LOG_VERBOSE) && processed_count > 0) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:19696:3: error: expected declaration before '}' token
+19696 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:19699:3: error: expected unqualified-id before 'if'
+19699 |   if (sc.Input[14].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:19801:3: error: expected unqualified-id before 'if'
+19801 |   if (sc.Input[22].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:19878:3: error: expected unqualified-id before 'if'
+19878 |   if (sc.Input[28].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:19999:17: error: expected constructor, destructor, or type conversion before '(' token
+19999 |   CheckAutoFlush(sc);
+      |                 ^
+MIA_Dumper_G3_Unifier.cpp:20000:16: error: expected constructor, destructor, or type conversion before '(' token
+20000 |   UpdateMetrics(sc, "study");
+      |                ^
+MIA_Dumper_G3_Unifier.cpp:20003:3: error: expected unqualified-id before 'if'
+20003 |   if (sc.Input[25].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:20076:3: error: expected unqualified-id before 'if'
+20076 |   if (sc.Input[33].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:20177:3: error: expected unqualified-id before 'if'
+20177 |   if (sc.Input[35].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:20257:3: error: expected unqualified-id before 'if'
+20257 |   if (sc.Input[37].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:20352:3: error: expected unqualified-id before 'if'
+20352 |   if (sc.LastCallToFunction) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:20515:1: error: expected declaration before '}' token
+20515 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:20517:9: error: expected declaration before '}' token
+20517 |         }
+      |         ^
+MIA_Dumper_G3_Unifier.cpp:20518:5: error: expected declaration before '}' token
+20518 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:20519:3: error: expected declaration before '}' token
+20519 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:20522:3: error: expected unqualified-id before 'if'
+20522 |   if (sc.LastCallToFunction) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:20685:1: error: expected declaration before '}' token
+20685 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:20689:7: error: expected unqualified-id before 'if'
+20689 |       if (s_stale_loops_by_chart[sc.ChartNumber] >= STALE_LIMIT) {
+      |       ^~
+MIA_Dumper_G3_Unifier.cpp:20698:5: error: expected declaration before '}' token
+20698 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:20701:9: error: redefinition of 'int end'
+20701 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:6646:9: note: 'int end' previously defined here
+ 6646 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:20701:19: error: 'sz' was not declared in this scope
+20701 |     int end = min(sz, start + BATCH_SIZE);
+      |                   ^~
+MIA_Dumper_G3_Unifier.cpp:20701:23: error: 'start' was not declared in this scope; did you mean 'stat'?
+20701 |     int end = min(sz, start + BATCH_SIZE);
+      |                       ^~~~~
+      |                       stat
+MIA_Dumper_G3_Unifier.cpp:20701:31: error: 'BATCH_SIZE' was not declared in this scope; did you mean 'IDC_SIZE'?
+20701 |     int end = min(sz, start + BATCH_SIZE);
+      |                               ^~~~~~~~~~
+      |                               IDC_SIZE
+MIA_Dumper_G3_Unifier.cpp:20704:14: error: redefinition of 'uint32_t last_seq_seen'
+20704 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6649:14: note: 'uint32_t last_seq_seen' previously defined here
+ 6649 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:20704:30: error: 'g_LastSeq_by_chart' was not declared in this scope
+20704 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:20704:49: error: 'sc' was not declared in this scope
+20704 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                                                 ^~
+MIA_Dumper_G3_Unifier.cpp:20705:16: error: redefinition of 'SCDateTime last_time'
+20705 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6650:16: note: 'SCDateTime last_time' previously declared here
+ 6650 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:20705:30: error: 's_LastTsTime_by_chart' was not declared in this scope
+20705 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:20705:52: error: 'sc' was not declared in this scope
+20705 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                                                    ^~
+MIA_Dumper_G3_Unifier.cpp:20706:9: error: redefinition of 'int processed_count'
+20706 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6651:9: note: 'int processed_count' previously defined here
+ 6651 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:20708:5: error: expected unqualified-id before 'for'
+20708 |     for (int i = start; i < end; ++i) {
+      |     ^~~
+MIA_Dumper_G3_Unifier.cpp:20708:25: error: 'i' does not name a type
+20708 |     for (int i = start; i < end; ++i) {
+      |                         ^
+MIA_Dumper_G3_Unifier.cpp:20708:34: error: expected unqualified-id before '++' token
+20708 |     for (int i = start; i < end; ++i) {
+      |                                  ^~
+MIA_Dumper_G3_Unifier.cpp:20721:5: error: expected unqualified-id before 'if'
+20721 |     if (g_UseSeq) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:20728:7: error: expected unqualified-id before 'else'
+20728 |     } else {
+      |       ^~~~
+MIA_Dumper_G3_Unifier.cpp:20739:5: error: 's_LastTsTime_by_chart' does not name a type
+20739 |     s_LastTsTime_by_chart[sc.ChartNumber] = last_time;
+      |     ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:20742:5: error: expected unqualified-id before 'if'
+20742 |     if (ShouldLog(sc, LOG_VERBOSE) && processed_count > 0) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:20748:3: error: expected declaration before '}' token
+20748 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:20751:3: error: expected unqualified-id before 'if'
+20751 |   if (sc.Input[14].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:20853:3: error: expected unqualified-id before 'if'
+20853 |   if (sc.Input[22].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:20930:3: error: expected unqualified-id before 'if'
+20930 |   if (sc.Input[28].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:21051:17: error: expected constructor, destructor, or type conversion before '(' token
+21051 |   CheckAutoFlush(sc);
+      |                 ^
+MIA_Dumper_G3_Unifier.cpp:21052:16: error: expected constructor, destructor, or type conversion before '(' token
+21052 |   UpdateMetrics(sc, "study");
+      |                ^
+MIA_Dumper_G3_Unifier.cpp:21055:3: error: expected unqualified-id before 'if'
+21055 |   if (sc.Input[25].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:21128:3: error: expected unqualified-id before 'if'
+21128 |   if (sc.Input[33].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:21229:3: error: expected unqualified-id before 'if'
+21229 |   if (sc.Input[35].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:21309:3: error: expected unqualified-id before 'if'
+21309 |   if (sc.Input[37].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:21404:3: error: expected unqualified-id before 'if'
+21404 |   if (sc.LastCallToFunction) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:21567:1: error: expected declaration before '}' token
+21567 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:21569:9: error: 'g_lastMetrics' does not name a type
+21569 |         g_lastMetrics.pvwap = pvwap; g_lastMetrics.pvwap_up1 = pvwap_up1; g_lastMetrics.pvwap_dn1 = pvwap_dn1;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21569:38: error: 'g_lastMetrics' does not name a type
+21569 |         g_lastMetrics.pvwap = pvwap; g_lastMetrics.pvwap_up1 = pvwap_up1; g_lastMetrics.pvwap_dn1 = pvwap_dn1;
+      |                                      ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21569:75: error: 'g_lastMetrics' does not name a type
+21569 |         g_lastMetrics.pvwap = pvwap; g_lastMetrics.pvwap_up1 = pvwap_up1; g_lastMetrics.pvwap_dn1 = pvwap_dn1;
+      |                                                                           ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21570:9: error: 'g_lastMetrics' does not name a type
+21570 |         g_lastMetrics.pvwap_up2 = pvwap_up2; g_lastMetrics.pvwap_dn2 = pvwap_dn2;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21570:46: error: 'g_lastMetrics' does not name a type
+21570 |         g_lastMetrics.pvwap_up2 = pvwap_up2; g_lastMetrics.pvwap_dn2 = pvwap_dn2;
+      |                                              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21572:9: error: 'g_lastMetrics' does not name a type
+21572 |         g_lastMetrics.cum_delta = cum_delta; g_lastMetrics.cum_delta_day = cum_delta_day; g_lastMetrics.cum_delta_session = cum_delta_session;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21572:46: error: 'g_lastMetrics' does not name a type
+21572 |         g_lastMetrics.cum_delta = cum_delta; g_lastMetrics.cum_delta_day = cum_delta_day; g_lastMetrics.cum_delta_session = cum_delta_session;
+      |                                              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21572:91: error: 'g_lastMetrics' does not name a type
+21572 |         g_lastMetrics.cum_delta = cum_delta; g_lastMetrics.cum_delta_day = cum_delta_day; g_lastMetrics.cum_delta_session = cum_delta_session;
+      |                                                                                           ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21574:9: error: 'g_lastMetrics' does not name a type
+21574 |         g_lastMetrics.nbcv = nbcv; g_lastMetrics.correlation = correlation;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21574:36: error: 'g_lastMetrics' does not name a type
+21574 |         g_lastMetrics.nbcv = nbcv; g_lastMetrics.correlation = correlation;
+      |                                    ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21576:9: error: 'g_lastMetrics' does not name a type
+21576 |         g_lastMetrics.blind_spot_1 = blind_spot_1; g_lastMetrics.blind_spot_2 = blind_spot_2; g_lastMetrics.blind_spot_3 = blind_spot_3;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21576:52: error: 'g_lastMetrics' does not name a type
+21576 |         g_lastMetrics.blind_spot_1 = blind_spot_1; g_lastMetrics.blind_spot_2 = blind_spot_2; g_lastMetrics.blind_spot_3 = blind_spot_3;
+      |                                                    ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21576:95: error: 'g_lastMetrics' does not name a type
+21576 |         g_lastMetrics.blind_spot_1 = blind_spot_1; g_lastMetrics.blind_spot_2 = blind_spot_2; g_lastMetrics.blind_spot_3 = blind_spot_3;
+      |                                                                                               ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21577:9: error: 'g_lastMetrics' does not name a type
+21577 |         g_lastMetrics.blind_spot_4 = blind_spot_4; g_lastMetrics.blind_spot_5 = blind_spot_5;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21577:52: error: 'g_lastMetrics' does not name a type
+21577 |         g_lastMetrics.blind_spot_4 = blind_spot_4; g_lastMetrics.blind_spot_5 = blind_spot_5;
+      |                                                    ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21579:9: error: 'g_lastMetrics' does not name a type
+21579 |         g_lastMetrics.ohlc_o = ohlc_o; g_lastMetrics.ohlc_h = ohlc_h; g_lastMetrics.ohlc_l = ohlc_l; g_lastMetrics.ohlc_c = ohlc_c; g_lastMetrics.ohlc_v = ohlc_v;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21579:40: error: 'g_lastMetrics' does not name a type
+21579 |         g_lastMetrics.ohlc_o = ohlc_o; g_lastMetrics.ohlc_h = ohlc_h; g_lastMetrics.ohlc_l = ohlc_l; g_lastMetrics.ohlc_c = ohlc_c; g_lastMetrics.ohlc_v = ohlc_v;
+      |                                        ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21579:71: error: 'g_lastMetrics' does not name a type
+21579 |         g_lastMetrics.ohlc_o = ohlc_o; g_lastMetrics.ohlc_h = ohlc_h; g_lastMetrics.ohlc_l = ohlc_l; g_lastMetrics.ohlc_c = ohlc_c; g_lastMetrics.ohlc_v = ohlc_v;
+      |                                                                       ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21579:102: error: 'g_lastMetrics' does not name a type
+21579 |         g_lastMetrics.ohlc_o = ohlc_o; g_lastMetrics.ohlc_h = ohlc_h; g_lastMetrics.ohlc_l = ohlc_l; g_lastMetrics.ohlc_c = ohlc_c; g_lastMetrics.ohlc_v = ohlc_v;
+      |                                                                                                      ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21579:133: error: 'g_lastMetrics' does not name a type
+21579 |         g_lastMetrics.ohlc_o = ohlc_o; g_lastMetrics.ohlc_h = ohlc_h; g_lastMetrics.ohlc_l = ohlc_l; g_lastMetrics.ohlc_c = ohlc_c; g_lastMetrics.ohlc_v = ohlc_v;
+      |                                                                                                                                     ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21580:9: error: 'g_lastMetrics' does not name a type
+21580 |         g_lastMetrics.ohlc_bidvol = ohlc_bidvol; g_lastMetrics.ohlc_askvol = ohlc_askvol;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21580:50: error: 'g_lastMetrics' does not name a type
+21580 |         g_lastMetrics.ohlc_bidvol = ohlc_bidvol; g_lastMetrics.ohlc_askvol = ohlc_askvol;
+      |                                                  ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21582:9: error: 'g_lastMetrics' does not name a type
+21582 |         g_lastMetrics.trade_buy_trades = trade_buy_trades; g_lastMetrics.trade_sell_trades = trade_sell_trades;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21582:60: error: 'g_lastMetrics' does not name a type
+21582 |         g_lastMetrics.trade_buy_trades = trade_buy_trades; g_lastMetrics.trade_sell_trades = trade_sell_trades;
+      |                                                            ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21583:9: error: 'g_lastMetrics' does not name a type
+21583 |         g_lastMetrics.trade_buy_vol = trade_buy_vol; g_lastMetrics.trade_sell_vol = trade_sell_vol;
+      |         ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21583:54: error: 'g_lastMetrics' does not name a type
+21583 |         g_lastMetrics.trade_buy_vol = trade_buy_vol; g_lastMetrics.trade_sell_vol = trade_sell_vol;
+      |                                                      ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21584:5: error: expected declaration before '}' token
+21584 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:21587:19: error: expected constructor, destructor, or type conversion before ';' token
+21587 |     CloseUnified();
+      |                   ^
+MIA_Dumper_G3_Unifier.cpp:21589:5: error: expected unqualified-id before 'if'
+21589 |     if (ShouldLog(sc, LOG_KEY)) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:21593:5: error: expected unqualified-id before 'if'
+21593 |     if (sc.Input[45].GetYesNo()) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:21597:3: error: expected declaration before '}' token
+21597 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:21598:1: error: expected declaration before '}' token
+21598 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:21602:7: error: expected unqualified-id before 'if'
+21602 |       if (s_stale_loops_by_chart[sc.ChartNumber] >= STALE_LIMIT) {
+      |       ^~
+MIA_Dumper_G3_Unifier.cpp:21611:5: error: expected declaration before '}' token
+21611 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:21614:9: error: redefinition of 'int end'
+21614 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:6646:9: note: 'int end' previously defined here
+ 6646 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:21614:19: error: 'sz' was not declared in this scope
+21614 |     int end = min(sz, start + BATCH_SIZE);
+      |                   ^~
+MIA_Dumper_G3_Unifier.cpp:21614:23: error: 'start' was not declared in this scope; did you mean 'stat'?
+21614 |     int end = min(sz, start + BATCH_SIZE);
+      |                       ^~~~~
+      |                       stat
+MIA_Dumper_G3_Unifier.cpp:21614:31: error: 'BATCH_SIZE' was not declared in this scope; did you mean 'IDC_SIZE'?
+21614 |     int end = min(sz, start + BATCH_SIZE);
+      |                               ^~~~~~~~~~
+      |                               IDC_SIZE
+MIA_Dumper_G3_Unifier.cpp:21617:14: error: redefinition of 'uint32_t last_seq_seen'
+21617 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6649:14: note: 'uint32_t last_seq_seen' previously defined here
+ 6649 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21617:30: error: 'g_LastSeq_by_chart' was not declared in this scope
+21617 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21617:49: error: 'sc' was not declared in this scope
+21617 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                                                 ^~
+MIA_Dumper_G3_Unifier.cpp:21618:16: error: redefinition of 'SCDateTime last_time'
+21618 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6650:16: note: 'SCDateTime last_time' previously declared here
+ 6650 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21618:30: error: 's_LastTsTime_by_chart' was not declared in this scope
+21618 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21618:52: error: 'sc' was not declared in this scope
+21618 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                                                    ^~
+MIA_Dumper_G3_Unifier.cpp:21619:9: error: redefinition of 'int processed_count'
+21619 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6651:9: note: 'int processed_count' previously defined here
+ 6651 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21621:5: error: expected unqualified-id before 'for'
+21621 |     for (int i = start; i < end; ++i) {
+      |     ^~~
+MIA_Dumper_G3_Unifier.cpp:21621:25: error: 'i' does not name a type
+21621 |     for (int i = start; i < end; ++i) {
+      |                         ^
+MIA_Dumper_G3_Unifier.cpp:21621:34: error: expected unqualified-id before '++' token
+21621 |     for (int i = start; i < end; ++i) {
+      |                                  ^~
+MIA_Dumper_G3_Unifier.cpp:21634:5: error: expected unqualified-id before 'if'
+21634 |     if (g_UseSeq) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:21641:7: error: expected unqualified-id before 'else'
+21641 |     } else {
+      |       ^~~~
+MIA_Dumper_G3_Unifier.cpp:21652:5: error: 's_LastTsTime_by_chart' does not name a type
+21652 |     s_LastTsTime_by_chart[sc.ChartNumber] = last_time;
+      |     ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:21655:5: error: expected unqualified-id before 'if'
+21655 |     if (ShouldLog(sc, LOG_VERBOSE) && processed_count > 0) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:21661:3: error: expected declaration before '}' token
+21661 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:21664:3: error: expected unqualified-id before 'if'
+21664 |   if (sc.Input[14].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:21766:3: error: expected unqualified-id before 'if'
+21766 |   if (sc.Input[22].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:21843:3: error: expected unqualified-id before 'if'
+21843 |   if (sc.Input[28].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:21964:17: error: expected constructor, destructor, or type conversion before '(' token
+21964 |   CheckAutoFlush(sc);
+      |                 ^
+MIA_Dumper_G3_Unifier.cpp:21965:16: error: expected constructor, destructor, or type conversion before '(' token
+21965 |   UpdateMetrics(sc, "study");
+      |                ^
+MIA_Dumper_G3_Unifier.cpp:21968:3: error: expected unqualified-id before 'if'
+21968 |   if (sc.Input[25].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:22041:3: error: expected unqualified-id before 'if'
+22041 |   if (sc.Input[33].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:22142:3: error: expected unqualified-id before 'if'
+22142 |   if (sc.Input[35].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:22222:3: error: expected unqualified-id before 'if'
+22222 |   if (sc.Input[37].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:22317:3: error: expected unqualified-id before 'if'
+22317 |   if (sc.LastCallToFunction) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:22480:1: error: expected declaration before '}' token
+22480 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:22484:7: error: expected unqualified-id before 'if'
+22484 |       if (s_stale_loops_by_chart[sc.ChartNumber] >= STALE_LIMIT) {
+      |       ^~
+MIA_Dumper_G3_Unifier.cpp:22493:5: error: expected declaration before '}' token
+22493 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:22496:9: error: redefinition of 'int end'
+22496 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:6646:9: note: 'int end' previously defined here
+ 6646 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:22496:19: error: 'sz' was not declared in this scope
+22496 |     int end = min(sz, start + BATCH_SIZE);
+      |                   ^~
+MIA_Dumper_G3_Unifier.cpp:22496:23: error: 'start' was not declared in this scope; did you mean 'stat'?
+22496 |     int end = min(sz, start + BATCH_SIZE);
+      |                       ^~~~~
+      |                       stat
+MIA_Dumper_G3_Unifier.cpp:22496:31: error: 'BATCH_SIZE' was not declared in this scope; did you mean 'IDC_SIZE'?
+22496 |     int end = min(sz, start + BATCH_SIZE);
+      |                               ^~~~~~~~~~
+      |                               IDC_SIZE
+MIA_Dumper_G3_Unifier.cpp:22499:14: error: redefinition of 'uint32_t last_seq_seen'
+22499 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6649:14: note: 'uint32_t last_seq_seen' previously defined here
+ 6649 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:22499:30: error: 'g_LastSeq_by_chart' was not declared in this scope
+22499 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:22499:49: error: 'sc' was not declared in this scope
+22499 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                                                 ^~
+MIA_Dumper_G3_Unifier.cpp:22500:16: error: redefinition of 'SCDateTime last_time'
+22500 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6650:16: note: 'SCDateTime last_time' previously declared here
+ 6650 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:22500:30: error: 's_LastTsTime_by_chart' was not declared in this scope
+22500 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:22500:52: error: 'sc' was not declared in this scope
+22500 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                                                    ^~
+MIA_Dumper_G3_Unifier.cpp:22501:9: error: redefinition of 'int processed_count'
+22501 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6651:9: note: 'int processed_count' previously defined here
+ 6651 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:22503:5: error: expected unqualified-id before 'for'
+22503 |     for (int i = start; i < end; ++i) {
+      |     ^~~
+MIA_Dumper_G3_Unifier.cpp:22503:25: error: 'i' does not name a type
+22503 |     for (int i = start; i < end; ++i) {
+      |                         ^
+MIA_Dumper_G3_Unifier.cpp:22503:34: error: expected unqualified-id before '++' token
+22503 |     for (int i = start; i < end; ++i) {
+      |                                  ^~
+MIA_Dumper_G3_Unifier.cpp:22516:5: error: expected unqualified-id before 'if'
+22516 |     if (g_UseSeq) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:22523:7: error: expected unqualified-id before 'else'
+22523 |     } else {
+      |       ^~~~
+MIA_Dumper_G3_Unifier.cpp:22534:5: error: 's_LastTsTime_by_chart' does not name a type
+22534 |     s_LastTsTime_by_chart[sc.ChartNumber] = last_time;
+      |     ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:22537:5: error: expected unqualified-id before 'if'
+22537 |     if (ShouldLog(sc, LOG_VERBOSE) && processed_count > 0) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:22543:3: error: expected declaration before '}' token
+22543 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:22546:3: error: expected unqualified-id before 'if'
+22546 |   if (sc.Input[14].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:22648:3: error: expected unqualified-id before 'if'
+22648 |   if (sc.Input[22].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:22725:3: error: expected unqualified-id before 'if'
+22725 |   if (sc.Input[28].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:22846:17: error: expected constructor, destructor, or type conversion before '(' token
+22846 |   CheckAutoFlush(sc);
+      |                 ^
+MIA_Dumper_G3_Unifier.cpp:22847:16: error: expected constructor, destructor, or type conversion before '(' token
+22847 |   UpdateMetrics(sc, "study");
+      |                ^
+MIA_Dumper_G3_Unifier.cpp:22850:3: error: expected unqualified-id before 'if'
+22850 |   if (sc.Input[25].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:22923:3: error: expected unqualified-id before 'if'
+22923 |   if (sc.Input[33].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:23024:3: error: expected unqualified-id before 'if'
+23024 |   if (sc.Input[35].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:23104:3: error: expected unqualified-id before 'if'
+23104 |   if (sc.Input[37].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:23199:3: error: expected unqualified-id before 'if'
+23199 |   if (sc.LastCallToFunction) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:23362:1: error: expected declaration before '}' token
+23362 | }
+      | ^
+MIA_Dumper_G3_Unifier.cpp:23366:7: error: expected unqualified-id before 'if'
+23366 |       if (s_stale_loops_by_chart[sc.ChartNumber] >= STALE_LIMIT) {
+      |       ^~
+MIA_Dumper_G3_Unifier.cpp:23375:5: error: expected declaration before '}' token
+23375 |     }
+      |     ^
+MIA_Dumper_G3_Unifier.cpp:23378:9: error: redefinition of 'int end'
+23378 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:6646:9: note: 'int end' previously defined here
+ 6646 |     int end = min(sz, start + BATCH_SIZE);
+      |         ^~~
+MIA_Dumper_G3_Unifier.cpp:23378:19: error: 'sz' was not declared in this scope
+23378 |     int end = min(sz, start + BATCH_SIZE);
+      |                   ^~
+MIA_Dumper_G3_Unifier.cpp:23378:23: error: 'start' was not declared in this scope; did you mean 'stat'?
+23378 |     int end = min(sz, start + BATCH_SIZE);
+      |                       ^~~~~
+      |                       stat
+MIA_Dumper_G3_Unifier.cpp:23378:31: error: 'BATCH_SIZE' was not declared in this scope; did you mean 'IDC_SIZE'?
+23378 |     int end = min(sz, start + BATCH_SIZE);
+      |                               ^~~~~~~~~~
+      |                               IDC_SIZE
+MIA_Dumper_G3_Unifier.cpp:23381:14: error: redefinition of 'uint32_t last_seq_seen'
+23381 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6649:14: note: 'uint32_t last_seq_seen' previously defined here
+ 6649 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |              ^~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:23381:30: error: 'g_LastSeq_by_chart' was not declared in this scope
+23381 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:23381:49: error: 'sc' was not declared in this scope
+23381 |     uint32_t last_seq_seen = g_LastSeq_by_chart[sc.ChartNumber];
+      |                                                 ^~
+MIA_Dumper_G3_Unifier.cpp:23382:16: error: redefinition of 'SCDateTime last_time'
+23382 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6650:16: note: 'SCDateTime last_time' previously declared here
+ 6650 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                ^~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:23382:30: error: 's_LastTsTime_by_chart' was not declared in this scope
+23382 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                              ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:23382:52: error: 'sc' was not declared in this scope
+23382 |     SCDateTime last_time   = s_LastTsTime_by_chart[sc.ChartNumber];
+      |                                                    ^~
+MIA_Dumper_G3_Unifier.cpp:23383:9: error: redefinition of 'int processed_count'
+23383 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:6651:9: note: 'int processed_count' previously defined here
+ 6651 |     int processed_count = 0;
+      |         ^~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:23385:5: error: expected unqualified-id before 'for'
+23385 |     for (int i = start; i < end; ++i) {
+      |     ^~~
+MIA_Dumper_G3_Unifier.cpp:23385:25: error: 'i' does not name a type
+23385 |     for (int i = start; i < end; ++i) {
+      |                         ^
+MIA_Dumper_G3_Unifier.cpp:23385:34: error: expected unqualified-id before '++' token
+23385 |     for (int i = start; i < end; ++i) {
+      |                                  ^~
+MIA_Dumper_G3_Unifier.cpp:23398:5: error: expected unqualified-id before 'if'
+23398 |     if (g_UseSeq) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:23405:7: error: expected unqualified-id before 'else'
+23405 |     } else {
+      |       ^~~~
+MIA_Dumper_G3_Unifier.cpp:23416:5: error: 's_LastTsTime_by_chart' does not name a type
+23416 |     s_LastTsTime_by_chart[sc.ChartNumber] = last_time;
+      |     ^~~~~~~~~~~~~~~~~~~~~
+MIA_Dumper_G3_Unifier.cpp:23419:5: error: expected unqualified-id before 'if'
+23419 |     if (ShouldLog(sc, LOG_VERBOSE) && processed_count > 0) {
+      |     ^~
+MIA_Dumper_G3_Unifier.cpp:23425:3: error: expected declaration before '}' token
+23425 |   }
+      |   ^
+MIA_Dumper_G3_Unifier.cpp:23428:3: error: expected unqualified-id before 'if'
+23428 |   if (sc.Input[14].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:23530:3: error: expected unqualified-id before 'if'
+23530 |   if (sc.Input[22].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:23607:3: error: expected unqualified-id before 'if'
+23607 |   if (sc.Input[28].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:23728:17: error: expected constructor, destructor, or type conversion before '(' token
+23728 |   CheckAutoFlush(sc);
+      |                 ^
+MIA_Dumper_G3_Unifier.cpp:23729:16: error: expected constructor, destructor, or type conversion before '(' token
+23729 |   UpdateMetrics(sc, "study");
+      |                ^
+MIA_Dumper_G3_Unifier.cpp:23732:3: error: expected unqualified-id before 'if'
+23732 |   if (sc.Input[25].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:23805:3: error: expected unqualified-id before 'if'
+23805 |   if (sc.Input[33].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:23906:3: error: expected unqualified-id before 'if'
+23906 |   if (sc.Input[35].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:23986:3: error: expected unqualified-id before 'if'
+23986 |   if (sc.Input[37].GetInt() != 0 && sc.ArraySize > 0) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:24081:3: error: expected unqualified-id before 'if'
+24081 |   if (sc.LastCallToFunction) {
+      |   ^~
+MIA_Dumper_G3_Unifier.cpp:24244:1: error: expected declaration before '}' token
+24244 | }
+      | ^
+
+Failed to generate the dll file.
+
+-- End of Build --     12:48:54

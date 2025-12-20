@@ -1,0 +1,54 @@
+================================================================================
+RAPPORT COMPARATIF: T4 vNext vs BASELINE vs MENTHORQ PURE
+================================================================================
+
+## T4 vNext (OPTIMISE)
+
+P&L Brut:        +108.74 ticks
+Fees:            -87.42 ticks
+P&L Net:         +21.32 ticks
+P&L/trade:       +0.151 ticks
+
+Trades:          141
+Wins:            65 (46.1%)
+Losses:          74
+Profit Factor:   1.27
+R:R moyen:       2.00:1
+Size moyen:      0.57x
+Sharpe Ratio:    4.08
+Max Drawdown:    55.48 ticks
+
+Distribution sizing:
+  0.5x: 124 trades (87.9%)
+  1.0x: 14 trades (9.9%)
+  1.5x: 3 trades (2.1%)
+
+## T4 BASELINE (Reference)
+
+P&L Net:         +295.00 ticks
+P&L/trade:       +0.300 ticks
+Trades:          1000
+WinRate:         48.0%
+
+## MENTHORQ PURE
+
+P&L Net:         -425.42 ticks
+P&L/trade:       -0.357 ticks
+Trades:          1191
+WinRate:         46.2%
+
+## COMPARAISON
+
+vs T4 Baseline:
+  Delta P&L/trade: -0.149 ticks (-49.6%)
+  VERDICT: T4 vNext = BASELINE [PAS D'AMELIORATION]
+
+vs MenthorQ Pure:
+  Delta P&L/trade: +0.508 ticks
+
+## OBJECTIF +1.0 t/trade
+
+Gap restant: 0.849 ticks (84.9%)
+Progres significatif, mais plus de travail requis
+
+================================================================================

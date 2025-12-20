@@ -5,7 +5,7 @@ Version: Enhanced v2.0 - INTÉGRATION COMPLÈTE AVEC EXISTANT
 
 🎯 INTÉGRATION STRATEGY:
 ✅ GARDE 100% de votre code existant qui fonctionne
-✅ AJOUTE toutes les améliorations demandées  
+✅ AJOUTE toutes les améliorations demandées
 ✅ COMPATIBILITÉ totale avec vos appels actuels
 ✅ NOUVELLES fonctionnalités disponibles progressivement
 
@@ -69,7 +69,7 @@ try:
 except ImportError:
     # Fallback: définir les types localement
     logger.warning("Impossible d'importer core.base_types, utilisation des types locaux")
-    
+
     @dataclass
     class MarketData:
         timestamp: datetime
@@ -81,15 +81,15 @@ except ImportError:
         volume: int
         bid: Optional[float] = None
         ask: Optional[float] = None
-    
-    @dataclass  
+
+    @dataclass
     class OrderFlowData:
         timestamp: datetime
         symbol: str
         cumulative_delta: float
         bid_volume: int
         ask_volume: int
-    
+
     @dataclass
     class TradingSignal:
         timestamp: datetime
@@ -97,21 +97,21 @@ except ImportError:
         signal_type: str
         direction: str
         confidence: float
-    
+
     @dataclass
     class TradeResult:
         timestamp: datetime
         symbol: str
         realized_pnl: float
-        
+
     class MarketRegime:
         TRENDING = "trending"
         RANGING = "ranging"
-    
+
     class SignalType:
         LONG = "LONG"
         SHORT = "SHORT"
-    
+
     # Constants ES
     ES_TICK_SIZE = 0.25
     ES_TICK_VALUE = 12.50
@@ -181,13 +181,13 @@ class MarketSnapshot:
 class BattleNavaleSnapshot:
     """Snapshot analyse Battle Navale (GARDÉ de l'existant)"""
     timestamp: datetime
-    
+
     # Battle Navale core
     signal_type: str
     signal_strength: float
     confidence: float
     direction: str
-    
+
     # Features Battle Navale (PRIORITÉ #3 - sans dow_trend_regime)
     vwap_trend_signal: float
     sierra_pattern_strength: float
@@ -197,22 +197,22 @@ class BattleNavaleSnapshot:
     order_book_imbalance: float  # NOUVEAU dans Priorité #3
     level_proximity_score: float
     aggression_bias: float
-    
+
     # Pattern analysis
     pattern_type: str
     pattern_quality: float
     base_strength: float
     rouge_sous_verte_valid: bool
-    
+
     # Confluence
     confluence_score: float
     confluence_components: Dict[str, float]
-    
+
     # Decision logic
     decision_reasoning: str
     filters_passed: List[str]
     filters_failed: List[str]
-    
+
     # PRIORITÉ #3 metadata (GARDÉ)
     priority_3_changes: Dict[str, Any] = field(default_factory=lambda: {
         'dow_trend_regime_removed': True,
@@ -225,26 +225,26 @@ class BattleNavaleSnapshot:
 class ExecutionSnapshot:
     """Snapshot exécution ordre (GARDÉ de l'existant)"""
     timestamp: datetime
-    
+
     # Order details
     order_id: str
     order_type: str                     # MKT/LMT/STP
     side: str                          # BUY/SELL
     quantity: float
     price_requested: Optional[float]    # Prix demandé (si LMT)
-    
+
     # Execution details
     price_filled: Optional[float]       # Prix rempli
     quantity_filled: float             # Quantité remplie
     execution_time_ms: float           # Temps exécution
     slippage_ticks: float              # Slippage en ticks
-    
+
     # Market conditions at execution
     bid_price: float
     ask_price: float
     spread_ticks: float
     market_impact: float               # Impact sur le marché
-    
+
     # Risk management
     stop_loss_price: Optional[float]
     take_profit_price: Optional[float]
@@ -255,24 +255,24 @@ class ExecutionSnapshot:
 class PositionSnapshot:
     """Snapshot position en cours (GARDÉ de l'existant)"""
     timestamp: datetime
-    
+
     # Position details
     symbol: str
     side: str                          # LONG/SHORT
     quantity: float
     entry_price: float
     current_price: float
-    
+
     # P&L tracking
     unrealized_pnl: float
     unrealized_pnl_percent: float
     max_favorable_excursion: float     # MFE
     max_adverse_excursion: float       # MAE
-    
+
     # Time tracking
     entry_time: datetime
     time_in_position_minutes: int
-    
+
     # Risk monitoring
     distance_to_stop: float            # Ticks
     distance_to_target: float          # Ticks
@@ -282,11 +282,11 @@ class PositionSnapshot:
 class TradeResultSnapshot:
     """Snapshot résultat final trade (GARDÉ de l'existant)"""
     timestamp: datetime
-    
+
     # Trade identification
     trade_id: str
     symbol: str
-    
+
     # Entry/Exit details
     entry_time: datetime
     exit_time: datetime
@@ -294,20 +294,20 @@ class TradeResultSnapshot:
     quantity: float
     entry_price: float
     exit_price: float
-    
+
     # Performance metrics
     realized_pnl: float
     realized_pnl_percent: float
     commission: float
     slippage: float
     net_pnl: float
-    
+
     # Trade analytics
     max_favorable_excursion: float     # MFE
     max_adverse_excursion: float       # MAE
     time_in_trade_minutes: int
     exit_reason: str                   # "TP", "SL", "TIME", "MANUAL"
-    
+
     # Battle Navale performance
     initial_confluence_score: float
     signal_accuracy: float
@@ -319,25 +319,25 @@ class TradeResultSnapshot:
 class MicrostructureSnapshot:
     """NOUVEAU: Snapshot microstructure marché"""
     timestamp: datetime
-    
+
     # Order book data
     bid_levels: List[Tuple[float, int]]  # [(price, size), ...]
     ask_levels: List[Tuple[float, int]]
     order_book_imbalance: float          # -1 à +1
     bid_ask_spread_ticks: float
-    
+
     # Tick analysis
     tick_direction: str                  # "up", "down", "same"
     tick_momentum_score: float           # -1 à +1
     upticks_last_20: int
     downticks_last_20: int
-    
+
     # Volume analysis
     large_orders_bias: float             # Smart money flow
     aggressive_buy_ratio: float          # % ordres agressifs buy
     aggressive_sell_ratio: float         # % ordres agressifs sell
     volume_spike_detected: bool
-    
+
     # Quality metrics
     data_quality_score: float            # 0-1
     latency_ms: float
@@ -346,27 +346,27 @@ class MicrostructureSnapshot:
 class OptionsFlowSnapshot:
     """NOUVEAU: Snapshot flow options enrichi"""
     timestamp: datetime
-    
+
     # SPX Gamma exposure
     total_gamma_exposure: float          # $billions
     dealer_gamma_position: str           # "long", "short", "neutral"
     gamma_flip_level: float              # Niveau flip dealer gamma
-    
+
     # Volatility surface
     vix_level: float
     term_structure_slope: float          # Contango/backwardation
     vol_skew_25_delta: float             # Skew 25-delta
-    
+
     # Put/Call dynamics
     put_call_ratio: float
     put_call_volume_ratio: float
     unusual_options_activity: bool
-    
+
     # Pin risk
     nearby_pin_levels: List[float]       # Niveaux pin risk proches
     days_to_monthly_expiry: int
     days_to_weekly_expiry: int
-    
+
     # Dealer positioning
     estimated_dealer_hedging: str        # "buying", "selling", "neutral"
 
@@ -374,24 +374,24 @@ class OptionsFlowSnapshot:
 class SessionContextSnapshot:
     """NOUVEAU: Contexte session enrichi"""
     timestamp: datetime
-    
+
     # Session timing
     session_phase: SessionPhase
     time_since_open_minutes: int
     time_to_close_minutes: int
     session_day_of_week: str
-    
+
     # Economic context
     economic_events_today: List[str]     # ["FOMC", "NFP", etc.]
     economic_events_this_week: List[str]
     high_impact_event_today: bool
-    
+
     # Seasonal patterns
     month_of_year: int
     week_of_month: int
     seasonal_bias: str                   # "bullish", "bearish", "neutral"
     historical_volatility_percentile: float
-    
+
     # Market context
     overnight_gap_percent: float
     premarket_volume_ratio: float        # vs average
@@ -402,30 +402,30 @@ class PostTradeAnalysisSnapshot:
     """NOUVEAU: Analyse post-trade pour apprentissage"""
     timestamp: datetime
     trade_id: str
-    
+
     # Analyse succès/échec
     trade_outcome: str                   # "win", "loss", "breakeven"
     outcome_confidence: float            # 0-1
-    
+
     # Facteurs de succès/échec
     success_factors: List[str]           # Pourquoi ça a marché
     failure_factors: List[str]           # Pourquoi ça a échoué
-    
+
     # Évolution marché pendant trade
     market_regime_shift: bool
     volatility_change_percent: float
     unexpected_events: List[str]
-    
+
     # Validation edge Battle Navale
     edge_confirmed: bool
     edge_confidence: float               # 0-1
     battle_navale_performed_as_expected: bool
-    
+
     # Insights pour ML
     key_features_importance: Dict[str, float]
     market_context_relevance: float
     timing_quality_score: float          # 0-1
-    
+
     # Recommandations amélioration
     improvement_suggestions: List[str]
     pattern_reliability_update: float
@@ -435,29 +435,29 @@ class PostTradeAnalysisSnapshot:
 class TradeSnapshotter:
     """
     TRADE SNAPSHOTTER ENHANCED & INTEGRATED
-    
+
     ✅ GARDE 100% fonctionnalités existantes
     ✅ AJOUTE toutes améliorations demandées
     ✅ COMPATIBILITÉ totale avec code existant
     """
-    
+
     def __init__(self, config: Optional[Dict[str, Any]] = None):
         """
         Initialisation avec support config existante + enrichie
         """
         self.config = config or {}
-        
+
         # Paths (GARDÉ existant)
         base_path = self.config.get('snapshots_directory', 'data/snapshots')
         self.base_path = Path(base_path)
         self.daily_path = self.base_path / "daily"
         self.archive_path = self.base_path / "archive"
-        
+
         # Mode (GARDÉ existant)
         trading_config = self.config.get('trading', {})
         mode_str = trading_config.get('automation_mode', 'paper_trading')
         self.mode = TradingMode.PAPER if 'paper' in mode_str else TradingMode.LIVE
-        
+
         # État existant (GARDÉ)
         self.current_trade_id: Optional[str] = None
         self.snapshots: Dict[str, List[Dict]] = {
@@ -467,7 +467,7 @@ class TradeSnapshotter:
             'positions': [],
             'results': []
         }
-        
+
         # NOUVELLES fonctionnalités enrichies
         self.enhanced_snapshots: Dict[str, List[Dict]] = {
             'microstructure': [],
@@ -476,12 +476,12 @@ class TradeSnapshotter:
             'post_trade_analysis': [],
             'correlations': []
         }
-        
+
         # Enhanced features tracking
         self.microstructure_history: List[Dict] = []
         self.options_history: List[Dict] = []
         self.correlation_tracker: Dict[str, Any] = {}
-        
+
         # Performance stats (GARDÉ + enrichi)
         self.capture_stats = {
             'total_snapshots': 0,
@@ -492,11 +492,11 @@ class TradeSnapshotter:
             'ml_features_generated': 0,
             'post_trade_analyses': 0
         }
-        
+
         # Initialize
         self.ensure_directories()
         self._initialize_enhanced_features()
-        
+
         logger.info(f"TradeSnapshotter Enhanced initialisé: {self.base_path}")
 
     def ensure_directories(self):
@@ -505,7 +505,7 @@ class TradeSnapshotter:
             # Existants (GARDÉS)
             self.base_path,
             self.base_path / "daily",
-            self.base_path / "weekly", 
+            self.base_path / "weekly",
             self.base_path / "archive",
             self.base_path / "ml_ready",
             self.base_path / "backups",
@@ -627,7 +627,7 @@ class TradeSnapshotter:
                 signal_strength=battle_navale_result.get('signal_strength', 0.0),
                 confidence=battle_navale_result.get('confidence', 0.0),
                 direction=battle_navale_result.get('direction', ''),
-                
+
                 # Features Battle Navale (PRIORITÉ #3 - dow_trend_regime SUPPRIMÉ)
                 vwap_trend_signal=features.get('vwap_trend_signal', 0.0),
                 sierra_pattern_strength=features.get('sierra_pattern_strength', 0.0),
@@ -637,22 +637,22 @@ class TradeSnapshotter:
                 order_book_imbalance=features.get('order_book_imbalance', 0.0),  # NOUVEAU P3
                 level_proximity_score=features.get('level_proximity_score', 0.0),
                 aggression_bias=features.get('aggression_bias', 0.0),
-                
+
                 # Pattern analysis (GARDÉ)
                 pattern_type=decision_context.get('pattern_type', ''),
                 pattern_quality=decision_context.get('pattern_quality', 0.0),
                 base_strength=decision_context.get('base_strength', 0.0),
                 rouge_sous_verte_valid=decision_context.get('rouge_sous_verte_valid', False),
-                
+
                 # Confluence (GARDÉ)
                 confluence_score=decision_context.get('confluence_score', 0.0),
                 confluence_components=decision_context.get('confluence_components', {}),
-                
+
                 # Decision logic (GARDÉ)
                 decision_reasoning=decision_context.get('decision_reasoning', ''),
                 filters_passed=decision_context.get('filters_passed', []),
                 filters_failed=decision_context.get('filters_failed', []),
-                
+
                 # PRIORITÉ #3 metadata (GARDÉ)
                 priority_3_changes={
                     'dow_trend_regime_removed': True,
@@ -673,7 +673,7 @@ class TradeSnapshotter:
                 'decision_context': decision_context,
                 'confidence_breakdown': self._analyze_confidence_breakdown(features),
                 'capture_time_ms': 0,
-                
+
                 # PRIORITÉ #3 decision metadata (GARDÉ)
                 'priority_3_decision': {
                     'optimized_features': True,
@@ -703,10 +703,17 @@ class TradeSnapshotter:
     def capture_execution_snapshot(self,
                                    trade_id: str,
                                    order_details: Dict[str, Any],
-                                   execution_result: Dict[str, Any]) -> bool:
+                                   execution_result: Dict[str, Any],
+                                   ml_data: Optional[Dict[str, Any]] = None) -> bool:
         """
-        SNAPSHOT EXÉCUTION (GARDÉ 100% existant)
-        Capture détails exécution ordre complets
+        SNAPSHOT EXÉCUTION (GARDÉ 100% existant + ENRICHI GPT)
+        Capture détails exécution ordre complets + télémétrie GPT
+
+        Args:
+            trade_id: ID unique du trade
+            order_details: Détails de l'ordre
+            execution_result: Résultat de l'exécution
+            ml_data: Données ML_READY enrichies (optionnel)
         """
         start_time = time.perf_counter()
 
@@ -733,7 +740,38 @@ class TradeSnapshotter:
                 max_risk_dollars=order_details.get('max_risk_dollars', 0.0)
             )
 
-            # Complete snapshot (GARDÉ)
+            # === ENRICHISSEMENT GPT : Télémétrie avancée ===
+            gpt_telemetry = {}
+            if ml_data:
+                # Gamma & Options
+                gpt_telemetry['gamma_pin_strength'] = ml_data.get('gamma_pin_strength')
+                gpt_telemetry['next_wall'] = ml_data.get('next_wall')
+                gpt_telemetry['blind_spot_id'] = ml_data.get('blind_spot_closest')
+                gpt_telemetry['headroom_pct'] = ml_data.get('headroom_pct')
+
+                # Options flow
+                gpt_telemetry['call_put_flow_ratio'] = ml_data.get('call_put_flow_ratio')
+                gpt_telemetry['dealers_bias'] = ml_data.get('dealers_bias')
+
+                # Volume & Momentum
+                gpt_telemetry['relvol_1m5m'] = ml_data.get('relvol_1m5m')
+                gpt_telemetry['relvol_break'] = ml_data.get('relvol_break')
+
+                # Order Flow
+                gpt_telemetry['level1_imbalance'] = ml_data.get('level1_imbalance')
+                gpt_telemetry['smart_money_flow'] = ml_data.get('smart_money_flow')
+                gpt_telemetry['institutional_pressure'] = ml_data.get('institutional_pressure')
+
+                # Technical
+                gpt_telemetry['vwap_slope'] = ml_data.get('vwap_slope')
+                gpt_telemetry['volume_climax'] = ml_data.get('volume_climax')
+
+                # Channel & HVL
+                gpt_telemetry['channel_conf'] = ml_data.get('channel_conf')
+                gpt_telemetry['channel_state_flip'] = ml_data.get('channel_state_flip')
+                gpt_telemetry['hvl_dist_pct'] = ml_data.get('hvl_dist_pct')
+
+            # Complete snapshot (GARDÉ + ENRICHI)
             execution_snapshot = {
                 'snapshot_id': f"{trade_id}_EXECUTION",
                 'trade_id': trade_id,
@@ -743,11 +781,15 @@ class TradeSnapshotter:
                 'execution_quality': self._calculate_execution_quality(exec_snapshot),
                 'market_conditions': execution_result.get('market_conditions', {}),
                 'capture_time_ms': 0,
-                
+
+                # === GPT ENHANCED TELEMETRY ===
+                'gpt_telemetry': gpt_telemetry,
+
                 # PRIORITÉ #3 execution metadata (GARDÉ)
                 'priority_3_execution': {
                     'optimized_processing': True,
-                    'dow_trend_removed_impact': 'reduced_processing_overhead'
+                    'dow_trend_removed_impact': 'reduced_processing_overhead',
+                    'gpt_enrichment_active': len(gpt_telemetry) > 0
                 }
             }
 
@@ -790,10 +832,10 @@ class TradeSnapshotter:
                     'features_streamlined': True
                 }
             }
-            
+
             self.snapshots['positions'].append(position_snapshot)
             return True
-            
+
         except Exception as e:
             logger.error(f"Erreur capture position update: {e}")
             return False
@@ -830,8 +872,19 @@ class TradeSnapshotter:
                 commission=result_data.get('commission', 0.0),
                 slippage=result_data.get('slippage', 0.0),
                 net_pnl=result_data.get('net_pnl', 0.0),
-                max_favorable_excursion=result_data.get('max_favorable_excursion', 0.0),
-                max_adverse_excursion=result_data.get('max_adverse_excursion', 0.0),
+                # ✅ CORRECTION MFE/MAE: Chercher avec plusieurs noms possibles (compatibilité)
+                max_favorable_excursion=(
+                    result_data.get('max_favorable_excursion') or
+                    result_data.get('mfe') or
+                    result_data.get('max_profit_ticks') or
+                    0.0
+                ),
+                max_adverse_excursion=(
+                    result_data.get('max_adverse_excursion') or
+                    result_data.get('mae') or
+                    result_data.get('max_loss_ticks') or
+                    0.0
+                ),
                 time_in_trade_minutes=result_data.get('time_in_trade_minutes', 0),
                 exit_reason=result_data.get('exit_reason', ''),
                 initial_confluence_score=result_data.get('initial_confluence_score', 0.0),
@@ -849,7 +902,7 @@ class TradeSnapshotter:
                 'performance_metrics': self._calculate_performance_metrics(result_snapshot),
                 'ml_features': self._extract_ml_features(trade_id),
                 'capture_time_ms': 0,
-                
+
                 # PRIORITÉ #3 final metadata (GARDÉ)
                 'priority_3_final': {
                     'complete_optimization_applied': True,
@@ -887,37 +940,37 @@ class TradeSnapshotter:
                                       options_data: Optional[Dict] = None) -> str:
         """
         NOUVEAU: Capture pre-analysis ENRICHIE avec toutes améliorations
-        
+
         Compatible avec méthode existante + nouvelles données
         """
         # D'abord, capture standard (compatibilité)
         trade_id = self.capture_pre_analysis_snapshot(market_data, order_flow)
-        
+
         if not trade_id:
             return ""
-        
+
         try:
             # NOUVEAU: Capture microstructure
             if microstructure_data:
                 microstructure_snapshot = self._capture_microstructure_data(
                     market_data, microstructure_data
                 )
-                
+
                 enriched_snapshot = {
-                    'snapshot_id': f"{trade_id}_MICROSTRUCTURE", 
+                    'snapshot_id': f"{trade_id}_MICROSTRUCTURE",
                     'trade_id': trade_id,
                     'snapshot_type': SnapshotType.MICROSTRUCTURE.value,
                     'timestamp': datetime.now(timezone.utc).isoformat(),
                     'microstructure_data': asdict(microstructure_snapshot)
                 }
-                
+
                 self.enhanced_snapshots['microstructure'].append(enriched_snapshot)
                 self._save_enhanced_snapshot(enriched_snapshot, 'microstructure')
-            
+
             # NOUVEAU: Capture options flow
             if options_data:
                 options_snapshot = self._capture_options_flow_data(market_data, options_data)
-                
+
                 options_enriched = {
                     'snapshot_id': f"{trade_id}_OPTIONS",
                     'trade_id': trade_id,
@@ -925,10 +978,10 @@ class TradeSnapshotter:
                     'timestamp': datetime.now(timezone.utc).isoformat(),
                     'options_flow_data': asdict(options_snapshot)
                 }
-                
+
                 self.enhanced_snapshots['options_flow'].append(options_enriched)
                 self._save_enhanced_snapshot(options_enriched, 'options_flow')
-            
+
             # NOUVEAU: Capture session context
             session_snapshot = self._capture_session_context(market_data)
             session_enriched = {
@@ -938,19 +991,19 @@ class TradeSnapshotter:
                 'timestamp': datetime.now(timezone.utc).isoformat(),
                 'session_context_data': asdict(session_snapshot)
             }
-            
+
             self.enhanced_snapshots['session_context'].append(session_enriched)
             self._save_enhanced_snapshot(session_enriched, 'session_context')
-            
+
             # Update enhanced stats
             self.capture_stats['enhanced_features_captured'] += 1
-            
+
             logger.debug(f"Enhanced pre-analysis captured: {trade_id}")
-            
+
         except Exception as e:
             logger.error(f"Erreur capture enhanced features: {e}")
             # Pas d'échec si enhanced échoue - on garde le standard
-        
+
         return trade_id
 
     def capture_post_trade_analysis(self,
@@ -960,7 +1013,7 @@ class TradeSnapshotter:
                                     battle_navale_performance: Dict) -> bool:
         """
         NOUVEAU: Capture analyse post-trade pour apprentissage
-        
+
         CRITIQUE pour amélioration continue et ML training
         """
         try:
@@ -969,33 +1022,33 @@ class TradeSnapshotter:
                 pnl = trade_result.get('realized_pnl', 0)
             else:
                 pnl = trade_result.realized_pnl
-            
+
             outcome = "win" if pnl > 0 else "loss" if pnl < 0 else "breakeven"
             outcome_confidence = min(1.0, abs(pnl) / 100)  # Normalize par $100
-            
+
             # Analyser facteurs succès/échec
             success_factors, failure_factors = self._analyze_trade_factors(
                 trade_result, market_context, battle_navale_performance
             )
-            
+
             # Détecter changements marché
             market_regime_shift = self._detect_market_regime_shift(trade_id, market_context)
-            
+
             # Valider edge Battle Navale
             edge_confirmed = self._validate_battle_navale_edge(
                 battle_navale_performance, outcome
             )
-            
+
             # Analyser importance features
             key_features_importance = self._analyze_feature_importance(
                 trade_id, battle_navale_performance
             )
-            
+
             # Générer recommandations
             improvement_suggestions = self._generate_improvement_suggestions(
                 outcome, success_factors, failure_factors, battle_navale_performance
             )
-            
+
             # Créer snapshot
             analysis_snapshot = PostTradeAnalysisSnapshot(
                 timestamp=datetime.now(timezone.utc),
@@ -1016,7 +1069,7 @@ class TradeSnapshotter:
                 improvement_suggestions=improvement_suggestions,
                 pattern_reliability_update=battle_navale_performance.get('pattern_reliability', 0.7)
             )
-            
+
             # Sauvegarder
             post_analysis_enriched = {
                 'snapshot_id': f"{trade_id}_POST_ANALYSIS",
@@ -1025,16 +1078,16 @@ class TradeSnapshotter:
                 'timestamp': datetime.now(timezone.utc).isoformat(),
                 'post_trade_analysis': asdict(analysis_snapshot)
             }
-            
+
             self.enhanced_snapshots['post_trade_analysis'].append(post_analysis_enriched)
             self._save_enhanced_snapshot(post_analysis_enriched, 'post_analysis')
-            
+
             # Update stats
             self.capture_stats['post_trade_analyses'] += 1
-            
+
             logger.info(f"Post-trade analysis captured: {trade_id} ({outcome})")
             return True
-            
+
         except Exception as e:
             logger.error(f"Erreur capture post-trade analysis: {e}")
             return False
@@ -1045,22 +1098,22 @@ class TradeSnapshotter:
             # Calculer corrélations si assez de données
             if len(self.correlation_tracker['features_history']) < 10:
                 return True  # Pas assez de données, mais pas d'erreur
-                
+
             correlations = self._calculate_all_correlations()
-            
+
             correlation_enriched = {
                 'snapshot_id': f"CORR_{int(time.time())}",
                 'snapshot_type': SnapshotType.CORRELATION_UPDATE.value,
                 'timestamp': datetime.now(timezone.utc).isoformat(),
                 'correlations_data': correlations
             }
-            
+
             self.enhanced_snapshots['correlations'].append(correlation_enriched)
             self._save_enhanced_snapshot(correlation_enriched, 'correlations')
-            
+
             logger.debug("Correlation snapshot captured")
             return True
-            
+
         except Exception as e:
             logger.error(f"Erreur capture correlation snapshot: {e}")
             return False
@@ -1151,7 +1204,7 @@ class TradeSnapshotter:
         """Met à jour stats capture (GARDÉ existant)"""
         self.capture_stats['total_snapshots'] += 1
         self.capture_stats['last_capture_time'] = datetime.now()
-        
+
         # Update moyenne
         if self.capture_stats['avg_capture_time_ms'] == 0:
             self.capture_stats['avg_capture_time_ms'] = capture_time
@@ -1165,38 +1218,38 @@ class TradeSnapshotter:
         try:
             today = datetime.now().date()
             daily_file = self.daily_path / f"snapshots_{today.isoformat()}.jsonl"
-            
+
             with open(daily_file, 'a', encoding='utf-8') as f:
                 f.write(json.dumps(snapshot, ensure_ascii=False, default=str) + '\n')
-                
+
         except Exception as e:
             logger.error(f"Erreur sauvegarde snapshot: {e}")
 
     # === NOUVELLES HELPER METHODS ENRICHIES ===
 
-    def _capture_microstructure_data(self, 
+    def _capture_microstructure_data(self,
                                      market_data: MarketData,
                                      microstructure_data: Dict) -> MicrostructureSnapshot:
         """NOUVEAU: Capture données microstructure"""
-        
+
         # Order book imbalance
         bid_levels = microstructure_data.get('bid_levels', [(market_data.bid or 0, 100)])
         ask_levels = microstructure_data.get('ask_levels', [(market_data.ask or 0, 100)])
-        
+
         total_bid_size = sum(size for _, size in bid_levels[:5])
         total_ask_size = sum(size for _, size in ask_levels[:5])
-        
+
         if total_bid_size + total_ask_size > 0:
             order_book_imbalance = (total_bid_size - total_ask_size) / (total_bid_size + total_ask_size)
         else:
             order_book_imbalance = 0.0
-        
+
         # Tick momentum analysis
         tick_momentum = self._calculate_tick_momentum(market_data, microstructure_data)
-        
+
         # Smart money flow
         large_orders_bias = self._calculate_smart_money_flow(microstructure_data)
-        
+
         return MicrostructureSnapshot(
             timestamp=market_data.timestamp,
             bid_levels=bid_levels[:10],
@@ -1216,10 +1269,10 @@ class TradeSnapshotter:
         )
 
     def _capture_options_flow_data(self,
-                                   market_data: MarketData, 
+                                   market_data: MarketData,
                                    options_data: Dict) -> OptionsFlowSnapshot:
         """NOUVEAU: Capture données options flow enrichies"""
-        
+
         return OptionsFlowSnapshot(
             timestamp=market_data.timestamp,
             total_gamma_exposure=options_data.get('total_gamma', 75000000000),  # $75B
@@ -1239,16 +1292,16 @@ class TradeSnapshotter:
 
     def _capture_session_context(self, market_data: MarketData) -> SessionContextSnapshot:
         """NOUVEAU: Capture contexte session"""
-        
+
         current_time = market_data.timestamp
-        
+
         # Déterminer phase session
         session_phase = self._determine_session_phase_enhanced(current_time)
-        
+
         # Calculer temps depuis ouverture/fermeture
         time_since_open = self._calculate_time_since_open(current_time)
         time_to_close = self._calculate_time_to_close(current_time)
-        
+
         return SessionContextSnapshot(
             timestamp=current_time,
             session_phase=session_phase,
@@ -1272,10 +1325,10 @@ class TradeSnapshotter:
         try:
             today = datetime.now().date()
             enhanced_file = self.base_path / snapshot_type / f"{snapshot_type}_{today.isoformat()}.jsonl"
-            
+
             with open(enhanced_file, 'a', encoding='utf-8') as f:
                 f.write(json.dumps(snapshot, ensure_ascii=False, default=str) + '\n')
-                
+
         except Exception as e:
             logger.error(f"Erreur sauvegarde enhanced snapshot {snapshot_type}: {e}")
 
@@ -1326,17 +1379,17 @@ class TradeSnapshotter:
         """NOUVEAU: Analyse facteurs succès/échec"""
         success_factors = []
         failure_factors = []
-        
+
         # Logique d'analyse
         if isinstance(trade_result, dict):
             pnl = trade_result.get('realized_pnl', 0)
         else:
             pnl = trade_result.realized_pnl
-            
+
         if pnl > 0:
             success_factors.extend([
                 "Battle_Navale_signal_strong",
-                "Market_regime_favorable", 
+                "Market_regime_favorable",
                 "Good_timing"
             ])
         else:
@@ -1345,7 +1398,7 @@ class TradeSnapshotter:
                 "Signal_quality_low",
                 "Poor_timing"
             ])
-            
+
         return success_factors, failure_factors
 
     def _validate_battle_navale_edge(self, battle_navale_perf: Dict, outcome: str) -> bool:
@@ -1372,19 +1425,19 @@ class TradeSnapshotter:
             'standard': {},
             'enhanced': {}
         }
-        
+
         # Standard snapshots (GARDÉ)
         for snapshot_type, snapshots in self.snapshots.items():
             for snapshot in snapshots:
                 if snapshot.get('trade_id') == trade_id:
                     trade_snapshots['standard'][snapshot_type] = snapshot
-        
+
         # Enhanced snapshots (NOUVEAU)
         for snapshot_type, snapshots in self.enhanced_snapshots.items():
             for snapshot in snapshots:
                 if snapshot.get('trade_id') == trade_id:
                     trade_snapshots['enhanced'][snapshot_type] = snapshot
-        
+
         return trade_snapshots
 
     # Placeholder methods pour développement futur
@@ -1394,7 +1447,7 @@ class TradeSnapshotter:
     def _determine_seasonal_bias(self, timestamp): return "neutral"
     def _detect_market_regime_shift(self, trade_id, market_context): return False
     def _analyze_feature_importance(self, trade_id, battle_navale_perf): return {}
-    def _generate_improvement_suggestions(self, outcome, success_factors, failure_factors, perf): 
+    def _generate_improvement_suggestions(self, outcome, success_factors, failure_factors, perf):
         return ["Optimize_timing", "Improve_confluence_threshold"]
     def _calculate_all_correlations(self): return {}
 
@@ -1419,7 +1472,7 @@ def create_trade_snapshotter(config: Optional[Dict[str, Any]] = None) -> TradeSn
                     'automation_mode': 'paper_trading'
                 }
             }
-    
+
     return TradeSnapshotter(config)
 
 def test_trade_snapshotter():
@@ -1454,7 +1507,7 @@ def test_trade_snapshotter():
         'downticks_20': 8,
         'smart_money_flow': 0.15
     }
-    
+
     options_data = {
         'total_gamma': 78000000000,
         'vix': 19.2,
@@ -1484,7 +1537,7 @@ def test_trade_snapshotter():
         'level_proximity_score': 0.60,
         'aggression_bias': 0.55
     }
-    
+
     decision_context = {
         'pattern_type': 'elite_pattern_2',
         'confluence_score': 0.75,
@@ -1505,7 +1558,7 @@ def test_trade_snapshotter():
         'stop_loss': 4495.0,
         'take_profit': 4515.0
     }
-    
+
     execution_result = {
         'fill_price': 4505.25,
         'fill_quantity': 1.0,
@@ -1540,7 +1593,7 @@ def test_trade_snapshotter():
         'vol_change': 5.2,
         'relevance_score': 0.8
     }
-    
+
     battle_navale_performance = {
         'confidence': 0.75,
         'timing_score': 0.8,
@@ -1566,7 +1619,7 @@ if __name__ == "__main__":
     # Test du système complet
     test_success = test_trade_snapshotter()
     print(f"🎯 Test Trade Snapshotter Enhanced: {'✅ SUCCÈS' if test_success else '❌ ÉCHEC'}")
-    
+
     print("\n" + "="*80)
     print("🎉 INTÉGRATION TRADE SNAPSHOTTER ENHANCED TERMINÉE")
     print("="*80)

@@ -1,0 +1,58 @@
+# Configuration Backtest MenthorQ - OPTIMISEE
+# Basée sur les résultats du backtest initial
+# Date: 23 Novembre 2025
+
+# Symboles à tester
+symbols:
+  - ES
+  - NQ
+
+# Période de test
+date_range:
+  start: '2025-11-05'
+  end: '2025-11-21'
+
+# Chemin vers données
+data_path: 'DATA_SIERRA_CHART/DATA_2025/NOVEMBRE'
+
+# Configuration SL/TP OPTIMALE (meilleure config identifiée)
+sl_configs:
+  - method: 'fixed'
+    ticks: 8
+
+tp_configs:
+  - method: 'rr'
+    ratio: 3.0
+
+# Seuils de confiance optimaux
+confidence_thresholds:
+  layer1: [0.20]  # MenthorQ
+  layer2: [0.60]  # OrderFlow
+  layer3: [0.70]  # Context
+
+# Confluence strength minimale (augmentée à 6)
+confluence_strengths: [6, 7, 8]
+
+# Heures de trading (éviter 10h-11h, 16h, 22h)
+trading_hours:
+  start: '09:30'
+  end: '16:00'
+  avoid: ['10:00', '11:00', '16:00', '22:00']
+
+# Output
+output:
+  directory: 'backtesting/results/'
+  formats: ['markdown', 'json', 'excel']
+
+# Filtres supplémentaires
+filters:
+  # Niveaux performants à privilégier (optionnel)
+  preferred_levels:
+    - 'vwap_dn2'
+    - 'blind_spot_7'
+    - 'vwap_dn1'
+    - 'gex_9'
+    - 'hvl'
+
+  # Confluence minimale requise
+  min_confluence: 6

@@ -1,0 +1,307 @@
+{
+  "version": "2.0",
+  "expansion_strategy": "progressive",
+  "current_phase": "Phase 0 - Validation ES/NQ",
+  "target_configuration": "TOP 5 (ES/NQ/GC/CL/RTY)",
+
+  "phases": {
+    "phase_0": {
+      "name": "Validation Initiale",
+      "status": "in_progress",
+      "markets": ["ES", "NQ"],
+      "target_metrics": {
+        "min_profit_factor": 2.0,
+        "min_win_rate": 0.65,
+        "min_trades": 500,
+        "min_uptime_days": 30
+      },
+      "validation_criteria": "Stabilité 30 jours + PF>2.0 + WR>65%"
+    },
+
+    "phase_1": {
+      "name": "TOP 5 - Métaux + Énergie",
+      "status": "planned",
+      "markets": ["ES", "NQ", "GC", "CL"],
+      "priority": "high",
+      "deployment_order": ["GC", "CL"],
+      "notes": "Métaux précieux + Énergie - Excellente compatibilité MenthorQ",
+      "target_completion": "Q1 2026"
+    },
+
+    "phase_2": {
+      "name": "TOP 5 - Small Caps (Complète TOP 5)",
+      "status": "planned",
+      "markets": ["ES", "NQ", "GC", "CL", "RTY"],
+      "priority": "high",
+      "deployment_order": ["RTY"],
+      "deployment_condition": "Phase 1 stable + GC/CL rentables 1 mois",
+      "notes": "RTY complète le TOP 5 - Beta diversification small caps",
+      "target_completion": "Q2 2026"
+    },
+
+    "phase_3": {
+      "name": "Extension Dow (Optionnelle)",
+      "status": "optional",
+      "markets": ["YM"],
+      "priority": "low",
+      "deployment_condition": "TOP 5 mature + 6 mois rentable",
+      "notes": "YM uniquement si capacité excédentaire - Priorité basse"
+    },
+
+    "phase_4": {
+      "name": "Extension Taux & FX (Optionnelle)",
+      "status": "optional",
+      "markets": ["ZN", "6E"],
+      "priority": "low",
+      "deployment_condition": "TOP 5 mature + besoin diversification macro",
+      "notes": "Taux/FX uniquement si nécessité stratégique - Priorité basse"
+    },
+
+    "phase_5": {
+      "name": "Extension Métaux Secondaires (Optionnelle)",
+      "status": "optional",
+      "markets": ["SI"],
+      "priority": "very_low",
+      "deployment_condition": "GC mature + 12 mois rentable",
+      "notes": "Argent - Seulement si GC très rentable et capacité libre"
+    }
+  },
+
+  "top_5_configuration": {
+    "composition": ["ES", "NQ", "GC", "CL", "RTY"],
+    "average_score": 8.9,
+    "sectors": {
+      "indices_large_cap": ["ES", "NQ"],
+      "indices_small_cap": ["RTY"],
+      "metals": ["GC"],
+      "energy": ["CL"]
+    },
+    "allocation_target": {
+      "ES": "25%",
+      "NQ": "25%",
+      "GC": "20%",
+      "CL": "15%",
+      "RTY": "15%"
+    },
+    "rationale": "Diversification optimale 5 marchés - Score moyen 8.9/10 - Corrélations décorrélées"
+  }
+  },
+
+  "markets": {
+    "ES": {
+      "name": "E-mini S&P 500",
+      "symbol_sierra": "ESZ25-CME",
+      "exchange": "CME",
+      "contract_size": 50,
+      "tick_size": 0.25,
+      "tick_value": 12.50,
+      "session_hours": "17:00-16:00 CT",
+      "has_profile": true,
+      "has_dom": true,
+      "has_menthorq": true,
+      "liquidity": "excellent",
+      "spread_typical": 1,
+      "data_available": true,
+      "chart_id_sierra": 3,
+      "account_sim": "Sim1",
+      "status": "active",
+      "notes": "Marché principal - Liquidité maximale - Gamma walls très clairs"
+    },
+
+    "NQ": {
+      "name": "E-mini Nasdaq 100",
+      "symbol_sierra": "NQZ25-CME",
+      "exchange": "CME",
+      "contract_size": 20,
+      "tick_size": 0.25,
+      "tick_value": 5.00,
+      "session_hours": "17:00-16:00 CT",
+      "has_profile": true,
+      "has_dom": true,
+      "has_menthorq": true,
+      "liquidity": "excellent",
+      "spread_typical": 1,
+      "data_available": true,
+      "chart_id_sierra": 9,
+      "account_sim": "Sim2",
+      "status": "active",
+      "notes": "Tech momentum - Excellents signaux delta divergence - Vol élevée"
+    },
+
+    "GC": {
+      "name": "Gold Futures",
+      "symbol_sierra": "GCZ25-COMEX",
+      "exchange": "COMEX",
+      "contract_size": 100,
+      "tick_size": 0.10,
+      "tick_value": 10.00,
+      "session_hours": "18:00-17:00 ET",
+      "has_profile": true,
+      "has_dom": true,
+      "has_menthorq": true,
+      "liquidity": "excellent",
+      "spread_typical": 1,
+      "data_available": false,
+      "chart_id_sierra": null,
+      "account_sim": null,
+      "status": "planned_phase1",
+      "priority": 1,
+      "menthorq_features": ["gamma_walls", "hvl", "gex_zones"],
+      "notes": "Or - Réactions nettes aux niveaux options - Belles rotations VWAP/VA"
+    },
+
+    "CL": {
+      "name": "WTI Crude Oil",
+      "symbol_sierra": "CLZ25-NYMEX",
+      "exchange": "NYMEX",
+      "contract_size": 1000,
+      "tick_size": 0.01,
+      "tick_value": 10.00,
+      "session_hours": "18:00-17:00 ET",
+      "has_profile": true,
+      "has_dom": true,
+      "has_menthorq": true,
+      "liquidity": "excellent",
+      "spread_typical": 1,
+      "data_available": false,
+      "chart_id_sierra": null,
+      "account_sim": null,
+      "status": "planned_phase1",
+      "priority": 2,
+      "menthorq_features": ["gamma_walls", "pin_risk"],
+      "notes": "Pétrole WTI - DOM lisible - Walls options fréquents - Pin/Reversion clairs"
+    },
+
+    "RTY": {
+      "name": "E-mini Russell 2000",
+      "symbol_sierra": "RTYZ25-CME",
+      "exchange": "CME",
+      "contract_size": 50,
+      "tick_size": 0.10,
+      "tick_value": 5.00,
+      "session_hours": "17:00-16:00 CT",
+      "has_profile": true,
+      "has_dom": true,
+      "has_menthorq": true,
+      "liquidity": "good",
+      "spread_typical": 2,
+      "data_available": false,
+      "chart_id_sierra": null,
+      "account_sim": null,
+      "status": "planned_phase2",
+      "priority": 3,
+      "top_5_member": true,
+      "score": 8.2,
+      "menthorq_features": ["gamma_walls_iwm", "hvl_small_caps", "gex_zones"],
+      "notes": "TOP 5 #5 - Small caps - Beta différent ES/NQ - Divergence risk-on/off - IWM gamma 0DTE"
+    },
+
+    "YM": {
+      "name": "E-mini Dow Jones",
+      "symbol_sierra": "YMZ25-CBOT",
+      "exchange": "CBOT",
+      "contract_size": 5,
+      "tick_size": 1.00,
+      "tick_value": 5.00,
+      "session_hours": "17:00-16:00 CT",
+      "has_profile": true,
+      "has_dom": true,
+      "has_menthorq": true,
+      "liquidity": "good",
+      "spread_typical": 1,
+      "data_available": false,
+      "chart_id_sierra": null,
+      "account_sim": null,
+      "status": "planned_phase2",
+      "priority": 4,
+      "notes": "Dow - Plus calme que NQ - Lecture inter-indices"
+    },
+
+    "ZN": {
+      "name": "10-Year T-Note",
+      "symbol_sierra": "ZNZ25-CBOT",
+      "exchange": "CBOT",
+      "contract_size": 100000,
+      "tick_size": 0.015625,
+      "tick_value": 15.625,
+      "session_hours": "17:00-16:00 CT",
+      "has_profile": true,
+      "has_dom": true,
+      "has_menthorq": true,
+      "liquidity": "excellent",
+      "spread_typical": 1,
+      "data_available": false,
+      "chart_id_sierra": null,
+      "account_sim": null,
+      "status": "planned_phase3",
+      "priority": 5,
+      "notes": "Taux 10 ans - Contexte macro - Réactions annonces - Profils clairs"
+    },
+
+    "6E": {
+      "name": "Euro FX",
+      "symbol_sierra": "6EZ25-CME",
+      "exchange": "CME",
+      "contract_size": 125000,
+      "tick_size": 0.00005,
+      "tick_value": 6.25,
+      "session_hours": "17:00-16:00 CT",
+      "has_profile": true,
+      "has_dom": true,
+      "has_menthorq": true,
+      "liquidity": "excellent",
+      "spread_typical": 1,
+      "data_available": false,
+      "chart_id_sierra": null,
+      "account_sim": null,
+      "status": "planned_phase3",
+      "priority": 6,
+      "notes": "EUR/USD futures - FX majeur - DOM correct - Confluence options+VP"
+    },
+
+    "SI": {
+      "name": "Silver Futures",
+      "symbol_sierra": "SIZ25-COMEX",
+      "exchange": "COMEX",
+      "contract_size": 5000,
+      "tick_size": 0.005,
+      "tick_value": 25.00,
+      "session_hours": "18:00-17:00 ET",
+      "has_profile": true,
+      "has_dom": true,
+      "has_menthorq": true,
+      "liquidity": "good",
+      "spread_typical": 2,
+      "data_available": false,
+      "chart_id_sierra": null,
+      "account_sim": null,
+      "status": "planned_phase4",
+      "priority": 7,
+      "notes": "Argent - Corrélé métaux - Setups proches GC - Plus nerveux"
+    }
+  },
+
+  "deployment_checklist": {
+    "new_market": [
+      "1. Configuration Sierra Chart (Chart ID, symbole, data feed)",
+      "2. Collecte données historiques (min 30 jours)",
+      "3. Adaptation features dumper C++ (tick_size, contract_size)",
+      "4. Training modèle ML (min 20,000 samples)",
+      "5. Validation backtest (PF>2.0, WR>60%)",
+      "6. Paper trading 14 jours",
+      "7. Go-live progressif (1 contrat, puis scaling)"
+    ]
+  },
+
+  "menthorq_compatibility": {
+    "all_markets": [
+      "gamma_walls_0dte",
+      "hvl_levels",
+      "gex_zones",
+      "call_resistance",
+      "put_support",
+      "blind_spots"
+    ],
+    "notes": "MenthorQ Premium couvre tous les marchés listés avec niveaux options mis à jour en temps réel"
+  }
+}

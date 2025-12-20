@@ -1,0 +1,16 @@
+{
+  "test_date": "2025-10-31",
+  "data_source": "ml_ESZ25_FUT_CME_3.jsonl",
+  "total_snapshots": 500,
+  "strategies": {
+    "\ud83d\udd25 LONG Elite: Battle Navale + Confluence Max": {
+      "total_trades": 1,
+      "wins": 0,
+      "losses": 0,
+      "timeouts": 1,
+      "win_rate": 0.0,
+      "pnl_ticks": 0,
+      "avg_duration_bars": 50.0
+    }
+  }
+}

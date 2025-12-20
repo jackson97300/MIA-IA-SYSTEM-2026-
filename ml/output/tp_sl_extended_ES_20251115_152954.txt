@@ -1,0 +1,47 @@
+================================================================================
+RAPPORT OPTIMISATION TP/SL - ES
+================================================================================
+
+## MEILLEURE COMBINAISON (selon P&L/trade)
+
+TP Optimal:      16 ticks
+SL Optimal:      12 ticks
+R:R:             1.33:1
+P&L/trade:       +0.397 ticks
+P&L Net:         +821.32 ticks
+WinRate:         45.8%
+Profit Factor:   1.09
+TP Hit Rate:     17.9%
+SL Hit Rate:     46.7%
+
+## IMPACT FINANCIER
+
+Sur 1,000 trades:
+  P&L Net: +4,964.46 USD
+
+## OBJECTIF +1.0 t/trade
+
+Gap restant: 0.603 ticks (60.3%)
+
+## TOP 10 MEILLEURES COMBINAISONS
+
+ 1. TP=16t, SL=12t | R:R=1.33:1 | P&L=+0.397t | WR=45.8% | PF=1.09
+ 2. TP=17t, SL=12t | R:R=1.42:1 | P&L=+0.394t | WR=45.8% | PF=1.09
+ 3. TP=18t, SL=12t | R:R=1.50:1 | P&L=+0.360t | WR=45.8% | PF=1.08
+ 4. TP=16t, SL=18t | R:R=0.89:1 | P&L=+0.330t | WR=45.8% | PF=1.08
+ 5. TP=17t, SL=18t | R:R=0.94:1 | P&L=+0.328t | WR=45.8% | PF=1.08
+ 6. TP=19t, SL=12t | R:R=1.58:1 | P&L=+0.321t | WR=45.8% | PF=1.08
+ 7. TP=18t, SL=18t | R:R=1.00:1 | P&L=+0.294t | WR=45.8% | PF=1.07
+ 8. TP=20t, SL=12t | R:R=1.67:1 | P&L=+0.288t | WR=45.8% | PF=1.07
+ 9. TP=16t, SL=17t | R:R=0.94:1 | P&L=+0.271t | WR=45.8% | PF=1.07
+10. TP=17t, SL=17t | R:R=1.00:1 | P&L=+0.269t | WR=45.8% | PF=1.07
+
+## STATISTIQUES GLOBALES
+
+Total combinaisons testees: 147
+Combinaisons rentables (P&L > 0): 101
+Combinaisons atteignant +1.0t: 0
+Meilleur P&L/trade: +0.397t
+Pire P&L/trade: -0.071t
+
+================================================================================

@@ -1,110 +1,71 @@
-#!/usr/bin/env python3
 """
-Stratégie ES NQ Lead Lag Mirror
-Détecte les décorrélations entre ES et NQ et génère des signaux d'alignement
-basés sur le leader/lag pattern.
+ES/NQ Lead/Lag Mirror (Tier 2) - ML_READY Optimized
 """
-
+import time
+from typing import Dict, Any, Optional
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Any
+from datetime import datetime
+from core.logger import get_logger
 
+logger = get_logger(__name__)
 
 @dataclass
+class PatternSignal:
+    strategy: str
+    timestamp: datetime
+    side: Optional[str]
+    confidence: float
+    entry: float
+    stop: float
+    targets: list
+    metadata: Dict[str, Any]
+    processing_time_ms: float = 0.0
+
 class EsNqLeadLagMirror:
-    """
-    Stratégie d'alignement basée sur les patterns lead/lag ES-NQ.
-    
-    Logique:
-    - Détecte une décorrélation notable entre ES et NQ
-    - Identifie le leader (ES ou NQ)
-    - Génère un signal d'alignement dans la direction du leader
-    """
-    name: str = "es_nq_lead_lag_mirror"
-    requires: tuple = ("correlation", "orderflow", "vwap", "price", "symbol")
-    params: dict = None
+    """Tier 2: Arbitrage ES/NQ leadership"""
 
-    def __post_init__(self):
-        self.params = self.params or {
-            "corr_thresh": 0.35,           # Seuil de décorrélation (0.35 = 65% corrélation)
-            "atr_mult_sl": 1.0,           # Multiplicateur ATR pour stop loss
-            "min_conf": 0.6               # Confiance minimale requise
-        }
+    def __init__(self, config: Optional[Dict] = None):
+        self.config = config or {}
+        self.leadership_threshold = self.config.get('leadership_threshold', 0.70)
+        self.stats = {'signals_generated': 0}
+        logger.info("✅ EsNqLeadLagMirror initialisé (Tier 2)")
 
-    def should_run(self, ctx: Dict[str, Any]) -> bool:
-        """
-        Vérifie si tous les prérequis sont disponibles.
-        
-        Args:
-            ctx: Contexte de trading
-            
-        Returns:
-            True si la stratégie peut s'exécuter
-        """
-        return all(k in ctx for k in ("correlation", "orderflow", "vwap", "price", "symbol"))
+    def analyze_from_ml_ready(self, ml_data: Dict[str, Any]) -> Optional[PatternSignal]:
+        """Analyse ML_READY"""
+        start_time = time.perf_counter()
 
-    def generate(self, ctx: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """
-        Génère un signal d'alignement basé sur le lead/lag ES-NQ.
-        
-        Args:
-            ctx: Contexte de trading
-            
-        Returns:
-            Signal de trading ou None
-        """
-        if not self.should_run(ctx):
+        try:
+            leadership_score = ml_data.get('leadership_score', 0.0)
+            es_nq_rs = ml_data.get('es_nq_relative_strength', 0.0)
+
+            if leadership_score < self.leadership_threshold:
+                return None
+
+            # Trade le suiveur
+            if es_nq_rs > 0:
+                side = "LONG"
+            elif es_nq_rs < 0:
+                side = "SHORT"
+            else:
+                return None
+
+            mid = ml_data.get('mid', 0)
+
+            signal = PatternSignal(
+                strategy="es_nq_lead_lag_mirror",
+                timestamp=datetime.now(),
+                side=side,
+                confidence=leadership_score,
+                entry=mid,
+                stop=mid - (8 * 0.25) if side == "LONG" else mid + (8 * 0.25),
+                targets=[mid + 12 * 0.25 if side == "LONG" else mid - 12 * 0.25],
+                metadata={'leadership_score': leadership_score, 'es_nq_rs': es_nq_rs, 'source': 'ML_READY'},
+                processing_time_ms=(time.perf_counter() - start_time) * 1000
+            )
+
+            self.stats['signals_generated'] += 1
+            return signal
+
+        except Exception as e:
+            logger.error(f"❌ Erreur EsNqLeadLag: {e}")
             return None
-            
-        corr = ctx["correlation"].get("es_nq", 1.0)
-        leader = ctx["correlation"].get("leader")
-        symbol = ctx["symbol"]
-        
-        # Vérifier la décorrélation
-        if abs(corr) > (1 - self.params["corr_thresh"]):  # Besoin décorrélation notable
-            return None
-        if leader not in ("ES", "NQ"):
-            return None
-
-        price = ctx["price"]["last"]
-        vwap = ctx["vwap"].get("vwap", price)
-        of = ctx["orderflow"]
-        tick = ctx.get("tick_size", 0.25)
-        atr = max(ctx.get("atr", 4*tick), 2*tick)
-
-        # Signal LONG: NQ leader up & on trade NQ
-        if leader == "NQ" and symbol == "NQ" and price > vwap and of.get("delta_burst", False):
-            entry = price
-            sl = vwap - self.params["atr_mult_sl"]*atr
-            tps = [entry + 6*tick, entry + 10*tick]
-            
-            return {
-                "strategy": self.name,
-                "side": "LONG",
-                "confidence": 0.64,
-                "entry": entry,
-                "stop": sl,
-                "targets": tps,
-                "reason": "NQ leader up, décorrélation → alignement haussier",
-                "metadata": {"leader": leader, "correlation": corr}
-            }
-            
-        # Signal SHORT: ES leader down & on trade ES
-        if leader == "ES" and symbol == "ES" and price < vwap and of.get("delta_burst", False):
-            entry = price
-            sl = vwap + self.params["atr_mult_sl"]*atr
-            tps = [entry - 6*tick, entry - 10*tick]
-            
-            return {
-                "strategy": self.name,
-                "side": "SHORT",
-                "confidence": 0.64,
-                "entry": entry,
-                "stop": sl,
-                "targets": tps,
-                "reason": "ES leader down, décorrélation → alignement baissier",
-                "metadata": {"leader": leader, "correlation": corr}
-            }
-            
-        return None
-
-

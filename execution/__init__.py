@@ -98,7 +98,7 @@ try:
     ])
     logger.debug("[OK] Import simple_trader")
 except ImportError as e:
-    logger.warning(f"Could not import simple_trader: {e}")
+    logger.debug(f"[SKIP] simple_trader: {e}")  # ✅ Changed to debug
 
 successful_imports = [name for name in __all__ if name in globals() and globals()[name] is not None]
 if successful_imports:

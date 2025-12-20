@@ -81,21 +81,23 @@ class RiskBracket:
 
 class RiskSizingEngine:
     """Moteur de calcul du risque et de la taille de position"""
-    
+
     def __init__(self):
         self.logger = get_logger(__name__)
         self.logger.info("🎯 Risk & Sizing Engine v1 initialisé")
-    
-    def build_risk_bracket(self, elite_synthesis: Dict[str, Any], 
-                          symbol: str = "ES", atr_ticks: float = None) -> Optional[RiskBracket]:
+
+    def build_risk_bracket(self, elite_synthesis: Dict[str, Any],
+                          symbol: str = "ES", atr_ticks: float = None,
+                          snapshot: Optional[Dict[str, Any]] = None) -> Optional[RiskBracket]:
         """
         Construit un bracket de risque basé sur la recommendation Elite
-        
+
         Args:
             elite_synthesis: Résultats de l'Elite Unifier
             symbol: Symbole (ES, MES, NQ, etc.)
             atr_ticks: ATR en ticks (optionnel, calculé si non fourni)
-            
+            snapshot: ML_READY snapshot (optionnel, pour ajustements MenthorQ)
+
         Returns:
             RiskBracket ou None si pas de signal
         """
@@ -103,31 +105,76 @@ class RiskSizingEngine:
             mode = elite_synthesis.get("go_live_mode", "NO")
             if mode not in ("SCOUT", "FULL"):
                 return None
-            
+
             cfg = RISK_CFG[mode]
             fam = _symbol_family(symbol)
             tick_value = TICK_SPECS.get(fam, TICK_SPECS['ES'])['tick_value']
             tick_size = TICK_SPECS.get(fam, TICK_SPECS['ES'])['tick_size']
-            
+
             # ATR en ticks (fallback si non fourni)
             if atr_ticks is None:
                 atr_ticks = 20.0  # Fallback conservateur
-            
+
             # Stop en ticks = max(min, frac*ATR)
             stop_ticks = int(max(cfg["stop_ticks_min"], cfg["stop_frac_atr"] * max(atr_ticks, 1.0)))
             tp_ticks = int(max(stop_ticks, cfg["tp_frac_atr"] * max(atr_ticks, 1.0)))
-            
+
+            # 📚 Bible MenthorQ v2.0: Ajuster sizing selon dangers MenthorQ
+            size_multiplier = 1.0
+            menthorq_warnings = []
+
+            if snapshot:
+                mid = snapshot.get('mid', 0)
+
+                # Check 1: Blind Spots proximity
+                blind_spots = snapshot.get('blind_spots', [])
+                if blind_spots and mid:
+                    min_blind_dist = float('inf')
+                    for bs in blind_spots:
+                        if isinstance(bs, dict):
+                            bs_price = bs.get('price', 0)
+                            if bs_price:
+                                dist_pct = abs((bs_price - mid) / mid) * 100
+                                min_blind_dist = min(min_blind_dist, dist_pct)
+
+                    if min_blind_dist < 0.15:  # < 0.15% du prix
+                        size_multiplier *= 0.7  # -30%
+                        menthorq_warnings.append(f"blind_spot_proche ({min_blind_dist:.2f}%)")
+                        self.logger.warning(f"⚠️ Blind Spot proche ({min_blind_dist:.2f}%) → sizing ×0.7")
+
+                # Check 2: 1-Day extremes proximity
+                day_max = snapshot.get('1d_max', 0)
+                day_min = snapshot.get('1d_min', 0)
+
+                if day_max and day_min and mid and day_max > day_min:
+                    day_range = day_max - day_min
+                    position_pct = ((mid - day_min) / day_range) * 100
+
+                    if position_pct >= 95:  # Près 1d_max
+                        size_multiplier *= 0.8  # -20%
+                        menthorq_warnings.append(f"near_1d_max ({position_pct:.1f}%)")
+                        self.logger.warning(f"⚠️ Prix @ {position_pct:.1f}% (près 1d_max) → sizing ×0.8")
+                    elif position_pct <= 5:  # Près 1d_min
+                        size_multiplier *= 0.8  # -20%
+                        menthorq_warnings.append(f"near_1d_min ({position_pct:.1f}%)")
+                        self.logger.warning(f"⚠️ Prix @ {position_pct:.1f}% (près 1d_min) → sizing ×0.8")
+
+                # Check 3: Multiple warnings → réduction cumulée
+                if len(menthorq_warnings) >= 2:
+                    size_multiplier *= 0.9  # -10% additionnel
+                    self.logger.warning(f"⚠️ Multiples warnings MenthorQ ({len(menthorq_warnings)}) → sizing ×0.9 additionnel")
+
             # Position sizing par risque
-            # taille = floor(risk_usd / (stop_ticks * tick_value))
-            raw_size = cfg["risk_usd"] / max(stop_ticks * tick_value, 1e-9)
+            # taille = floor(risk_usd / (stop_ticks * tick_value)) × menthorq_multiplier
+            raw_size = (cfg["risk_usd"] / max(stop_ticks * tick_value, 1e-9)) * size_multiplier
             contracts = max(int(raw_size), 1)
-            
+
             # Limiter la taille selon le mode
             if mode == "SCOUT":
                 contracts = min(contracts, 2)  # Max 2 contrats en SCOUT
             else:
                 contracts = min(contracts, 5)  # Max 5 contrats en FULL
-            
+
             bracket = RiskBracket(
                 mode=mode,
                 symbol=symbol,
@@ -140,37 +187,41 @@ class RiskSizingEngine:
                 size_hint=cfg["size_hint"],
                 atr_ticks=atr_ticks
             )
-            
-            self.logger.info(f"🎯 Risk Bracket: {mode} {symbol} size={contracts} stop={stop_ticks}t tp={tp_ticks}t risk=${cfg['risk_usd']}")
+
+            log_msg = f"🎯 Risk Bracket: {mode} {symbol} size={contracts} stop={stop_ticks}t tp={tp_ticks}t risk=${cfg['risk_usd']}"
+            if size_multiplier < 1.0:
+                log_msg += f" (MenthorQ sizing ×{size_multiplier:.2f}: {', '.join(menthorq_warnings)})"
+            self.logger.info(log_msg)
+
             return bracket
-            
+
         except Exception as e:
             self.logger.error(f"❌ Erreur calcul risk bracket: {e}")
             return None
-    
+
     def format_risk_summary(self, bracket: RiskBracket) -> str:
         """Formate un résumé du bracket de risque"""
         if not bracket:
             return "Pas de signal"
-        
+
         return (f"Risk: mode={bracket.mode} {bracket.symbol} size={bracket.contracts} "
                 f"stop={bracket.stop_ticks}t tp={bracket.tp_ticks}t (~${bracket.risk_usd})")
-    
+
     def get_symbol_family(self, symbol: str) -> str:
         return _symbol_family(symbol)
 
 # === FONCTION UTILITAIRE ===
 
-def build_risk_bracket(elite_synthesis: Dict[str, Any], 
+def build_risk_bracket(elite_synthesis: Dict[str, Any],
                       symbol: str = "ES", atr_ticks: float = None) -> Optional[RiskBracket]:
     """
     Fonction utilitaire pour construire un bracket de risque
-    
+
     Args:
         elite_synthesis: Résultats de l'Elite Unifier
         symbol: Symbole (ES, MES, NQ, etc.)
         atr_ticks: ATR en ticks (optionnel)
-        
+
     Returns:
         RiskBracket ou None
     """

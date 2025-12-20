@@ -1,0 +1,143 @@
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║          🔍 ANALYSE COMPLÈTE SESSION - 02 DÉCEMBRE 2025                      ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+═══════════════════════════════════════════════════════════════════════════════
+1️⃣  EXECUTIVE SUMMARY
+═══════════════════════════════════════════════════════════════════════════════
+
+🔴 PROBLÈME PRINCIPAL: BE/Trailing tue les profits (0 occurrences)
+💡 SOLUTION PRIORITAIRE: Désactiver BE OU augmenter trigger (ES 40t, NQ 50t)
+📊 IMPACT ESTIMÉ: +$712.90/jour
+⚠️  URGENCE: CRITIQUE
+🎯 ACTION IMMÉDIATE: Relancer bot avec BE désactivé ou trigger x2
+
+═══════════════════════════════════════════════════════════════════════════════
+2️⃣  STATISTIQUES SESSION
+═══════════════════════════════════════════════════════════════════════════════
+
+- Durée: 20.3 heures
+- Trades gagnants: 42
+- Trades perdants: 50
+- Trades BE: 9
+- Total trades: 101
+- Win Rate: 41.6%
+- P&L Brut: $3055.40
+- Avg Win: $245.07
+- Avg Loss: $-144.75
+- Profit Factor: 1.69
+
+═══════════════════════════════════════════════════════════════════════════════
+3️⃣  TABLEAUX RÉCAPITULATIFS
+═══════════════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ TABLEAU 1: Performance par Instrument                                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+| Symbol | Trades | WR%    | P&L       | LONG WR | SHORT WR | Verdict |
+|--------|--------|--------|-----------|---------|----------|---------|
+| ES     |     44 |  34.1% | $  330.00 |   38.5% |    27.8% | ✅       |
+| NQ     |     57 |  47.4% | $ 2725.40 |   53.8% |    41.9% | ✅       |
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ TABLEAU 2: Analyse des Sorties                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+| Type Sortie        | Count | % Total | Avg P&L    |
+|--------------------|-------|---------|------------|
+| SL Hit             |    56 |   55.4% | $   -67.44 |
+| TP Hit             |    37 |   36.6% | $    89.92 |
+| TP_HIT             |     6 |    5.9% | $   688.33 |
+| SL_HIT             |     2 |    2.0% | $  -312.50 |
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ TABLEAU 3: Top Problèmes Identifiés                                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+| Problème                           | Occurrences | Impact $    |
+|------------------------------------|-------------|-------------|
+| Stops trop serrés                  |          10 | $   -712.90 |
+| Trades avec confluence < 0.8       |           4 | $   -262.50 |
+| Série de 8 pertes consécutives     |           8 | $      0.00 |
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ TABLEAU 4: Distribution Temporelle (Top/Flop)                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+| Heure | Trades | WR%    | P&L       | Verdict |
+|-------|--------|--------|-----------|---------|
+| 19h   |      3 | 100.0% | $ 2539.50 | ✅       |
+| 18h   |      9 |  44.4% | $ 1631.20 | ✅       |
+| 17h   |     13 |  53.8% | $  373.40 | ✅       |
+| 03h   |      8 |  50.0% | $  314.20 | ✅       |
+| 08h   |      3 |  33.3% | $  201.40 | ✅       |
+| 22h   |      3 |  66.7% | $   17.80 | ✅       |
+| 02h   |     12 |  41.7% | $  -63.70 | ❌       |
+| 20h   |      7 |  28.6% | $ -220.90 | ❌       |
+| 15h   |      3 |  33.3% | $ -494.40 | ❌       |
+| 16h   |     11 |  18.2% | $-1650.00 | ❌       |
+
+═══════════════════════════════════════════════════════════════════════════════
+4️⃣  TOP 5 ACTIONS IMMÉDIATES
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Augmenter SL minimum: ES 20t → 25t, NQ 30t → 40t
+   → Impact estimé: +$713/jour
+   → Priorité: P0
+
+2. Augmenter MIN_TOTAL_CONFIDENCE: 0.35 → 0.80
+   → Impact estimé: +$262/jour
+   → Priorité: P1
+
+3. Bloquer sessions: 08h, 09h, 15h, 16h, 20h
+   → Impact estimé: +$-2365/jour
+   → Priorité: P1
+
+
+═══════════════════════════════════════════════════════════════════════════════
+5️⃣  RÈGLES DE PROTECTION À AJOUTER
+═══════════════════════════════════════════════════════════════════════════════
+
+STOP BOT si:
+- ✅ 5 pertes consécutives (détecté: 8)
+- ✅ Drawdown > $500 (actuel: $0.00)
+- ✅ Win rate session < 40% (actuel: 41.6%)
+- ✅ P&L < -$300 (actuel: $3055.40)
+
+═══════════════════════════════════════════════════════════════════════════════
+6️⃣  ACTION PLAN FINAL
+═══════════════════════════════════════════════════════════════════════════════
+
+📋 CHECKLIST À FAIRE MAINTENANT:
+
+□ Action 1: Arrêter le bot - Priorité: P0
+□ Action 2: Modifier config BE/Trailing (voir recommandations) - Priorité: P0
+□ Action 3: Augmenter MIN_TOTAL_CONFIDENCE à 0.80 - Priorité: P1
+□ Action 4: Bloquer heures perdantes (<40% WR) - Priorité: P1
+□ Action 5: Augmenter SL minimum (ES +5t, NQ +10t) - Priorité: P2
+
+📅 POUR DEMAIN:
+□ Backtester nouveaux paramètres sur 30 derniers jours
+□ Valider impact estimé des changements
+□ Activer logging verbose pour BE/Trailing
+
+📈 MÉTRIQUES À SURVEILLER:
+□ Win Rate cible: > 50%
+□ P&L cible: > +$200/jour
+□ Max Drawdown: < $300
+□ Trades max: < 80/jour (actuel: 101)
+
+═══════════════════════════════════════════════════════════════════════════════
+✅ VALIDATION FINALE
+═══════════════════════════════════════════════════════════════════════════════
+
+- [✓] Tous les trades analysés (101 trades)
+- [✓] Patterns récurrents identifiés (3 problèmes)
+- [✓] 3 actions concrètes proposées
+- [✓] Recommandations QUANTIFIÉES
+- [✓] Tableaux récapitulatifs complets
+- [✓] Executive summary clair et actionnable
+
+═══════════════════════════════════════════════════════════════════════════════

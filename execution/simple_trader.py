@@ -90,7 +90,7 @@ from execution.trade_snapshotter import create_trade_snapshotter
 
 # 🆕 NOUVEAU: Import Post-Mortem Analyzer
 from execution.post_mortem_analyzer import (
-    create_post_mortem_analyzer, 
+    create_post_mortem_analyzer,
     setup_complete_post_mortem_system
 )
 
@@ -135,6 +135,7 @@ class Position:
     max_profit: float = 0.0
     max_loss: float = 0.0
     bars_in_trade: int = 0
+    entry_context: Optional[Dict[str, Any]] = None  # ✅ NOUVEAU: Contexte d'entrée (menthorq_score, market_bias, session, etc.)
 
 class SimpleBattleNavaleTrader:
     """
@@ -222,7 +223,7 @@ class SimpleBattleNavaleTrader:
         # 🆕 NOUVEAU: Post-Mortem Analyzer
         self.post_mortem_analyzer = create_post_mortem_analyzer(self.discord)
         logger.info("[OK] Post-Mortem Analyzer initialisé")
-        
+
         # Intégrer avec snapshotter
         self.snapshotter, self.post_mortem_analyzer = setup_complete_post_mortem_system(
             self.snapshotter, self.discord
@@ -403,13 +404,13 @@ class SimpleBattleNavaleTrader:
             config.security.kill_switch_loss_threshold = self.risk_manager.params.daily_loss_limit * 0.8
             config.security.max_gross_position = self.risk_manager.params.max_positions_concurrent * 2
 
-            # Symboles selon risk params
+            # Symboles selon risk params - Aligné avec chart router ES/NQ/RTY
             if self.risk_manager.params.max_position_size <= 2:
-                config.contracts.primary_symbol = "MES"  # Micro si petites positions
-                config.contracts.enabled_symbols = ["MES"]
+                config.contracts.primary_symbol = "ES"  # ES pour petites positions (Chart 3)
+                config.contracts.enabled_symbols = ["ES", "NQ", "RTY"]  # ✅ RTY ajouté - Aligné avec charts [3, 9, 1]
             else:
                 config.contracts.primary_symbol = "ES"
-                config.contracts.enabled_symbols = ["ES", "MES"]
+                config.contracts.enabled_symbols = ["ES", "NQ", "RTY"]  # ✅ RTY ajouté - Aligné avec charts [3, 9, 1]
 
         elif mode_upper == "DATA_COLLECTION":
             # Configuration collecte données
@@ -419,7 +420,7 @@ class SimpleBattleNavaleTrader:
             config.dtc.port = 11100  # Port DTC data collection
 
             # Tous les symboles pour ML
-            config.contracts.enabled_symbols = ["ES", "MES", "NQ", "MNQ"]
+            config.contracts.enabled_symbols = ["ES", "MES", "NQ", "MNQ", "RTY"]  # ✅ RTY ajouté
 
             # Pas de trading réel
             config.sierra_chart.trading_enabled = False
@@ -433,9 +434,9 @@ class SimpleBattleNavaleTrader:
             config.sierra_chart.daily_loss_limit = self.risk_manager.params.daily_loss_limit
             config.security.kill_switch_threshold = self.risk_manager.params.daily_loss_limit * 0.9
 
-            # Micro contrats pour paper trading
-            config.contracts.primary_symbol = "MES"
-            config.contracts.enabled_symbols = ["MES"]
+            # Symboles alignés avec chart router pour paper trading
+            config.contracts.primary_symbol = "ES"
+            config.contracts.enabled_symbols = ["ES", "NQ"]  # Aligné avec charts [3, 9]
 
         # Application globale
         # set_sierra_config(config)  # Commenté - la config est déjà stockée dans self.sierra_config
@@ -588,13 +589,13 @@ class SimpleBattleNavaleTrader:
     def _generate_order_book_data(self, market_data: MarketData) -> Optional[OrderBookSnapshot]:
         """
         Génère ou récupère données order book
-        
+
         Returns:
             OrderBookSnapshot: Données order book (mock ou réelles)
         """
         if not ORDER_BOOK_IMBALANCE_AVAILABLE:
             return None
-            
+
         try:
             # TODO: Remplacer par vraie connectivité order book
             # Pour le moment, utilise mock data basé sur le prix
@@ -602,12 +603,12 @@ class SimpleBattleNavaleTrader:
                 symbol=market_data.symbol,
                 base_price=market_data.close
             )
-            
+
             # Stocker pour usage ultérieur
             self.order_book_data = order_book
-            
+
             return order_book
-            
+
         except Exception as e:
             logger.error(f"[ERROR] Erreur génération order book: {e}")
             return None
@@ -702,7 +703,7 @@ class SimpleBattleNavaleTrader:
                 if ORDER_BOOK_IMBALANCE_AVAILABLE and order_book_data:
                     # Passer order book au signal generator pour feature calculator
                     signal = self.signal_generator.generate_signal(
-                        market_data, 
+                        market_data,
                         order_book=order_book_data
                     )
                 else:
@@ -724,7 +725,7 @@ class SimpleBattleNavaleTrader:
                             'order_book': order_book_data.__dict__ if order_book_data else None
                         }
                         trade_id = self.snapshotter.capture_pre_analysis_snapshot(
-                            market_data, 
+                            market_data,
                             additional_data=snapshot_data
                         )
 
@@ -744,7 +745,7 @@ class SimpleBattleNavaleTrader:
                             'order_book_available': ORDER_BOOK_IMBALANCE_AVAILABLE,
                             'order_book_data': order_book_data.__dict__ if order_book_data else None
                         }
-                        
+
                         self.snapshotter.capture_decision_snapshot(
                             trade_id,
                             decision_data,
@@ -842,6 +843,9 @@ class SimpleBattleNavaleTrader:
                 }
 
             if order_result.get('status') == 'FILLED':
+                # ✅ NOUVEAU: Créer entry_context avec données d'entrée
+                entry_context = self._build_entry_context(signal, decision, market_data)
+
                 # Créer position
                 position = Position(
                     position_id=trade_id,
@@ -852,7 +856,8 @@ class SimpleBattleNavaleTrader:
                     entry_time=datetime.now(),
                     stop_loss=decision.stop_loss_price,
                     take_profit=decision.take_profit_price,
-                    current_price=market_data.close
+                    current_price=market_data.close,
+                    entry_context=entry_context  # ✅ NOUVEAU: Stocker contexte d'entrée
                 )
 
                 self.positions[trade_id] = position
@@ -866,7 +871,7 @@ class SimpleBattleNavaleTrader:
                     'order_book_available': ORDER_BOOK_IMBALANCE_AVAILABLE,
                     'order_book_context': self.order_book_data.__dict__ if self.order_book_data else None
                 }
-                
+
                 self.snapshotter.capture_execution_snapshot(
                     trade_id,
                     order_result,
@@ -913,7 +918,7 @@ class SimpleBattleNavaleTrader:
                     **position.__dict__,
                     'order_book_current': self._generate_order_book_data(market_data).__dict__ if ORDER_BOOK_IMBALANCE_AVAILABLE else None
                 }
-                
+
                 self.snapshotter.capture_position_update(
                     position_id,
                     position_update_data,
@@ -978,6 +983,17 @@ class SimpleBattleNavaleTrader:
 
             final_pnl = pnl_ticks * position.size * ES_TICK_VALUE
 
+            # ✅ CORRECTION MFE/MAE: Convertir max_profit et max_loss en ticks pour MFE/MAE
+            # MFE = Maximum Favorable Excursion (profit max en ticks)
+            # MAE = Maximum Adverse Excursion (perte max en ticks, toujours positif)
+            if position.size > 0:
+                # Convertir dollars → ticks
+                mfe_ticks = (position.max_profit / (position.size * ES_TICK_VALUE)) * ES_TICK_SIZE if position.max_profit > 0 else 0.0
+                mae_ticks = (abs(position.max_loss) / (position.size * ES_TICK_VALUE)) * ES_TICK_SIZE if position.max_loss < 0 else 0.0
+            else:
+                mfe_ticks = 0.0
+                mae_ticks = 0.0
+
             # 🆕 NOUVEAU: Order Book context à la fermeture
             exit_order_book = self._generate_order_book_data(market_data) if ORDER_BOOK_IMBALANCE_AVAILABLE else None
 
@@ -992,8 +1008,16 @@ class SimpleBattleNavaleTrader:
                 'pnl_ticks': pnl_ticks,
                 'exit_reason': exit_reason,
                 'bars_in_trade': position.bars_in_trade,
+                # Conservé pour compatibilité (dollars)
                 'max_profit': position.max_profit,
                 'max_loss': position.max_loss,
+                # ✅ CORRECTION: MFE/MAE en ticks (compatibilité multiple formats)
+                'max_profit_ticks': mfe_ticks,
+                'max_loss_ticks': mae_ticks,
+                'mfe': mfe_ticks,                                     # Alias pour lessons_learned_analyzer
+                'mae': mae_ticks,                                     # Alias pour lessons_learned_analyzer
+                'max_favorable_excursion': mfe_ticks,                 # Pour trade_snapshotter
+                'max_adverse_excursion': mae_ticks,                   # Pour trade_snapshotter
                 # 🆕 NOUVEAU: Order Book context
                 'order_book_at_exit': exit_order_book.__dict__ if exit_order_book else None,
                 'order_book_analysis_available': ORDER_BOOK_IMBALANCE_AVAILABLE
@@ -1003,8 +1027,8 @@ class SimpleBattleNavaleTrader:
 
             # 🆕 NOUVEAU: Lancer Post-Mortem Analysis automatiquement (avec order book)
             self.post_mortem_analyzer.start_post_mortem_tracking(
-                position_id, 
-                trade_result, 
+                position_id,
+                trade_result,
                 market_data
             )
             logger.info(f"🔍 Post-mortem started for trade {position_id}"
@@ -1127,7 +1151,7 @@ class SimpleBattleNavaleTrader:
                 close=self._price_base,
                 volume=np.random.randint(500, 2000)
             )
-            
+
             # Stocker pour utilisation dans post-mortem
             self.last_market_data = market_data
             return market_data
@@ -1345,6 +1369,88 @@ class SimpleBattleNavaleTrader:
         except Exception as e:
             logger.error(f"Erreur Discord: {e}")
 
+    def _build_entry_context(self, signal: Any, decision: Any, market_data: MarketData) -> Dict[str, Any]:
+        """
+        ✅ NOUVEAU: Construit le contexte d'entrée à partir de signal, decision et market_data
+
+        Returns:
+            Dict avec toutes les données d'entrée nécessaires pour Discord
+        """
+        context = {}
+
+        try:
+            # Extraire données depuis signal
+            if hasattr(signal, 'total_confidence'):
+                context['confidence'] = signal.total_confidence
+            if hasattr(signal, 'strategy'):
+                context['strategy'] = signal.strategy
+            elif hasattr(signal, 'name'):
+                context['strategy'] = signal.name
+
+            # Extraire scores depuis signal.components si disponible
+            if hasattr(signal, 'components'):
+                components = signal.components
+                if hasattr(components, 'menthorq_score'):
+                    context['menthorq_score'] = components.menthorq_score
+                if hasattr(components, 'orderflow_score'):
+                    context['orderflow_score'] = components.orderflow_score
+                if hasattr(components, 'context_score'):
+                    context['context_score'] = components.context_score
+                if hasattr(components, 'confluence'):
+                    context['confluence'] = components.confluence
+                if hasattr(components, 'bataille_navale'):
+                    bn = components.bataille_navale
+                    if hasattr(bn, 'bullish_score'):
+                        context['bullish_score'] = bn.bullish_score
+                    if hasattr(bn, 'bias_state'):
+                        context['market_bias'] = bn.bias_state
+
+            # Extraire depuis signal.metadata si disponible
+            if hasattr(signal, 'metadata') and isinstance(signal.metadata, dict):
+                context.update({
+                    'menthorq_score': signal.metadata.get('menthorq_score', context.get('menthorq_score')),
+                    'orderflow_score': signal.metadata.get('orderflow_score', context.get('orderflow_score')),
+                    'context_score': signal.metadata.get('context_score', context.get('context_score')),
+                    'confluence': signal.metadata.get('confluence', context.get('confluence')),
+                    'market_bias': signal.metadata.get('market_bias', context.get('market_bias')),
+                    'bullish_score': signal.metadata.get('bullish_score', context.get('bullish_score')),
+                    'regime': signal.metadata.get('regime', 'Unknown'),
+                    'session': signal.metadata.get('session', 'Unknown'),
+                    'menthorq_level_type': signal.metadata.get('menthorq_level_type', 'N/A'),
+                    'menthorq_level_entry': signal.metadata.get('menthorq_level_entry', 0),
+                    'menthorq_strength': signal.metadata.get('menthorq_strength', 0),
+                    'menthorq_distance': signal.metadata.get('menthorq_distance', 0),
+                })
+
+            # Session depuis current_session si disponible
+            if hasattr(self, 'current_session'):
+                context['session'] = context.get('session', self.current_session)
+
+            # Valeurs par défaut si manquantes
+            context.setdefault('menthorq_score', None)
+            context.setdefault('orderflow_score', None)
+            context.setdefault('context_score', None)
+            context.setdefault('confluence', None)
+            context.setdefault('market_bias', None)
+            context.setdefault('bullish_score', None)
+            context.setdefault('regime', 'Unknown')
+            context.setdefault('session', 'Unknown')
+            context.setdefault('menthorq_level_type', 'N/A')
+            context.setdefault('menthorq_level_entry', None)
+            context.setdefault('menthorq_strength', None)
+            context.setdefault('menthorq_distance', None)
+
+        except Exception as e:
+            logger.warning(f"⚠️ Erreur construction entry_context: {e}")
+            # Retourner contexte minimal en cas d'erreur
+            context = {
+                'strategy': getattr(signal, 'strategy', getattr(signal, 'name', 'UNKNOWN')),
+                'confidence': getattr(signal, 'total_confidence', 0.0),
+                'session': getattr(self, 'current_session', 'Unknown')
+            }
+
+        return context
+
     async def _notify_trade_executed(self, position: Position, signal: Any):
         """Notification trade exécuté"""
         if not self.discord_enabled:
@@ -1383,7 +1489,14 @@ class SimpleBattleNavaleTrader:
             if ORDER_BOOK_IMBALANCE_AVAILABLE:
                 post_mortem_note += " (avec Order Book)"
 
+            # ✅ NOUVEAU: Récupérer entry_context depuis position
+            entry_context = position.entry_context or {}
+
+            # Calculer stats quotidiennes
+            daily_stats = self._get_daily_stats()
+
             message_data = {
+                'symbol': position.symbol,
                 'side': position.side,
                 'exit_price': position.current_price,
                 'pnl': pnl,
@@ -1394,12 +1507,49 @@ class SimpleBattleNavaleTrader:
                 'max_loss_ticks': position.max_loss / (position.size * ES_TICK_VALUE) * ES_TICK_SIZE,
                 'exit_reason': reason,
                 'exit_type': reason,
-                'post_mortem_note': post_mortem_note
+                'post_mortem_note': post_mortem_note,
+                'strategy': entry_context.get('strategy', 'UNKNOWN'),
+                'quantity': position.size,
+                # ✅ NOUVEAU: Données d'entrée depuis entry_context
+                'confluence': entry_context.get('confluence'),
+                'menthorq_score': entry_context.get('menthorq_score'),
+                'orderflow_score': entry_context.get('orderflow_score'),
+                'context_score': entry_context.get('context_score'),
+                'market_bias': entry_context.get('market_bias'),
+                'bullish_score': entry_context.get('bullish_score'),
+                'regime': entry_context.get('regime', 'Unknown'),
+                'session': entry_context.get('session', 'Unknown'),
+                'menthorq_level_type': entry_context.get('menthorq_level_type', 'N/A'),
+                'menthorq_level_entry': entry_context.get('menthorq_level_entry'),
+                'menthorq_strength': entry_context.get('menthorq_strength'),
+                'menthorq_distance': entry_context.get('menthorq_distance'),
+                # Stats quotidiennes
+                'daily_pnl_usd': daily_stats.get('gross_pnl', 0.0),
+                'daily_winrate': daily_stats.get('win_rate', 0.0),
+                'daily_trades': daily_stats.get('trades_count', 0),
+                'daily_wins': daily_stats.get('winning_trades', 0)
             }
-            
+
             await self.discord.send_trade_closed(message_data)
         except Exception as e:
             logger.error(f"Erreur Discord: {e}")
+
+    def _get_daily_stats(self) -> Dict[str, Any]:
+        """✅ NOUVEAU: Récupère les stats quotidiennes"""
+        try:
+            total_trades = self.daily_stats.get('trades_count', 0)
+            winning_trades = self.daily_stats.get('winning_trades', 0)
+            win_rate = (winning_trades / total_trades * 100) if total_trades > 0 else 0.0
+
+            return {
+                'trades_count': total_trades,
+                'winning_trades': winning_trades,
+                'win_rate': win_rate,
+                'gross_pnl': self.daily_stats.get('gross_pnl', 0.0)
+            }
+        except Exception as e:
+            logger.warning(f"⚠️ Erreur calcul stats quotidiennes: {e}")
+            return {'trades_count': 0, 'winning_trades': 0, 'win_rate': 0.0, 'gross_pnl': 0.0}
 
     async def _notify_progress(self):
         """Notification progress (mode data collection)"""
@@ -1658,7 +1808,7 @@ class SimpleBattleNavaleTrader:
         """Retourne les insights post-mortem récents"""
         if not hasattr(self.post_mortem_analyzer, 'completed_analyses'):
             return []
-        
+
         insights = []
         for analysis in self.post_mortem_analyzer.completed_analyses[-10:]:  # 10 derniers
             insight_data = {
@@ -1678,7 +1828,7 @@ class SimpleBattleNavaleTrader:
                 'had_order_book_data': hasattr(analysis, 'order_book_context') and analysis.order_book_context is not None
             }
             insights.append(insight_data)
-        
+
         return insights
 
     # 🆕 NOUVELLE MÉTHODE: Pattern Detection Summary
@@ -1686,27 +1836,27 @@ class SimpleBattleNavaleTrader:
         """Retourne résumé des patterns détectés"""
         if not hasattr(self.post_mortem_analyzer, 'pattern_tracker'):
             return {}
-        
+
         try:
             recent_analyses = self.post_mortem_analyzer.pattern_tracker.analyses_history[-20:]
-            
+
             # Compter patterns par type
             pattern_counts = {}
             order_book_patterns = {}
-            
+
             for analysis in recent_analyses:
                 for insight in analysis.insights:
                     pattern_counts[insight.value] = pattern_counts.get(insight.value, 0) + 1
-                    
+
                     # 🆕 NOUVEAU: Patterns spécifiques Order Book
                     if ORDER_BOOK_IMBALANCE_AVAILABLE and hasattr(analysis, 'order_book_context'):
                         if 'order_book' in insight.value.lower() or 'imbalance' in insight.value.lower():
                             order_book_patterns[insight.value] = order_book_patterns.get(insight.value, 0) + 1
-            
+
             # Identifier patterns récurrents (3+ occurrences)
             recurring_patterns = {k: v for k, v in pattern_counts.items() if v >= 3}
             recurring_order_book_patterns = {k: v for k, v in order_book_patterns.items() if v >= 2}
-            
+
             return {
                 'total_analyses': len(recent_analyses),
                 'pattern_counts': pattern_counts,
@@ -1919,7 +2069,7 @@ if __name__ == "__main__":
 # ACCÈS AUX NOUVELLES FONCTIONNALITÉS:
 #
 # trader = create_simple_trader("PAPER")
-# 
+#
 # # Status Order Book
 # ob_status = trader.get_order_book_status()
 # print(f"Order Book disponible: {ob_status['module_available']}")
@@ -1953,7 +2103,7 @@ MIAAutomationSystem = SimpleBattleNavaleTrader
 __all__ = [
     "SimpleBattleNavaleTrader",
     "MIAAutomationSystem",  # 🆕 NOUVEAU: Alias pour compatibilité
-    "create_simple_trader", 
+    "create_simple_trader",
     "run_data_collection_session",
     "ORDER_BOOK_IMBALANCE_AVAILABLE"
 ]

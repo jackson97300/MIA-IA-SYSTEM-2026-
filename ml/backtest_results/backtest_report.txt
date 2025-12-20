@@ -1,0 +1,16 @@
+======================================================================
+RAPPORT BACKTEST LIGHTGBM
+======================================================================
+
+Trades total:    7,949
+Trades errors:   0
+
+MAE:             13.53 points
+RMSE:            15.17 points
+R2:              0.2065
+MAPE:            35.78%
+Correlation:     0.4775
+
+Erreur < 5 pts:  11.0%
+Erreur < 10 pts: 32.0%
+Erreur < 15 pts: 59.9%

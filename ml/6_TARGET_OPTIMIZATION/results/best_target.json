@@ -1,0 +1,22 @@
+{
+  "target_name": "T7_expected_value",
+  "pnl_net": 477.6599999999919,
+  "pnl_gross": 2005.9599999999919,
+  "pnl_per_trade": 0.1937768762677452,
+  "n_trades": 2465,
+  "winrate": 0.4795131845841785,
+  "sharpe": 15.226710836597471,
+  "max_dd": 19.853191938548353,
+  "metrics": {
+    "mae": 16.44787557954341,
+    "rmse": 16.58365245473023,
+    "multi_objective_score": 99.1431833342681
+  },
+  "validation": {
+    "mean_pnl_net": 477.6599999999919,
+    "std_pnl_net": 0.0,
+    "min_pnl_net": 477.6599999999919,
+    "max_pnl_net": 477.6599999999919,
+    "stability_pct": 0.0
+  }
+}

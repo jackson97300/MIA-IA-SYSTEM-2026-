@@ -1,0 +1,26 @@
+{
+  "mid": 6863.0,
+  "hvl": 6865.0,
+  "vwap": 6878.48,
+  "atr": 1.13,
+  "vva": {
+    "vah": 6890.25,
+    "val": 6870.25,
+    "vpoc": 6882.75
+  },
+  "menthor_distances": {
+    "near_blind": 1.37,
+    "near_gex_up": 48,
+    "near_gex_dn": -93
+  },
+  "call_resistance": 7000.0,
+  "put_support": 6700.0,
+  "deltaPct": 0.6,
+  "cum_delta_session": -187,
+  "tsec": 1762222688.12,
+  "spread": 0.25,
+  "confluence_strength": 0.35,
+  "menthorq_proximity_strength": 0.12,
+  "smart_money_flow": 0.6,
+  "depth_imbalance": 0.2
+}

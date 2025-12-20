@@ -21,7 +21,7 @@ _module_availability: Dict[str, bool] = {}
 # Configuration des modules features
 FEATURE_MODULES = {
     'feature_calculator': {
-        'path': '.feature_calculator_optimized', 
+        'path': '.feature_calculator_optimized',
         'class': 'FeatureCalculatorOptimized',
         'factory': 'create_feature_calculator_optimized'
     },
@@ -32,7 +32,7 @@ FEATURE_MODULES = {
     },
     'confluence_analyzer': {
         'path': '.confluence_analyzer',
-        'class': 'ConfluenceAnalyzer', 
+        'class': 'ConfluenceAnalyzer',
         'factory': 'create_confluence_analyzer'
     },
     'confluence_integrator': {
@@ -66,7 +66,7 @@ FEATURE_MODULES = {
         'factory': 'create_menthorq_dealers_bias_analyzer'
     },
     'leadership_analyzer': {
-        'path': '.leadership_analyzer',
+        'path': '.leadership_zmom',
         'class': 'LeadershipZMom',
         'factory': 'LeadershipZMom'
     },
@@ -80,7 +80,7 @@ FEATURE_MODULES = {
 # Exports publics
 __all__ = [
     'create_feature_calculator',
-    'create_market_regime_detector', 
+    'create_market_regime_detector',
     'create_confluence_analyzer',
     'create_confluence_integrator',
     'create_order_book_imbalance_calculator',
@@ -104,23 +104,23 @@ __all__ = [
 def _lazy_import_module(module_name: str) -> Optional[Any]:
     """
     Import paresseux d'un module avec cache
-    
+
     Args:
         module_name: Nom du module (clé dans FEATURE_MODULES)
-        
+
     Returns:
         Module importé ou None si erreur
     """
     if module_name in _loaded_modules:
         return _loaded_modules[module_name]
-    
+
     if module_name not in FEATURE_MODULES:
         logger.warning(f"Module inconnu: {module_name}")
         return None
-    
+
     module_config = FEATURE_MODULES[module_name]
     module_path = module_config['path']
-    
+
     try:
         module = importlib.import_module(module_path, package='features')
         _loaded_modules[module_name] = module
@@ -135,34 +135,34 @@ def _lazy_import_module(module_name: str) -> Optional[Any]:
 def _lazy_get_class(module_name: str) -> Optional[Any]:
     """
     Récupère une classe d'un module avec lazy loading
-    
+
     Args:
         module_name: Nom du module
-        
+
     Returns:
         Classe ou None si erreur
     """
     module = _lazy_import_module(module_name)
     if not module:
         return None
-    
+
     class_name = FEATURE_MODULES[module_name]['class']
     return getattr(module, class_name, None)
 
 def _lazy_get_factory(module_name: str) -> Optional[Callable]:
     """
     Récupère une factory function d'un module avec lazy loading
-    
+
     Args:
         module_name: Nom du module
-        
+
     Returns:
         Factory function ou None si erreur
     """
     module = _lazy_import_module(module_name)
     if not module:
         return None
-    
+
     factory_name = FEATURE_MODULES[module_name]['factory']
     return getattr(module, factory_name, None)
 
@@ -178,7 +178,7 @@ def create_feature_calculator(config=None):
         except Exception as e:
             logger.warning(f"Erreur création FeatureCalculator: {e}")
             return None
-    
+
     logger.error("Factory FeatureCalculator non disponible")
     return None
 
@@ -237,16 +237,16 @@ def create_market_state_analyzer(config=None):
 def is_module_available(module_name: str) -> bool:
     """
     Vérifie si un module est disponible sans le charger
-    
+
     Args:
         module_name: Nom du module
-        
+
     Returns:
         True si disponible, False sinon
     """
     if module_name in _module_availability:
         return _module_availability[module_name]
-    
+
     # Test rapide d'import
     try:
         module_config = FEATURE_MODULES[module_name]
@@ -260,16 +260,16 @@ def is_module_available(module_name: str) -> bool:
 def get_module_status(module_name: str) -> Dict[str, Any]:
     """
     Retourne le statut détaillé d'un module
-    
+
     Args:
         module_name: Nom du module
-        
+
     Returns:
         Dict avec statut, disponibilité, etc.
     """
     available = is_module_available(module_name)
     loaded = module_name in _loaded_modules
-    
+
     return {
         'name': module_name,
         'available': available,
@@ -282,30 +282,30 @@ def get_module_status(module_name: str) -> Dict[str, Any]:
 def get_features_status() -> Dict[str, Any]:
     """
     Retourne le statut global des modules features
-    
+
     Returns:
         Dict avec statut de tous les modules
     """
     status = {}
     total_available = 0
     total_loaded = 0
-    
+
     for module_name in FEATURE_MODULES.keys():
         module_status = get_module_status(module_name)
         status[module_name] = module_status
-        
+
         if module_status['available']:
             total_available += 1
         if module_status['loaded']:
             total_loaded += 1
-    
+
     status['summary'] = {
         'total_modules': len(FEATURE_MODULES),
         'available_modules': total_available,
         'loaded_modules': total_loaded,
         'availability_rate': total_available / len(FEATURE_MODULES) if FEATURE_MODULES else 0
     }
-    
+
     return status
 
 # === INTEGRITY MONITORING ===
@@ -316,85 +316,95 @@ _integrity_monitor: Optional[Any] = None
 def _setup_integrity_monitoring():
     """Configure le monitoring d'intégrité des modules"""
     global _integrity_monitor
-    
+
     try:
-        from .module_integrity import (
-            create_module_integrity_monitor,
-            create_import_check,
-            create_instantiation_check,
-            IntegrityCheckType
-        )
-        
+        # Essayer d'abord avec import relatif
+        try:
+            from .module_integrity import (
+                create_module_integrity_monitor,
+                create_import_check,
+                create_instantiation_check,
+                IntegrityCheckType
+            )
+        except ImportError:
+            # Si l'import relatif échoue, essayer avec importlib
+            module_integrity = importlib.import_module('features.module_integrity')
+            create_module_integrity_monitor = getattr(module_integrity, 'create_module_integrity_monitor')
+            create_import_check = getattr(module_integrity, 'create_import_check')
+            create_instantiation_check = getattr(module_integrity, 'create_instantiation_check')
+            IntegrityCheckType = getattr(module_integrity, 'IntegrityCheckType')
+
         _integrity_monitor = create_module_integrity_monitor(check_interval_seconds=120)
-        
+
         # Enregistrer les modules avec leurs vérifications
         for module_name, module_config in FEATURE_MODULES.items():
             checks = []
-            
+
             # Convertir le chemin relatif en chemin absolu
             absolute_path = f"features{module_config['path']}"
-            
+
             # Vérification d'import
             checks.append(create_import_check(
-                absolute_path, 
+                absolute_path,
                 module_config['class']
             ))
-            
+
             # Vérification d'instanciation
             checks.append(create_instantiation_check(
                 absolute_path,
                 module_config['class'],
                 module_config['factory']
             ))
-            
+
             # Note: Pas de vérification fonctionnelle complexe pour éviter les timeouts
             # Les vérifications d'import et d'instanciation suffisent pour la santé du module
-            
+
             _integrity_monitor.register_module(module_name, checks)
-        
+
         logger.info("🔍 Monitoring d'intégrité configuré")
         return True
-        
+
     except Exception as e:
         logger.warning(f"⚠️ Impossible de configurer le monitoring d'intégrité: {e}")
+        logger.debug(f"Détails de l'erreur: {type(e).__name__}: {str(e)}", exc_info=True)
         return False
 
 def start_integrity_monitoring():
     """Démarre le monitoring d'intégrité"""
     global _integrity_monitor
-    
+
     if _integrity_monitor is None:
         if not _setup_integrity_monitoring():
             return False
-    
+
     if _integrity_monitor:
         _integrity_monitor.start_monitoring()
         logger.info("🚀 Monitoring d'intégrité démarré")
         return True
-    
+
     return False
 
 def stop_integrity_monitoring():
     """Arrête le monitoring d'intégrité"""
     global _integrity_monitor
-    
+
     if _integrity_monitor:
         _integrity_monitor.stop_monitoring()
         logger.info("🛑 Monitoring d'intégrité arrêté")
         return True
-    
+
     return False
 
 def get_integrity_status() -> Dict[str, Any]:
     """Retourne le statut d'intégrité des modules"""
     global _integrity_monitor
-    
+
     if _integrity_monitor is None:
         return {
             'monitoring_active': False,
             'error': 'Monitoring d\'intégrité non configuré'
         }
-    
+
     try:
         return {
             'monitoring_active': _integrity_monitor.running,
@@ -412,26 +422,38 @@ def get_integrity_status() -> Dict[str, Any]:
 logger.info(f"🚀 Features module initialized with lazy loading - {len(FEATURE_MODULES)} modules configured")
 logger.info(f"📊 Available exports: {len(__all__)}")
 
-# Log du statut initial (sans charger les modules)
-initial_status = get_features_status()
-logger.info(f"📈 Module availability: {initial_status['summary']['available_modules']}/{initial_status['summary']['total_modules']}")
+# Log du statut initial (sans charger les modules - vérification lazy)
+# On ne vérifie pas la disponibilité lors de l'initialisation pour éviter les problèmes d'import
+# La disponibilité sera vérifiée de manière lazy lors de la première utilisation
+logger.info(f"📈 Module availability: {len(FEATURE_MODULES)} modules configured (lazy loading activé)")
 
 # Configurer le monitoring d'intégrité (sans le démarrer automatiquement)
 _setup_integrity_monitoring()
 
-# Export direct de MarketRegimeDetector pour compatibilité
-def _get_market_regime_detector():
-    """Récupère la classe MarketRegimeDetector"""
-    return _lazy_get_class('market_regime')
+# Export direct de MarketRegimeDetector et ConfluenceAnalyzer pour compatibilité (lazy)
+# Ces classes seront chargées de manière lazy via __getattr__ ci-dessous
+_MarketRegimeDetector = None
+_ConfluenceAnalyzer = None
 
-# Ajouter MarketRegimeDetector aux exports globaux
-MarketRegimeDetector = _get_market_regime_detector()
+def __getattr__(name: str):
+    """Gère les imports lazy pour les exports directs"""
+    global _MarketRegimeDetector, _ConfluenceAnalyzer
 
-# Export direct de ConfluenceAnalyzer pour compatibilité
-def _get_confluence_analyzer():
-    return _lazy_get_class('confluence_analyzer')
+    if name == 'MarketRegimeDetector':
+        if _MarketRegimeDetector is None:
+            _MarketRegimeDetector = _lazy_get_class('market_regime')
+            if _MarketRegimeDetector is None:
+                raise ImportError("Module market_regime non disponible")
+        return _MarketRegimeDetector
 
-ConfluenceAnalyzer = _get_confluence_analyzer()
+    if name == 'ConfluenceAnalyzer':
+        if _ConfluenceAnalyzer is None:
+            _ConfluenceAnalyzer = _lazy_get_class('confluence_analyzer')
+            if _ConfluenceAnalyzer is None:
+                raise ImportError("Module confluence_analyzer non disponible")
+        return _ConfluenceAnalyzer
+
+    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 # === COMPATIBILITÉ LEGACY ===
 # Re-exports pour compat legacy - confluence_calculator

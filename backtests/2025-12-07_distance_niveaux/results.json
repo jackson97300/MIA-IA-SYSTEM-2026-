@@ -1,0 +1,156 @@
+{
+  "test_name": "Distance aux Niveaux MenthorQ",
+  "test_date": "2025-12-06T15:25:39.666427",
+  "results": {
+    "ES_5t": {
+      "trades": 85,
+      "wins": 16,
+      "losses": 36,
+      "pnl": -3900.0,
+      "win_rate": 18.823529411764707,
+      "avg_distance": 2.9162352941175307,
+      "max_dist": 5,
+      "symbol": "ES"
+    },
+    "ES_8t": {
+      "trades": 103,
+      "wins": 17,
+      "losses": 44,
+      "pnl": -5725.0,
+      "win_rate": 16.50485436893204,
+      "avg_distance": 5.0170873786407615,
+      "max_dist": 8,
+      "symbol": "ES"
+    },
+    "ES_10t": {
+      "trades": 117,
+      "wins": 23,
+      "losses": 49,
+      "pnl": -4850.0,
+      "win_rate": 19.65811965811966,
+      "avg_distance": 6.068034188034242,
+      "max_dist": 10,
+      "symbol": "ES"
+    },
+    "ES_12t": {
+      "trades": 127,
+      "wins": 25,
+      "losses": 51,
+      "pnl": -4650.0,
+      "win_rate": 19.68503937007874,
+      "avg_distance": 6.954015748031524,
+      "max_dist": 12,
+      "symbol": "ES"
+    },
+    "ES_15t_ACTUEL": {
+      "trades": 134,
+      "wins": 29,
+      "losses": 50,
+      "pnl": -2875.0,
+      "win_rate": 21.641791044776117,
+      "avg_distance": 8.24089552238816,
+      "max_dist": 15,
+      "symbol": "ES"
+    },
+    "ES_18t": {
+      "trades": 145,
+      "wins": 23,
+      "losses": 60,
+      "pnl": -7875.0,
+      "win_rate": 15.862068965517242,
+      "avg_distance": 9.583448275862134,
+      "max_dist": 18,
+      "symbol": "ES"
+    },
+    "ES_20t": {
+      "trades": 147,
+      "wins": 23,
+      "losses": 65,
+      "pnl": -9250.0,
+      "win_rate": 15.646258503401361,
+      "avg_distance": 9.881632653061263,
+      "max_dist": 20,
+      "symbol": "ES"
+    },
+    "ES_25t": {
+      "trades": 154,
+      "wins": 30,
+      "losses": 62,
+      "pnl": -5800.0,
+      "win_rate": 19.480519480519483,
+      "avg_distance": 10.569870129870262,
+      "max_dist": 25,
+      "symbol": "ES"
+    },
+    "NQ_10t": {
+      "trades": 41,
+      "wins": 22,
+      "losses": 18,
+      "pnl": 3000.0,
+      "win_rate": 53.65853658536586,
+      "avg_distance": 5.891707317073469,
+      "max_dist": 10,
+      "symbol": "NQ"
+    },
+    "NQ_15t": {
+      "trades": 45,
+      "wins": 25,
+      "losses": 19,
+      "pnl": 3700.0,
+      "win_rate": 55.55555555555556,
+      "avg_distance": 9.54577777777805,
+      "max_dist": 15,
+      "symbol": "NQ"
+    },
+    "NQ_20t": {
+      "trades": 52,
+      "wins": 32,
+      "losses": 19,
+      "pnl": 5800.0,
+      "win_rate": 61.53846153846154,
+      "avg_distance": 12.156153846154597,
+      "max_dist": 20,
+      "symbol": "NQ"
+    },
+    "NQ_25t_ACTUEL": {
+      "trades": 56,
+      "wins": 32,
+      "losses": 23,
+      "pnl": 5000.0,
+      "win_rate": 57.14285714285714,
+      "avg_distance": 16.393571428572354,
+      "max_dist": 25,
+      "symbol": "NQ"
+    },
+    "NQ_30t": {
+      "trades": 60,
+      "wins": 32,
+      "losses": 27,
+      "pnl": 4200.0,
+      "win_rate": 53.333333333333336,
+      "avg_distance": 19.328666666667655,
+      "max_dist": 30,
+      "symbol": "NQ"
+    },
+    "NQ_35t": {
+      "trades": 70,
+      "wins": 37,
+      "losses": 32,
+      "pnl": 4700.0,
+      "win_rate": 52.85714285714286,
+      "avg_distance": 23.994285714287045,
+      "max_dist": 35,
+      "symbol": "NQ"
+    },
+    "NQ_40t": {
+      "trades": 76,
+      "wins": 42,
+      "losses": 33,
+      "pnl": 6000.0,
+      "win_rate": 55.26315789473685,
+      "avg_distance": 26.68000000000106,
+      "max_dist": 40,
+      "symbol": "NQ"
+    }
+  }
+}

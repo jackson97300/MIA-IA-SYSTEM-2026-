@@ -1,0 +1,282 @@
+{
+    "site": {
+        "title": "MIA IA SYSTEM",
+        "description": "Intelligence Artificielle pour le Trading Futures"
+    },
+    "nav": {
+        "home": "Accueil",
+        "features": "Services",
+        "pricing": "Tarifs",
+        "faq": "FAQ",
+        "contact": "Contact",
+        "login": "Connexion",
+        "register": "Inscription",
+        "dashboard": "Dashboard",
+        "logout": "Déconnexion",
+        "profile": "Mon Profil"
+    },
+    "hero": {
+        "title": "MIA IA SYSTEM",
+        "subtitle": "Votre Assistant Intelligent de Trading",
+        "description": "Un robot qui analyse les marchés 24h/24 à votre place. Prenez de meilleures décisions, sans stress, sans émotions.",
+        "cta_primary": "Accéder au Dashboard",
+        "cta_secondary": "En savoir plus"
+    },
+    "about": {
+        "title": "L'Histoire de MIA",
+        "story": "Je suis un trader indépendant qui a tradé pendant 10 ans sur les marchés financiers. J'ai connu des victoires, mais aussi des échecs.\n\nJ'avais une stratégie qui marchait, mais mon côté émotionnel me faisait perdre. La peur, la cupidité, l'hésitation... Ces biais détruisaient mes résultats.\n\nAprès plus de 10 ans de recherche, j'ai décidé de gommer ces lacunes en créant un bot qui trade ma stratégie propriétaire de manière 100% objective.\n\nLa stratégie a d'abord fonctionné en trading manuel avant d'être automatisée.\n\nAu début, MIA était juste une aide à la décision. Aujourd'hui, c'est un système complet qui trade en autonomie.\n\nMIA trade mille fois mieux que moi. Elle analyse en une fraction de seconde ce que je n'aurais jamais pensé analyser, et prend des décisions ultra-rapides sans aucun biais émotionnel.",
+        "signature": "— Le créateur de MIA"
+    },
+    "features": {
+        "title": "Fonctionnalités",
+        "subtitle": "Tout ce dont vous avez besoin pour un trading intelligent",
+        "items": {
+            "realtime": {
+                "title": "Analyse Temps Réel",
+                "description": "Surveillance continue des marchés futures ES, NQ et RTY, 24h/24."
+            },
+            "signals": {
+                "title": "Signaux Précis",
+                "description": "Entrées et sorties optimisées par intelligence artificielle."
+            },
+            "automated": {
+                "title": "100% Automatisé",
+                "description": "Trading sans intervention manuelle, sans émotions, sans stress."
+            },
+            "multiplatform": {
+                "title": "Accessible Partout",
+                "description": "Dashboard accessible depuis n'importe quel appareil, où que vous soyez."
+            },
+            "alerts": {
+                "title": "Alertes Instantanées",
+                "description": "Notifications Discord en temps réel pour chaque signal et trade."
+            },
+            "dashboard": {
+                "title": "Dashboard Live",
+                "description": "Visualisez les performances, statistiques et trades en temps réel."
+            },
+            "education": {
+                "title": "Éducation Trading",
+                "description": "Ressources éducatives pour comprendre les marchés et améliorer vos compétences."
+            },
+            "calendar": {
+                "title": "Calendrier Économique",
+                "description": "Suivi des annonces économiques majeures qui impactent les marchés."
+            }
+        }
+    },
+    "how_it_works": {
+        "title": "Comment ça marche",
+        "subtitle": "Commencez en 4 étapes simples",
+        "steps": {
+            "1": {
+                "title": "Créez votre compte",
+                "description": "Inscription rapide en 30 secondes avec Google ou email."
+            },
+            "2": {
+                "title": "Accédez au Dashboard",
+                "description": "Connectez-vous et découvrez l'interface de MIA."
+            },
+            "3": {
+                "title": "Observez MIA Trader",
+                "description": "MIA analyse les marchés et génère des signaux en temps réel."
+            },
+            "4": {
+                "title": "Suivez les Résultats",
+                "description": "Consultez les performances et statistiques détaillées."
+            }
+        }
+    },
+    "stats": {
+        "title": "MIA en chiffres",
+        "items": {
+            "analysis": {
+                "value": "24/7",
+                "label": "Analyse Continue"
+            },
+            "markets": {
+                "value": "3",
+                "label": "Marchés Tradés"
+            },
+            "reaction": {
+                "value": "< 1s",
+                "label": "Temps de Réaction"
+            },
+            "research": {
+                "value": "10+",
+                "label": "Années de Recherche"
+            }
+        }
+    },
+    "pricing": {
+        "title": "Tarifs",
+        "subtitle": "Commencez gratuitement",
+        "free": {
+            "name": "Gratuit",
+            "price": "0€",
+            "period": "/mois",
+            "features": [
+                "Accès au dashboard",
+                "Signaux en temps réel",
+                "Alertes Discord",
+                "Statistiques complètes"
+            ],
+            "cta": "Commencer gratuitement",
+            "badge": "ACTUEL"
+        },
+        "premium": {
+            "name": "Premium",
+            "price": "---",
+            "period": "",
+            "features": [
+                "Tout du plan Gratuit",
+                "Fonctionnalités avancées",
+                "Support prioritaire",
+                "Et plus encore..."
+            ],
+            "cta": "Bientôt disponible",
+            "badge": "BIENTÔT"
+        }
+    },
+    "faq": {
+        "title": "Questions Fréquentes",
+        "items": {
+            "1": {
+                "question": "Qu'est-ce que MIA IA SYSTEM ?",
+                "answer": "MIA est un système de trading algorithmique qui analyse les marchés futures (ES, NQ, RTY) 24h/24 et génère des signaux de trading basés sur une stratégie propriétaire développée pendant plus de 10 ans."
+            },
+            "2": {
+                "question": "Faut-il des connaissances en trading ?",
+                "answer": "Une connaissance de base des marchés est recommandée. MIA est un outil d'aide à la décision, pas un système de gains garantis. Comprendre les risques du trading est essentiel."
+            },
+            "3": {
+                "question": "Comment sont générés les signaux ?",
+                "answer": "MIA utilise une stratégie propriétaire combinant analyse technique avancée et intelligence artificielle pour identifier les meilleures opportunités de trading."
+            },
+            "4": {
+                "question": "C'est gratuit ?",
+                "answer": "Oui ! L'accès au dashboard MIA est actuellement 100% gratuit. Des offres premium avec des fonctionnalités avancées seront disponibles prochainement."
+            },
+            "5": {
+                "question": "Puis-je perdre de l'argent ?",
+                "answer": "Oui. Le trading comporte des risques de perte en capital. Les performances passées ne garantissent pas les résultats futurs. N'investissez jamais plus que ce que vous pouvez vous permettre de perdre."
+            },
+            "6": {
+                "question": "Comment accéder au dashboard ?",
+                "answer": "Créez un compte gratuit ou connectez-vous avec Google, puis cliquez sur 'Accéder au Dashboard'. Vous serez redirigé vers l'interface de MIA."
+            }
+        }
+    },
+    "newsletter": {
+        "title": "Restez Informé",
+        "description": "Inscrivez-vous pour recevoir les dernières actualités sur MIA IA SYSTEM et être informé des futures offres.",
+        "placeholder": "Votre adresse email",
+        "button": "S'inscrire",
+        "success": "Merci ! Vous êtes inscrit à notre newsletter.",
+        "error": "Cet email est déjà inscrit.",
+        "invalid": "Veuillez entrer un email valide."
+    },
+    "contact": {
+        "title": "Contactez-nous",
+        "description": "Une question ? N'hésitez pas à nous contacter.",
+        "form": {
+            "name": "Votre nom",
+            "email": "Votre email",
+            "message": "Votre message",
+            "submit": "Envoyer"
+        },
+        "success": "Message envoyé avec succès !",
+        "error": "Erreur lors de l'envoi. Veuillez réessayer."
+    },
+    "auth": {
+        "login": {
+            "title": "Connexion",
+            "google": "Continuer avec Google",
+            "or": "OU",
+            "email": "Email",
+            "password": "Mot de passe",
+            "remember": "Se souvenir de moi",
+            "forgot": "Mot de passe oublié ?",
+            "submit": "Se connecter",
+            "no_account": "Pas encore de compte ?",
+            "register_link": "S'inscrire"
+        },
+        "register": {
+            "title": "Créer un compte",
+            "google": "Continuer avec Google",
+            "or": "OU",
+            "name": "Nom complet",
+            "email": "Email",
+            "password": "Mot de passe",
+            "password_hint": "Min. 8 caractères, 1 majuscule, 1 chiffre",
+            "confirm_password": "Confirmer le mot de passe",
+            "terms": "J'accepte les CGU et la politique de confidentialité",
+            "newsletter": "Je souhaite recevoir les actualités",
+            "submit": "Créer mon compte",
+            "has_account": "Déjà un compte ?",
+            "login_link": "Se connecter"
+        },
+        "forgot_password": {
+            "title": "Mot de passe oublié ?",
+            "description": "Entrez votre email et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+            "email": "Email",
+            "submit": "Envoyer le lien",
+            "back": "Retour à la connexion"
+        },
+        "reset_password": {
+            "title": "Nouveau mot de passe",
+            "password": "Nouveau mot de passe",
+            "confirm": "Confirmer le mot de passe",
+            "submit": "Réinitialiser",
+            "success": "Mot de passe mis à jour avec succès !"
+        }
+    },
+    "footer": {
+        "description": "MIA IA SYSTEM - Intelligence Artificielle pour le Trading Futures",
+        "links": {
+            "title": "Liens",
+            "home": "Accueil",
+            "features": "Services",
+            "pricing": "Tarifs",
+            "faq": "FAQ"
+        },
+        "legal": {
+            "title": "Légal",
+            "terms": "CGU",
+            "privacy": "Confidentialité",
+            "mentions": "Mentions légales",
+            "risk": "Avertissement Risques"
+        },
+        "contact": {
+            "title": "Contact",
+            "email": "MIA.IA.SYSTEM@GMAIL.COM"
+        },
+        "copyright": "© 2024 MIA IA SYSTEM. Tous droits réservés.",
+        "risk_warning": "⚠️ Le trading comporte des risques de perte en capital. Les performances passées ne garantissent pas les résultats futurs."
+    },
+    "legal": {
+        "terms": {
+            "title": "Conditions Générales d'Utilisation"
+        },
+        "privacy": {
+            "title": "Politique de Confidentialité"
+        },
+        "mentions": {
+            "title": "Mentions Légales"
+        },
+        "risk": {
+            "title": "Avertissement sur les Risques",
+            "content": "Le trading de produits dérivés (futures, options) comporte des risques élevés de perte en capital. Vous pouvez perdre la totalité de votre investissement.\n\nLes performances passées ne préjugent pas des performances futures.\n\nMIA IA SYSTEM est un outil d'aide à la décision et ne constitue en aucun cas un conseil en investissement personnalisé. Les signaux générés sont fournis à titre informatif uniquement.\n\nN'investissez jamais plus que ce que vous pouvez vous permettre de perdre. Le trading ne convient pas à tous les investisseurs. Assurez-vous de bien comprendre les risques avant de trader."
+        }
+    },
+    "common": {
+        "loading": "Chargement...",
+        "error": "Une erreur est survenue",
+        "success": "Succès !",
+        "cancel": "Annuler",
+        "save": "Enregistrer",
+        "back": "Retour",
+        "next": "Suivant",
+        "close": "Fermer"
+    }
+}

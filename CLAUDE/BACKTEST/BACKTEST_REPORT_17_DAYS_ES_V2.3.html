@@ -1,0 +1,381 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Backtest ES Pure V2.3 - 17 Jours</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background: #0d1117; color: #c9d1d9; }
+        h1 { color: #58a6ff; border-bottom: 3px solid #58a6ff; padding-bottom: 10px; }
+        h2 { color: #79c0ff; margin-top: 30px; border-bottom: 2px solid #30363d; padding-bottom: 8px; }
+        .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 20px 0; }
+        .metric-card { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 15px; }
+        .metric-card h3 { margin: 0 0 10px 0; color: #58a6ff; font-size: 14px; }
+        .metric-card .value { font-size: 28px; font-weight: bold; color: #fff; }
+        .metric-card .label { font-size: 12px; color: #8b949e; margin-top: 5px; }
+        .positive { color: #3fb950 !important; }
+        .negative { color: #f85149 !important; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: #161b22; }
+        th { background: #21262d; color: #58a6ff; padding: 12px; text-align: left; border-bottom: 2px solid #30363d; }
+        td { padding: 10px 12px; border-bottom: 1px solid #30363d; }
+        tr:hover { background: #1c2128; }
+        .chart { margin: 30px 0; }
+        .daily-row { cursor: pointer; }
+        .daily-row:hover { background: #1c2128; }
+    </style>
+</head>
+<body>
+    <h1>📊 Backtest ES Pure MenthorQ V2.3 - 17 Jours</h1>
+    <p style="color: #8b949e;">Période: 5-27 Novembre 2025 | Total: 128 trades</p>
+    
+    <div class="metrics">
+        <div class="metric-card">
+            <h3>Win Rate</h3>
+            <div class="value positive">73.4%</div>
+            <div class="label">94W / 34L</div>
+        </div>
+        <div class="metric-card">
+            <h3>P&L Total</h3>
+            <div class="value negative">$-1047.50</div>
+            <div class="label">-83.8 ticks</div>
+        </div>
+        <div class="metric-card">
+            <h3>Profit Factor</h3>
+            <div class="value negative">0.84</div>
+            <div class="label">Gross P/L ratio</div>
+        </div>
+        <div class="metric-card">
+            <h3>Max Drawdown</h3>
+            <div class="value negative">$1965.50</div>
+            <div class="label">Peak-to-trough</div>
+        </div>
+        <div class="metric-card">
+            <h3>Avg Win</h3>
+            <div class="value positive">$60.38</div>
+            <div class="label">Per winning trade</div>
+        </div>
+        <div class="metric-card">
+            <h3>Avg Loss</h3>
+            <div class="value negative">$-197.74</div>
+            <div class="label">Per losing trade</div>
+        </div>
+    </div>
+    
+    <h2>📅 Résultats par Jour</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Trades</th>
+                <th>Win Rate</th>
+                <th>P&L</th>
+                <th>Ticks</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr class="daily-row">
+                <td>20251105</td>
+                <td>8</td>
+                <td class="positive">100.0%</td>
+                <td class="positive">$450.00</td>
+                <td>36.0t</td>
+            </tr>
+
+            <tr class="daily-row">
+                <td>20251106</td>
+                <td>8</td>
+                <td class="positive">75.0%</td>
+                <td class="negative">$-107.00</td>
+                <td>-8.6t</td>
+            </tr>
+
+            <tr class="daily-row">
+                <td>20251107</td>
+                <td>8</td>
+                <td class="positive">87.5%</td>
+                <td class="positive">$225.00</td>
+                <td>18.0t</td>
+            </tr>
+
+            <tr class="daily-row">
+                <td>20251110</td>
+                <td>8</td>
+                <td class="positive">62.5%</td>
+                <td class="negative">$-342.00</td>
+                <td>-27.4t</td>
+            </tr>
+
+            <tr class="daily-row">
+                <td>20251111</td>
+                <td>8</td>
+                <td class="positive">100.0%</td>
+                <td class="positive">$425.50</td>
+                <td>34.0t</td>
+            </tr>
+
+            <tr class="daily-row">
+                <td>20251112</td>
+                <td>8</td>
+                <td class="positive">62.5%</td>
+                <td class="negative">$-162.50</td>
+                <td>-13.0t</td>
+            </tr>
+
+            <tr class="daily-row">
+                <td>20251113</td>
+                <td>8</td>
+                <td class="positive">62.5%</td>
+                <td class="negative">$-374.50</td>
+                <td>-30.0t</td>
+            </tr>
+
+            <tr class="daily-row">
+                <td>20251114</td>
+                <td>8</td>
+                <td class="positive">87.5%</td>
+                <td class="positive">$144.00</td>
+                <td>11.5t</td>
+            </tr>
+
+            <tr class="daily-row">
+                <td>20251117</td>
+                <td>8</td>
+                <td class="positive">62.5%</td>
+                <td class="negative">$-475.00</td>
+                <td>-38.0t</td>
+            </tr>
+
+            <tr class="daily-row">
+                <td>20251118</td>
+                <td>8</td>
+                <td class="negative">37.5%</td>
+                <td class="negative">$-831.00</td>
+                <td>-66.5t</td>
+            </tr>
+
+            <tr class="daily-row">
+                <td>20251119</td>
+                <td>8</td>
+                <td class="positive">75.0%</td>
+                <td class="negative">$-68.50</td>
+                <td>-5.5t</td>
+            </tr>
+
+            <tr class="daily-row">
+                <td>20251120</td>
+                <td>8</td>
+                <td class="positive">87.5%</td>
+                <td class="positive">$725.00</td>
+                <td>58.0t</td>
+            </tr>
+
+            <tr class="daily-row">
+                <td>20251121</td>
+                <td>8</td>
+                <td class="positive">62.5%</td>
+                <td class="negative">$-68.50</td>
+                <td>-5.5t</td>
+            </tr>
+
+            <tr class="daily-row">
+                <td>20251124</td>
+                <td>8</td>
+                <td class="positive">62.5%</td>
+                <td class="negative">$-431.50</td>
+                <td>-34.5t</td>
+            </tr>
+
+            <tr class="daily-row">
+                <td>20251125</td>
+                <td>8</td>
+                <td class="positive">75.0%</td>
+                <td class="negative">$-31.50</td>
+                <td>-2.5t</td>
+            </tr>
+
+            <tr class="daily-row">
+                <td>20251126</td>
+                <td>8</td>
+                <td class="positive">75.0%</td>
+                <td class="negative">$-125.00</td>
+                <td>-10.0t</td>
+            </tr>
+
+            <tr class="daily-row">
+                <td>20251127</td>
+                <td>0</td>
+                <td class="negative">0.0%</td>
+                <td class="positive">$0.00</td>
+                <td>0.0t</td>
+            </tr>
+
+        </tbody>
+    </table>
+    
+    <h2>🎯 Par Setup</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Setup</th>
+                <th>Trades</th>
+                <th>Win Rate</th>
+                <th>P&L</th>
+                <th>Avg P&L</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr>
+                <td>breakout</td>
+                <td>52</td>
+                <td class="positive">78.8%</td>
+                <td class="positive">$177.00</td>
+                <td>$3.40</td>
+            </tr>
+
+            <tr>
+                <td>gamma_wall_defense</td>
+                <td>40</td>
+                <td class="positive">77.5%</td>
+                <td class="positive">$475.50</td>
+                <td>$11.89</td>
+            </tr>
+
+            <tr>
+                <td>pullback_clean</td>
+                <td>33</td>
+                <td class="positive">60.6%</td>
+                <td class="negative">$-1662.50</td>
+                <td>$-50.38</td>
+            </tr>
+
+            <tr>
+                <td>vwap_reversion</td>
+                <td>3</td>
+                <td class="positive">66.7%</td>
+                <td class="negative">$-37.50</td>
+                <td>$-12.50</td>
+            </tr>
+
+        </tbody>
+    </table>
+    
+    <h2>🔢 Par Niveau GEX</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>GEX Level</th>
+                <th>Trades</th>
+                <th>Win Rate</th>
+                <th>P&L</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr>
+                <td>GEX_1</td>
+                <td>2</td>
+                <td class="positive">100.0%</td>
+                <td class="positive">$50.00</td>
+            </tr>
+
+            <tr>
+                <td>GEX_10</td>
+                <td>8</td>
+                <td class="positive">87.5%</td>
+                <td class="positive">$725.00</td>
+            </tr>
+
+            <tr>
+                <td>GEX_2</td>
+                <td>19</td>
+                <td class="positive">68.4%</td>
+                <td class="negative">$-456.00</td>
+            </tr>
+
+            <tr>
+                <td>GEX_3</td>
+                <td>1</td>
+                <td class="positive">100.0%</td>
+                <td class="positive">$150.00</td>
+            </tr>
+
+            <tr>
+                <td>GEX_4</td>
+                <td>2</td>
+                <td class="positive">100.0%</td>
+                <td class="positive">$94.00</td>
+            </tr>
+
+            <tr>
+                <td>GEX_5</td>
+                <td>8</td>
+                <td class="positive">75.0%</td>
+                <td class="negative">$-87.50</td>
+            </tr>
+
+        </tbody>
+    </table>
+    
+    <h2>⏰ Par Session</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Session</th>
+                <th>Trades</th>
+                <th>Win Rate</th>
+                <th>P&L</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr>
+                <td>London</td>
+                <td>103</td>
+                <td class="positive">73.8%</td>
+                <td class="negative">$-1210.00</td>
+            </tr>
+
+            <tr>
+                <td>US</td>
+                <td>25</td>
+                <td class="positive">72.0%</td>
+                <td class="positive">$162.50</td>
+            </tr>
+
+        </tbody>
+    </table>
+    
+    <h2>🚪 Raisons de Sortie</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Exit Reason</th>
+                <th>Count</th>
+                <th>Percentage</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr>
+                <td>SL</td>
+                <td>110</td>
+                <td>85.9%</td>
+            </tr>
+
+            <tr>
+                <td>TP1</td>
+                <td>18</td>
+                <td>14.1%</td>
+            </tr>
+
+        </tbody>
+    </table>
+    
+    <p style="margin-top: 50px; color: #8b949e; text-align: center;">
+        Généré le 28/11/2025 00:47:48<br>
+        ES Pure MenthorQ V2.3 - OrderFlow STRICT
+    </p>
+</body>
+</html>

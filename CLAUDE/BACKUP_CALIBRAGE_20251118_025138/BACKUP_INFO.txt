@@ -1,0 +1,11 @@
+Backup cree le: 2025-11-18 02:51:38
+Base: D:/MIA_IA_system/CLAUDE/BACKUP_CALIBRAGE_20251118_025138
+
+Fichiers sauvegardes:
+  [OK] strategies/menthorq_3layer_strategy.py
+  [OK] strategies/vwap_sd_options_confluence_strategy.py
+  [OK] strategies/gamma_wall_rejection_strategy.py
+  [OK] strategies/strategy_manager_optimized_v3.py
+  [OK] config/symbol_profiles.py
+  [OK] config/trading_config.py
+  [OK] config/optimized_strategy_config.py

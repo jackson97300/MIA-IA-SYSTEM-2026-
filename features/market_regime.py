@@ -149,6 +149,16 @@ class RangeAnalysis:
     underlying_bias: str = "neutral"  # bullish, bearish, neutral
     bias_strength: float = 0.0
 
+    # 🔥 NOUVEAU 08/12: Position dans le range pour logique FADE
+    current_price: float = 0.0
+    position_in_range_pct: float = 50.0  # 0-100% (0=support, 100=résistance)
+    range_zone: str = "MIDDLE"  # "BOTTOM" (<25%), "MIDDLE" (25-75%), "TOP" (>75%)
+    distance_to_support_ticks: float = 0.0
+    distance_to_resistance_ticks: float = 0.0
+
+    # 🔥 NOUVEAU 08/12: Détection breakout imminent
+    breakout_risk: str = "NONE"  # "NONE", "BEARISH", "BULLISH"
+
 
 @dataclass
 class ESNQCorrelation:
@@ -204,7 +214,7 @@ class MarketRegimeData:
 
 class TickConverter:
     """🎯 Utilitaire de conversion prix ↔ ticks pour différents instruments"""
-    
+
     # Tick sizes par instrument
     TICK_SIZES = {
         'ES': 0.25,    # E-mini S&P 500
@@ -216,7 +226,7 @@ class TickConverter:
         'RTY': 0.1,    # E-mini Russell 2000
         'M2K': 0.1,    # Micro E-mini Russell 2000
     }
-    
+
     # Tick values par instrument (pour calcul P&L)
     TICK_VALUES = {
         'ES': 12.50,   # $12.50 par tick
@@ -228,7 +238,7 @@ class TickConverter:
         'RTY': 5.00,   # $5.00 par tick
         'M2K': 0.50,   # $0.50 par tick
     }
-    
+
     @classmethod
     def price_to_ticks(cls, price: float, instrument: str = 'ES') -> float:
         """🎯 Convertit un prix en nombre de ticks"""
@@ -238,7 +248,7 @@ class TickConverter:
         except (TypeError, ValueError, ZeroDivisionError):
             logger.warning(f"⚠️ Erreur conversion prix→ticks: {price} pour {instrument}")
             return 0.0
-    
+
     @classmethod
     def ticks_to_price(cls, ticks: float, instrument: str = 'ES') -> float:
         """🎯 Convertit un nombre de ticks en prix"""
@@ -248,7 +258,7 @@ class TickConverter:
         except (TypeError, ValueError):
             logger.warning(f"⚠️ Erreur conversion ticks→prix: {ticks} pour {instrument}")
             return 0.0
-    
+
     @classmethod
     def price_range_to_ticks(cls, price1: float, price2: float, instrument: str = 'ES') -> float:
         """🎯 Convertit une plage de prix en ticks"""
@@ -257,7 +267,7 @@ class TickConverter:
         except (TypeError, ValueError):
             logger.warning(f"⚠️ Erreur conversion plage→ticks: {price1}-{price2} pour {instrument}")
             return 0.0
-    
+
     @classmethod
     def ticks_to_dollar_value(cls, ticks: float, instrument: str = 'ES') -> float:
         """🎯 Convertit des ticks en valeur dollar"""
@@ -267,7 +277,7 @@ class TickConverter:
         except (TypeError, ValueError):
             logger.warning(f"⚠️ Erreur conversion ticks→dollars: {ticks} pour {instrument}")
             return 0.0
-    
+
     @classmethod
     def round_to_tick(cls, price: float, instrument: str = 'ES') -> float:
         """🎯 Arrondit un prix au tick le plus proche"""
@@ -277,17 +287,17 @@ class TickConverter:
         except (TypeError, ValueError):
             logger.warning(f"⚠️ Erreur arrondi tick: {price} pour {instrument}")
             return price
-    
+
     @classmethod
     def get_tick_size(cls, instrument: str = 'ES') -> float:
         """🎯 Retourne la taille de tick pour un instrument"""
         return cls.TICK_SIZES.get(instrument.upper(), 0.25)
-    
+
     @classmethod
     def get_tick_value(cls, instrument: str = 'ES') -> float:
         """🎯 Retourne la valeur de tick pour un instrument"""
         return cls.TICK_VALUES.get(instrument.upper(), 12.50)
-    
+
     @classmethod
     def is_valid_tick_price(cls, price: float, instrument: str = 'ES') -> bool:
         """🎯 Vérifie si un prix est aligné sur les ticks"""
@@ -323,11 +333,34 @@ class MarketRegimeDetector:
         self.dow_structure_periods = self.config.get('dow_structure_periods', 30)
 
         # Paramètres range detection
-        self.min_range_size_ticks = self.config.get('min_range_size_ticks', 12)  # IMPORTANT
-        self.max_range_size_ticks = self.config.get('max_range_size_ticks', 50)
-        self.min_range_duration = self.config.get('min_range_duration', 20)  # minutes
-        self.min_level_tests = self.config.get('min_level_tests', 3)
+        # 🔥 MODIFIÉ 08/12: Ajustements pour brackets courts
+        self.min_range_size_ticks = self.config.get('min_range_size_ticks', 15)  # 15 ticks min (3.75 pts ES)
+        self.max_range_size_ticks = self.config.get('max_range_size_ticks', 60)  # 60 ticks max (15 pts ES)
+        self.min_range_duration = self.config.get('min_range_duration', 10)  # 10 minutes (réduit de 20)
+        self.min_level_tests = self.config.get('min_level_tests', 3)  # 3 touches minimum avec buffer
         self.range_respect_threshold = self.config.get('range_respect_threshold', 0.75)
+
+        # 🔥 NOUVEAU 08/12: Configuration par symbole
+        self.symbol_config = self.config.get('symbol_config', {
+            'ES': {
+                'min_range_size_ticks': 15,    # 15 ticks min (3.75 pts)
+                'max_range_size_ticks': 60,    # 60 ticks max (15 pts)
+                'breakout_proximity_ticks': 5,  # Alerte à 5 ticks du bord
+                'level_test_tolerance_ticks': 1.5,  # Buffer 1.5 ticks pour touches
+            },
+            'NQ': {
+                'min_range_size_ticks': 20,    # 20 ticks min (5 pts) - NQ plus volatil
+                'max_range_size_ticks': 80,    # 80 ticks max (20 pts)
+                'breakout_proximity_ticks': 8,  # Alerte à 8 ticks du bord
+                'level_test_tolerance_ticks': 2.0,  # Buffer 2 ticks pour touches
+            },
+            'RTY': {
+                'min_range_size_ticks': 15,
+                'max_range_size_ticks': 60,
+                'breakout_proximity_ticks': 5,
+                'level_test_tolerance_ticks': 1.5,
+            }
+        })
 
         # Paramètres corrélation
         self.correlation_lookback = self.config.get('correlation_lookback', 100)
@@ -342,7 +375,7 @@ class MarketRegimeDetector:
             'close': 1.2,          # Modérément volatil
             'after_hours': 0.5     # Faible volatilité
         })
-        
+
         # 🎯 Paramètres de classification des tendances (configurables)
         self.trend_classification_thresholds = self.config.get('trend_classification_thresholds', {
             'very_strong': 0.85,   # >= 0.85
@@ -351,13 +384,13 @@ class MarketRegimeDetector:
             'weak': 0.30,          # >= 0.30
             'very_weak': 0.0       # < 0.30
         })
-        
+
         # 🎯 Paramètres de validation des volumes
         self.volume_validation_thresholds = self.config.get('volume_validation_thresholds', {
             'min_volume_change': 0.1,  # 10% change minimum
             'volume_confirmation_weight': 0.2  # Poids dans le calcul
         })
-        
+
         # 🎯 Paramètres de corrélation ES/NQ
         self.correlation_classification_thresholds = self.config.get('correlation_classification_thresholds', {
             'very_high': 0.8,      # >= 0.8
@@ -365,20 +398,20 @@ class MarketRegimeDetector:
             'moderate': 0.4,       # >= 0.4
             'low': 0.0             # < 0.4
         })
-        
+
         # 🎯 Paramètres de divergence
         self.divergence_thresholds = self.config.get('divergence_thresholds', {
             'warning_threshold': 0.02,  # 2% divergence warning
             'critical_threshold': 0.05  # 5% divergence critical
         })
-        
+
         # 🎯 Paramètres de bias
         self.bias_thresholds = self.config.get('bias_thresholds', {
             'min_bias_strength': 0.5,    # Force minimum pour bias
             'vwap_slope_strong': 0.5,    # VWAP slope pour tendance forte
             'vwap_slope_moderate': 0.2   # VWAP slope pour tendance modérée
         })
-        
+
         # 🎯 Paramètres de qualité des ranges
         self.range_quality_thresholds = self.config.get('range_quality_thresholds', {
             'optimal_size_min': 15,      # Taille optimale minimum
@@ -507,7 +540,7 @@ class MarketRegimeDetector:
                         base = datetime(1899, 12, 30, tzinfo=timezone.utc)
                         return (base + timedelta(days=ts)).timestamp()
                     return ts
-                
+
                 ts = _normalize_ts(ts)
                 if ts is None:
                     from datetime import datetime, timezone
@@ -838,6 +871,63 @@ class MarketRegimeDetector:
         else:
             volume_contraction = False
 
+        # ═══════════════════════════════════════════════════════════════
+        # 🔥 NOUVEAU 08/12: CALCUL POSITION DANS LE RANGE
+        # ═══════════════════════════════════════════════════════════════
+
+        current_price = market_data.close
+        position_in_range_pct = 50.0
+        range_zone = "MIDDLE"
+        distance_to_support_ticks = 0.0
+        distance_to_resistance_ticks = 0.0
+
+        if resistance_level > support_level:
+            # Position en pourcentage (0% = support, 100% = résistance)
+            position_in_range_pct = ((current_price - support_level) /
+                                     (resistance_level - support_level)) * 100
+            position_in_range_pct = max(0, min(100, position_in_range_pct))
+
+            # Distances en ticks
+            distance_to_support_ticks = TickConverter.price_range_to_ticks(
+                current_price, support_level, 'ES'
+            )
+            distance_to_resistance_ticks = TickConverter.price_range_to_ticks(
+                resistance_level, current_price, 'ES'
+            )
+
+            # Zones avec buffer (25% / 75%) - LOGIQUE FADE PRO
+            BOTTOM_ZONE = 25
+            TOP_ZONE = 75
+
+            if position_in_range_pct < BOTTOM_ZONE:
+                range_zone = "BOTTOM"
+            elif position_in_range_pct > TOP_ZONE:
+                range_zone = "TOP"
+            else:
+                range_zone = "MIDDLE"
+
+        # ═══════════════════════════════════════════════════════════════
+        # 🔥 NOUVEAU 08/12: DÉTECTION BREAKOUT IMMINENT
+        # ═══════════════════════════════════════════════════════════════
+
+        breakout_risk = "NONE"
+        BREAKOUT_PROXIMITY_TICKS = 5  # Alerte si < 5 ticks du bord
+
+        # Momentum basé sur volume trend (depuis trend_analysis) et bias
+        volume_trend_value = trend_analysis.volume_trend if trend_analysis else 0.0
+        momentum_bearish = (volume_trend_value < -0.1) or (underlying_bias == "bearish")
+        momentum_bullish = (volume_trend_value > 0.1) or (underlying_bias == "bullish")
+
+        # Proche du support + momentum baissier = BREAKOUT DOWN
+        if distance_to_support_ticks < BREAKOUT_PROXIMITY_TICKS and momentum_bearish:
+            breakout_risk = "BEARISH"
+            logger.warning(f"⚠️ BREAKOUT RISK DOWN: {distance_to_support_ticks:.1f}t du support + momentum bearish")
+
+        # Proche de la résistance + momentum haussier = BREAKOUT UP
+        elif distance_to_resistance_ticks < BREAKOUT_PROXIMITY_TICKS and momentum_bullish:
+            breakout_risk = "BULLISH"
+            logger.warning(f"⚠️ BREAKOUT RISK UP: {distance_to_resistance_ticks:.1f}t de la résistance + momentum bullish")
+
         return RangeAnalysis(
             timestamp=market_data.timestamp,
             range_detected=True,
@@ -854,7 +944,14 @@ class MarketRegimeDetector:
             breakout_volume_threshold=range_volume_avg * 1.5,
             volume_contraction=volume_contraction,
             underlying_bias=underlying_bias,
-            bias_strength=bias_strength
+            bias_strength=bias_strength,
+            # 🔥 NOUVEAUX CHAMPS 08/12
+            current_price=current_price,
+            position_in_range_pct=position_in_range_pct,
+            range_zone=range_zone,
+            distance_to_support_ticks=distance_to_support_ticks,
+            distance_to_resistance_ticks=distance_to_resistance_ticks,
+            breakout_risk=breakout_risk
         )
 
     def _analyze_es_nq_correlation(self,
@@ -1096,17 +1193,48 @@ class MarketRegimeDetector:
             allowed_directions = ["SHORT"]  # Mais plus prudent
             bias_strength = trend_analysis.trend_consistency * 0.7
 
-        elif regime == MarketRegime.RANGE_BULLISH_BIAS:
-            allowed_directions = ["LONG"]  # Seulement longs en bas range
-            bias_strength = range_analysis.bias_strength
+        elif regime in [MarketRegime.RANGE_BULLISH_BIAS,
+                        MarketRegime.RANGE_BEARISH_BIAS,
+                        MarketRegime.RANGE_NEUTRAL]:
+            # ═══════════════════════════════════════════════════════════════
+            # 🔥 NOUVEAU 08/12: LOGIQUE FADE BASÉE SUR POSITION DANS LE RANGE
+            # ═══════════════════════════════════════════════════════════════
 
-        elif regime == MarketRegime.RANGE_BEARISH_BIAS:
-            allowed_directions = ["SHORT"]  # Seulement shorts en haut range
-            bias_strength = range_analysis.bias_strength
+            range_zone = range_analysis.range_zone
+            breakout_risk = range_analysis.breakout_risk
+            position_pct = range_analysis.position_in_range_pct
 
-        elif regime == MarketRegime.RANGE_NEUTRAL:
-            allowed_directions = ["LONG", "SHORT"]  # Both sides
-            bias_strength = 0.0
+            # 1. BREAKOUT IMMINENT = PAS DE TRADE
+            if breakout_risk == "BEARISH":
+                allowed_directions = []
+                preferred_strategy = "wait"
+                bias_strength = 0.0
+                logger.warning(f"🚫 RANGE: BREAKOUT DOWN imminent - Pas de trade (zone: {range_zone}, {position_pct:.0f}%)")
+
+            elif breakout_risk == "BULLISH":
+                allowed_directions = []
+                preferred_strategy = "wait"
+                bias_strength = 0.0
+                logger.warning(f"🚫 RANGE: BREAKOUT UP imminent - Pas de trade (zone: {range_zone}, {position_pct:.0f}%)")
+
+            # 2. BAS DU RANGE = LONG SEULEMENT (FADE)
+            elif range_zone == "BOTTOM":
+                allowed_directions = ["LONG"]
+                bias_strength = 0.7
+                logger.info(f"📈 RANGE BOTTOM ({position_pct:.0f}%): LONG autorisé (FADE vers résistance)")
+
+            # 3. HAUT DU RANGE = SHORT SEULEMENT (FADE)
+            elif range_zone == "TOP":
+                allowed_directions = ["SHORT"]
+                bias_strength = 0.7
+                logger.info(f"📉 RANGE TOP ({position_pct:.0f}%): SHORT autorisé (FADE vers support)")
+
+            # 4. MILIEU = PAS DE TRADE
+            else:  # MIDDLE
+                allowed_directions = []
+                preferred_strategy = "wait"
+                bias_strength = 0.0
+                logger.info(f"⏸️ RANGE MIDDLE ({position_pct:.0f}%): Pas de trade - Attendre les extrêmes")
 
         else:  # TRANSITION, UNCLEAR
             allowed_directions = []  # Pas de trade
@@ -1278,7 +1406,7 @@ class MarketRegimeDetector:
 
         # 🎯 Poids configurables pour le calcul de qualité
         quality_weights = self.range_quality_thresholds
-        
+
         # Respect niveaux (configurable)
         score += range_analysis.level_respect_rate * quality_weights['respect_weight']
 
@@ -1352,6 +1480,181 @@ class MarketRegimeDetector:
             'current_bias': self.current_regime.allowed_directions if self.current_regime else [],
             'filter_efficiency': f"{self.stats['ranges_filtered_small'] + self.stats['ranges_filtered_large']} ranges filtrés"
         }
+
+    # ═══════════════════════════════════════════════════════════════════════
+    # 🔥 NOUVEAU 08/12: GÉNÉRATION SIGNAUX FADE POUR RANGES "PURS"
+    # ═══════════════════════════════════════════════════════════════════════
+
+    def generate_fade_signal(self,
+                             snapshot: Dict[str, Any],
+                             symbol: str = "ES") -> Optional[Dict[str, Any]]:
+        """
+        Génère un signal FADE sur range "pur" (sans niveau MenthorQ)
+
+        Utilise OrderFlow pour confirmation:
+        - Delta positif au support → LONG
+        - Delta négatif à la résistance → SHORT
+
+        Args:
+            snapshot: Données ML_READY du marché
+            symbol: Symbole (ES, NQ, RTY)
+
+        Returns:
+            Signal dict si conditions remplies, None sinon
+        """
+
+        # Vérifier qu'on a un régime actuel
+        if not self.current_regime:
+            return None
+
+        regime = self.current_regime.regime
+        range_analysis = self.current_regime.range_analysis
+
+        # Seulement pour les régimes RANGE
+        if regime not in [MarketRegime.RANGE_NEUTRAL,
+                          MarketRegime.RANGE_BULLISH_BIAS,
+                          MarketRegime.RANGE_BEARISH_BIAS]:
+            return None
+
+        # Vérifier qu'on a un range valide
+        if not range_analysis or not range_analysis.range_detected:
+            return None
+
+        # Récupérer les données de position
+        range_zone = range_analysis.range_zone
+        position_pct = range_analysis.position_in_range_pct
+        breakout_risk = range_analysis.breakout_risk
+        support = range_analysis.support_level
+        resistance = range_analysis.resistance_level
+
+        # PAS de signal si breakout imminent
+        if breakout_risk != "NONE":
+            logger.debug(f"[{symbol}] Pas de signal FADE: Breakout {breakout_risk} imminent")
+            return None
+
+        # PAS de signal au milieu
+        if range_zone == "MIDDLE":
+            logger.debug(f"[{symbol}] Pas de signal FADE: Zone MIDDLE ({position_pct:.0f}%)")
+            return None
+
+        # ═══════════════════════════════════════════════════════════════
+        # EXTRACTION ORDERFLOW DEPUIS SNAPSHOT
+        # ═══════════════════════════════════════════════════════════════
+
+        delta = snapshot.get('delta', 0) or snapshot.get('cum_delta_session', 0)
+        delta_rate = snapshot.get('delta_rate_1s', 0)
+        bid_volume = snapshot.get('bidvol', 0)
+        ask_volume = snapshot.get('askvol', 0)
+        level1_imbalance = snapshot.get('level1_imbalance', 0)
+        institutional_pressure = snapshot.get('institutional_pressure', 0)
+        mid_price = snapshot.get('mid', 0)
+
+        # Calculer pressure
+        total_volume = bid_volume + ask_volume
+        buying_pressure = (ask_volume / total_volume) > 0.55 if total_volume > 0 else False
+        selling_pressure = (bid_volume / total_volume) > 0.55 if total_volume > 0 else False
+
+        # ═══════════════════════════════════════════════════════════════
+        # 🔥 NOUVEAU 09/12: FILTRE BIAS - Trader SEULEMENT dans le sens du bias!
+        # ═══════════════════════════════════════════════════════════════
+
+        underlying_bias = range_analysis.underlying_bias  # "BULLISH", "BEARISH", "NEUTRAL"
+
+        # Tick size par symbole
+        tick_size = 0.25 if symbol in ['ES', 'NQ'] else 0.10
+
+        # Calculer le MILIEU du range (TP cible = aimant)
+        range_midpoint = (support + resistance) / 2
+
+        # ═══════════════════════════════════════════════════════════════
+        # GÉNÉRATION SIGNAL FADE (avec filtre BIAS + TP au milieu)
+        # ═══════════════════════════════════════════════════════════════
+
+        signal = None
+
+        # ZONE BOTTOM → Chercher LONG (seulement si bias BULLISH ou NEUTRAL)
+        if range_zone == "BOTTOM":
+            # 🔥 FILTRE BIAS: Pas de LONG si bias BEARISH
+            if underlying_bias == "BEARISH":
+                logger.debug(f"[{symbol}] Pas de LONG en BOTTOM: Bias BEARISH (contre-tendance)")
+                return None
+
+            # Confirmations OrderFlow pour LONG
+            confirmations = sum([
+                delta > 0 or delta_rate > 0,
+                buying_pressure,
+                level1_imbalance > 0.2,
+                institutional_pressure > 0
+            ])
+
+            if confirmations >= 2:
+                # 🔥 TP AU MILIEU avec buffer (3 ticks avant pour sécurité)
+                tp_price = range_midpoint - (3 * tick_size)
+                sl_price = support - (8 * tick_size)
+
+                signal = {
+                    'action': 'LONG',
+                    'entry_price': mid_price,
+                    'confidence': 0.45 + (confirmations * 0.05),  # 0.55-0.65
+                    'tp_price': tp_price,
+                    'sl_price': sl_price,
+                    'reason': f"FADE LONG: BOTTOM ({position_pct:.0f}%), Bias={underlying_bias}, {confirmations} OF",
+                    'signal_type': 'RANGE_FADE',
+                    'range_support': support,
+                    'range_resistance': resistance,
+                    'range_midpoint': range_midpoint,
+                    'underlying_bias': underlying_bias,
+                    'orderflow_confirmations': confirmations,
+                    'disable_trailing': True  # 🔥 Désactiver trailing en RANGE
+                }
+                logger.info(f"📈 [{symbol}] SIGNAL FADE LONG généré @ {mid_price:.2f}")
+                logger.info(f"   Bias: {underlying_bias} | Position: {position_pct:.0f}% | OF: {confirmations}/4")
+                logger.info(f"   TP: {tp_price:.2f} (milieu) | SL: {sl_price:.2f}")
+
+        # ZONE TOP → Chercher SHORT (seulement si bias BEARISH ou NEUTRAL)
+        elif range_zone == "TOP":
+            # 🔥 FILTRE BIAS: Pas de SHORT si bias BULLISH
+            if underlying_bias == "BULLISH":
+                logger.debug(f"[{symbol}] Pas de SHORT en TOP: Bias BULLISH (contre-tendance)")
+                return None
+
+            # Confirmations OrderFlow pour SHORT
+            confirmations = sum([
+                delta < 0 or delta_rate < 0,
+                selling_pressure,
+                level1_imbalance < -0.2,
+                institutional_pressure < 0
+            ])
+
+            if confirmations >= 2:
+                # 🔥 TP AU MILIEU avec buffer (3 ticks après pour sécurité)
+                tp_price = range_midpoint + (3 * tick_size)
+                sl_price = resistance + (8 * tick_size)
+
+                signal = {
+                    'action': 'SHORT',
+                    'entry_price': mid_price,
+                    'confidence': 0.45 + (confirmations * 0.05),  # 0.55-0.65
+                    'tp_price': tp_price,
+                    'sl_price': sl_price,
+                    'reason': f"FADE SHORT: TOP ({position_pct:.0f}%), Bias={underlying_bias}, {confirmations} OF",
+                    'signal_type': 'RANGE_FADE',
+                    'range_support': support,
+                    'range_resistance': resistance,
+                    'range_midpoint': range_midpoint,
+                    'underlying_bias': underlying_bias,
+                    'orderflow_confirmations': confirmations,
+                    'disable_trailing': True  # 🔥 Désactiver trailing en RANGE
+                }
+                logger.info(f"📉 [{symbol}] SIGNAL FADE SHORT généré @ {mid_price:.2f}")
+                logger.info(f"   Bias: {underlying_bias} | Position: {position_pct:.0f}% | OF: {confirmations}/4")
+                logger.info(f"   TP: {tp_price:.2f} (milieu) | SL: {sl_price:.2f}")
+
+        # Stats
+        if signal:
+            self.stats['fade_signals_generated'] = self.stats.get('fade_signals_generated', 0) + 1
+
+        return signal
 
 # === FACTORY FUNCTIONS ===
 

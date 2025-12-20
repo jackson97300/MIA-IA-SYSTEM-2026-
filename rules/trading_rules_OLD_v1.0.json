@@ -1,0 +1,184 @@
+{
+  "_comment": "Règles de trading pour MIA_IA_SYSTEM - EliteDecisionOrchestrator",
+  "_version": "1.0.0",
+  "_last_update": "2025-11-07",
+
+  "entry_rules": {
+    "_description": "Règles pour valider une entrée en position",
+
+    "confluence": {
+      "min_confluence": 0.70,
+      "description": "Confluence minimale pour entrer en position",
+      "enabled": true
+    },
+
+    "context": {
+      "max_proximity_alerts": 2,
+      "description": "Maximum d'alertes de proximité tolérées (HVL, GEX walls, VA)",
+      "enabled": true
+    },
+
+    "bias": {
+      "forbidden_against_main_bias": true,
+      "min_bias_strength": 0.30,
+      "description": "Interdire trades contre le bias principal si bias_strength > seuil",
+      "enabled": true
+    },
+
+    "orderflow": {
+      "require_orderflow_alignment": true,
+      "min_delta_pct": -0.20,
+      "description": "Orderflow pressure doit être aligné avec la direction du trade",
+      "enabled": true
+    },
+
+    "gamma": {
+      "avoid_gamma_flip_zone": true,
+      "gamma_flip_cooldown_seconds": 120,
+      "description": "Ne pas trader pendant 2 min après un gamma flip",
+      "enabled": true
+    },
+
+    "session": {
+      "avoid_mid_day_chop": true,
+      "mid_day_start_hour": 20,
+      "mid_day_end_hour": 22,
+      "description": "Éviter les trades entre 20h-22h (Europe/Paris) = 14h-16h EST (lunch chop)",
+      "enabled": true
+    },
+
+    "volatility": {
+      "max_vix_for_entry": 35.0,
+      "min_atr_for_entry": 0.5,
+      "description": "Limites de volatilité pour entrée",
+      "enabled": true
+    },
+
+    "ml_filter": {
+      "enforce_ml_threshold": true,
+      "adaptive_thresholds": true,
+      "description": "Appliquer les seuils ML (déjà fait dans MLDualFilter)",
+      "enabled": true
+    },
+
+    "position": {
+      "max_open_positions_per_symbol": 1,
+      "description": "Maximum 1 position ouverte par symbole (anti-cumulation)",
+      "enabled": true
+    },
+
+    "cooldown": {
+      "min_seconds_between_trades": 120,
+      "ignore_if_gamma_flip": true,
+      "ignore_if_hvl_break": true,
+      "description": "Cooldown de 2 min entre trades sauf événements majeurs",
+      "enabled": true
+    }
+  },
+
+  "exit_rules": {
+    "_description": "Règles pour sortir d'une position",
+
+    "time": {
+      "max_trade_duration_minutes": 60,
+      "force_close_before_eod": true,
+      "eod_close_minutes": 15,
+      "description": "Fermer positions avant fin de session",
+      "enabled": true
+    },
+
+    "target": {
+      "partial_at_tp1": false,
+      "partial_size_percent": 50,
+      "move_sl_to_breakeven_at_tp1": true,
+      "description": "Gestion des profits",
+      "enabled": true
+    },
+
+    "gamma": {
+      "close_on_gamma_flip_against": true,
+      "description": "Fermer position si gamma flip en défaveur",
+      "enabled": false
+    },
+
+    "context": {
+      "close_if_bias_reverses": true,
+      "min_bias_reversal_strength": 0.50,
+      "description": "Fermer si le bias principal s'inverse fortement",
+      "enabled": true
+    }
+  },
+
+  "risk_management": {
+    "_description": "Règles de gestion du risque",
+
+    "daily_limits": {
+      "max_daily_loss": 1000.0,
+      "max_daily_trades": 25,
+      "max_consecutive_losses": 4,
+      "description": "Limites journalières",
+      "enabled": true
+    },
+
+    "drawdown": {
+      "max_drawdown_percent": 15.0,
+      "max_drawdown_duration_minutes": 120,
+      "description": "Limites de drawdown (géré par SafetyKillSwitch)",
+      "enabled": true
+    },
+
+    "position_sizing": {
+      "base_size_contracts": 1,
+      "max_size_contracts": 1,
+      "reduce_size_on_high_vix": true,
+      "vix_threshold_reduce": 25.0,
+      "description": "Gestion de la taille des positions",
+      "enabled": true
+    },
+
+    "risk_reward": {
+      "min_rr_ratio": 1.5,
+      "preferred_rr_ratio": 2.0,
+      "description": "Ratio risque/rendement minimum",
+      "enabled": true
+    }
+  },
+
+  "context_rules": {
+    "_description": "Règles contextuelles adaptatives",
+
+    "volatility": {
+      "high_vol_reduce_size": true,
+      "high_vol_threshold": 25.0,
+      "low_vol_increase_tp": true,
+      "low_vol_threshold": 15.0,
+      "description": "Adaptation selon volatilité",
+      "enabled": true
+    },
+
+    "session": {
+      "eu_open_cautious": true,
+      "us_open_aggressive": true,
+      "power_hour_selective": true,
+      "description": "Adaptation selon session",
+      "enabled": true
+    },
+
+    "market_regime": {
+      "trend_follow": true,
+      "range_fade": true,
+      "breakout_confirm": true,
+      "description": "Adaptation selon régime de marché",
+      "enabled": true
+    }
+  },
+
+  "calibration_mode": {
+    "_description": "Mode calibration pour tests (désactive certaines limites)",
+    "enabled": false,
+    "override_daily_limits": true,
+    "override_drawdown_limits": true,
+    "log_all_rejections": true,
+    "description": "Activer pour calibration/tests intensifs"
+  }
+}

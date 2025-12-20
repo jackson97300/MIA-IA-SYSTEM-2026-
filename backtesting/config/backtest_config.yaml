@@ -1,0 +1,77 @@
+# Configuration Backtest MenthorQ
+# Date: 23 Novembre 2025
+
+# Symboles à tester
+symbols:
+  - ES
+  - NQ
+  # - RTY  # Décommenter si données disponibles
+
+# Période de test
+date_range:
+  start: '2025-11-05'
+  end: '2025-11-21'
+
+# Chemin vers données
+data_path: 'DATA_SIERRA_CHART/DATA_2025/NOVEMBRE'
+
+# Configurations SL à tester
+sl_configs:
+  - method: 'fixed'
+    ticks: 8
+  - method: 'fixed'
+    ticks: 10
+  - method: 'fixed'
+    ticks: 15
+  - method: 'fixed'
+    ticks: 20
+  - method: 'fixed'
+    ticks: 25
+  - method: 'fixed'
+    ticks: 30
+  - method: 'fixed'
+    ticks: 35
+  - method: 'fixed'
+    ticks: 40
+  - method: 'confluence'
+    buffer_ticks: 2
+  - method: 'confluence'
+    buffer_ticks: 3
+
+# Configurations TP à tester
+tp_configs:
+  - method: 'rr'
+    ratio: 1.0
+  - method: 'rr'
+    ratio: 1.2
+  - method: 'rr'
+    ratio: 1.5
+  - method: 'rr'
+    ratio: 1.8
+  - method: 'rr'
+    ratio: 2.0
+  - method: 'rr'
+    ratio: 2.5
+  - method: 'rr'
+    ratio: 3.0
+  - method: 'level'
+    target_level: 'next_technical'
+
+# Seuils de confiance à tester (pour analyses futures)
+confidence_thresholds:
+  layer1: [0.10, 0.15, 0.20, 0.25, 0.30]
+  layer2: [0.50, 0.55, 0.60, 0.65, 0.70]
+  layer3: [0.60, 0.65, 0.70, 0.75, 0.80]
+
+# Confluence strength à tester
+confluence_strengths: [2, 3, 4, 5]
+
+# Heures de trading (ET)
+trading_hours:
+  start: '09:30'
+  end: '16:00'
+
+# Output
+output:
+  directory: 'backtesting/results/'
+  formats: ['markdown', 'json', 'excel']

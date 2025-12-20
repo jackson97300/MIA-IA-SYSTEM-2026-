@@ -1,0 +1,123 @@
+================================================================================
+RAPPORT COMPARATIF DETAILLE: TP/SL OPTIMAL ES vs NQ
+SL ELARGI (12-18t) - Trades qui respirent
+================================================================================
+
+## CONTEXTE
+
+Analyse avec SL elargi (12-18t) pour:
+- Laisser respirer les trades NQ (haute volatilite)
+- Eviter les stop-outs prematures
+- Trouver equilibre optimal ES/NQ
+
+## RESULTATS PAR SYMBOLE
+
+### ES (S&P 500)
+
+TP Optimal:      16 ticks
+SL Optimal:      12 ticks
+R:R:             1.33:1
+P&L/trade:       +0.397 ticks
+WinRate:         45.8%
+Profit Factor:   1.09
+TP Hit Rate:     17.9%
+SL Hit Rate:     46.7%
+Fees:            0.12 ticks
+
+Sur 1,000 trades: +4,964.46 USD
+
+### NQ (Nasdaq-100)
+
+TP Optimal:      23 ticks
+SL Optimal:      12 ticks
+R:R:             1.92:1
+P&L/trade:       +1.528 ticks
+WinRate:         43.5%
+Profit Factor:   1.27
+TP Hit Rate:     15.1%
+SL Hit Rate:     56.2%
+Fees:            0.28 ticks
+
+Sur 1,000 trades: +7,641.73 USD
+
+## COMPARAISON
+
+| Metrique | ES | NQ | Difference |
+|----------|----|----|------------|
+| TP | 16t | 23t | +7t |
+| SL | 12t | 12t | +0t |
+| R:R | 1.33:1 | 1.92:1 | +0.58 |
+| P&L/trade | +0.397t | +1.528t | +1.131t |
+| WinRate | 45.8% | 43.5% | -2.3% |
+| Profit Factor | 1.09 | 1.27 | +0.18 |
+| TP Hit Rate | 17.9% | 15.1% | -2.8% |
+| SL Hit Rate | 46.7% | 56.2% | +9.5% |
+| P&L 1000 | $4,964 | $7,642 | $+2,677 |
+| Objectif +1.0t | NON | OUI | - |
+
+## IMPACT DU SL ELARGI (12-18t)
+
+### Avantages:
+- Trades respirent mieux (SL NQ: 12t vs 9t avant)
+- Moins de stop-outs prematures (SL Hit: 56.2%)
+- WinRate potentiellement ameliore
+
+### Compromis:
+- R:R reduit (mais compense par meilleur WinRate)
+- Risque par trade augmente
+
+## TOP 10 COMBINAISONS PAR SYMBOLE
+
+### ES Top 10:
+
+ 1. TP=16t, SL=12t | R:R=1.33:1 | P&L=+0.397t | WR=45.8% | TP Hit=17.9% | SL Hit=46.7%
+ 2. TP=17t, SL=12t | R:R=1.42:1 | P&L=+0.394t | WR=45.8% | TP Hit=8.8% | SL Hit=46.7%
+ 3. TP=18t, SL=12t | R:R=1.50:1 | P&L=+0.360t | WR=45.8% | TP Hit=4.7% | SL Hit=46.7%
+ 4. TP=16t, SL=18t | R:R=0.89:1 | P&L=+0.330t | WR=45.8% | TP Hit=17.9% | SL Hit=1.1%
+ 5. TP=17t, SL=18t | R:R=0.94:1 | P&L=+0.328t | WR=45.8% | TP Hit=8.8% | SL Hit=1.1%
+ 6. TP=19t, SL=12t | R:R=1.58:1 | P&L=+0.321t | WR=45.8% | TP Hit=2.6% | SL Hit=46.7%
+ 7. TP=18t, SL=18t | R:R=1.00:1 | P&L=+0.294t | WR=45.8% | TP Hit=4.7% | SL Hit=1.1%
+ 8. TP=20t, SL=12t | R:R=1.67:1 | P&L=+0.288t | WR=45.8% | TP Hit=1.4% | SL Hit=46.7%
+ 9. TP=16t, SL=17t | R:R=0.94:1 | P&L=+0.271t | WR=45.8% | TP Hit=17.9% | SL Hit=2.5%
+10. TP=17t, SL=17t | R:R=1.00:1 | P&L=+0.269t | WR=45.8% | TP Hit=8.8% | SL Hit=2.5%
+
+### NQ Top 10:
+
+ 1. TP=23t, SL=12t | R:R=1.92:1 | P&L=+1.528t | WR=43.5% | TP Hit=15.1% | SL Hit=56.2%
+ 2. TP=24t, SL=12t | R:R=2.00:1 | P&L=+1.518t | WR=43.5% | TP Hit=12.4% | SL Hit=56.2%
+ 3. TP=22t, SL=12t | R:R=1.83:1 | P&L=+1.495t | WR=43.5% | TP Hit=18.1% | SL Hit=56.2%
+ 4. TP=25t, SL=12t | R:R=2.08:1 | P&L=+1.482t | WR=43.5% | TP Hit=10.1% | SL Hit=56.2%
+ 5. TP=26t, SL=12t | R:R=2.17:1 | P&L=+1.443t | WR=43.5% | TP Hit=8.4% | SL Hit=56.2%
+ 6. TP=21t, SL=12t | R:R=1.75:1 | P&L=+1.438t | WR=43.5% | TP Hit=22.2% | SL Hit=56.2%
+ 7. TP=27t, SL=12t | R:R=2.25:1 | P&L=+1.371t | WR=43.5% | TP Hit=6.6% | SL Hit=56.2%
+ 8. TP=23t, SL=13t | R:R=1.77:1 | P&L=+1.344t | WR=44.7% | TP Hit=15.5% | SL Hit=55.0%
+ 9. TP=28t, SL=12t | R:R=2.33:1 | P&L=+1.334t | WR=43.5% | TP Hit=5.6% | SL Hit=56.2%
+10. TP=24t, SL=13t | R:R=1.85:1 | P&L=+1.333t | WR=44.7% | TP Hit=12.8% | SL Hit=55.0%
+
+## RECOMMANDATION STRATEGIQUE
+
+**FOCUS EXCLUSIF SUR NQ**
+
+ES reste sous-performant meme avec SL elargi.
+Configuration recommandee:
+
+```python
+# ES:
+tp_ticks_es = 16  # R:R 1.33:1
+sl_ticks_es = 12
+# Performance: +0.397 t/trade
+# Status: SUSPENDU - Optimisation requise
+
+# NQ:
+tp_ticks_nq = 23  # R:R 1.92:1
+sl_ticks_nq = 12
+# Performance: +1.528 t/trade
+# Status: ACTIF
+```
+
+## CONCLUSION
+
+NQ ATTEINT l'objectif +1.0t/trade avec SL elargi ! (++1.528t)
+ES necessite optimisation majeure (++0.397t)
+
+================================================================================

@@ -1,0 +1,32 @@
+================================================================================
+RAPPORT COMPARATIF: MENTHORQ PURE vs T4 BASELINE
+================================================================================
+
+## MENTHORQ PURE STRATEGY
+
+P&L Brut:        +313.00 ticks
+Fees:            -738.42 ticks
+P&L Net:         -425.42 ticks
+P&L/trade:       -0.357 ticks
+
+Trades:          1191
+Wins:            550 (46.2%)
+Losses:          637
+Profit Factor:   1.04
+Sharpe Ratio:    2.36
+Max Drawdown:    605.00 ticks
+Duree moy:       33.7 min
+
+## T4 BASELINE (Reference)
+
+P&L Net:         +295.00 ticks
+P&L/trade:       +0.300 ticks
+Trades:          1000
+WinRate:         48.0%
+
+## COMPARAISON
+
+Delta P&L/trade: -0.657 ticks (-219.1%)
+VERDICT: MENTHORQ PURE < BASELINE [ECHEC]
+
+================================================================================

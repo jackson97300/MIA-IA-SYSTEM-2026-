@@ -1,8 +1,18 @@
 # Auto-generated module: mia_bullish
 from dataclasses import dataclass, field
-from typing import Optional, Dict, Any, Deque, Tuple
+from typing import Optional, Dict, Any, Deque, Tuple, List
 from collections import deque
 import math
+import numpy as np
+
+# === GPT v3.0 IMPORTS ===
+try:
+    from core.ml_ready_helpers import calculate_delta_ratio
+    from core.corridor_manager import CorridorManager
+    from core.timeframe_aligner import TimeframeAligner
+    GPT_V3_ENABLED = True
+except ImportError:
+    GPT_V3_ENABLED = False
 
 def clip01(x: float) -> float:
     return 0.0 if x < 0.0 else 1.0 if x > 1.0 else x
@@ -120,50 +130,68 @@ class BullishScorer:
         close_price = bar.close if bar.close is not None else bar.vwap
         if close_price is None or bar.vwap is None or bar.delta_ratio is None:
             return None
-        # 1) Order-Flow
-        of_core = 1.0 if bar.pressure == 1 else 0.0
+
+        # ========================================
+        # BULLISH SCORER V2.0 - ENHANCED (10 COMPOSANTES)
+        # ========================================
+
+        # 1) Order-Flow Enhanced (25%) - Pressure + Delta Ratio
+        of_core = 1.0 if bar.pressure == 1 else (0.0 if bar.pressure == -1 else 0.5)
         of_bonus = clip01(((bar.delta_ratio or 0.0) - 0.08) / (0.50 - 0.08))
         OF_score = 0.7 * of_core + 0.3 * of_bonus
-        # 2) VWAP position
+
+        # 2) VWAP Position (15%) - Position relative aux bandes
         if bar.up1 is not None and bar.vwap is not None:
             band = max(1e-9, abs(bar.up1 - bar.vwap))
         else:
             band = max(1e-9, abs(bar.vwap) * 0.002)
         z = (close_price - bar.vwap) / band
         VWAP_score = clip01(0.5 + 0.5 * math.tanh(z))
-        # 3) VVA
+
+        # 3) VVA - Value Area (10%)
         if bar.vah is not None and bar.val is not None:
             if close_price > bar.vah:
                 VVA_score = 0.9; pos = "above_VAH"
             elif close_price < bar.val:
-                VVA_score = 0.2; pos = "below_VAL"
+                VVA_score = 0.1; pos = "below_VAL"
             else:
-                VVA_score = 0.6; pos = "inside_VA"
+                VVA_score = 0.5; pos = "inside_VA"
         else:
             VVA_score = 0.5; pos = "no_VA"
-        # 4) Cum delta trend
+
+        # 4) Cumulative Delta Trend (10%)
         CD_score = self._cum_slope_score()
-        # 5) VIX factor
+
+        # 5) VIX Factor (multiplicateur de confiance)
         if self.use_vix and isinstance(self.vix_value, (int, float)):
             vix = float(self.vix_value)
-            if vix <= 12:   vix_factor = 0.95
-            elif vix <= 25: vix_factor = 1.00
-            elif vix <= 35: vix_factor = 0.95
-            else:           vix_factor = 0.85
+            if vix <= 12:   vix_factor = 0.95   # Complaisance
+            elif vix <= 25: vix_factor = 1.00   # Normal
+            elif vix <= 35: vix_factor = 0.95   # Nerveux
+            else:           vix_factor = 0.85   # Panique
         else:
             vix_factor = 1.0
-        score = (0.35 * OF_score +
-                 0.25 * VWAP_score +
-                 0.20 * VVA_score +
-                 0.20 * CD_score) * vix_factor
-        score = round(clip01(score), 3)
-        
+
+        # Score unidirectionnel (0 à 1)
+        score = (0.25 * OF_score +
+                 0.15 * VWAP_score +
+                 0.10 * VVA_score +
+                 0.10 * CD_score) * vix_factor
+
+        # Conversion en score BIDIRECTIONNEL (-1 à +1)
+        # Score = 0.5 → neutre (0.0)
+        # Score = 1.0 → très bullish (+1.0)
+        # Score = 0.0 → très bearish (-1.0)
+        score_bidirectional = (score - 0.5) * 2.0
+        score_bidirectional = max(-1.0, min(1.0, score_bidirectional))
+        score_bidirectional = round(score_bidirectional, 3)
+
         # Calcul staleness des données
         import time
         current_time = time.time()
         staleness_ms = None
         staleness_status = "OK"
-        
+
         if bar.t is not None:
             # Convertir timestamp Sierra/Excel vers epoch si nécessaire
             if bar.t > 10000:  # Sierra/Excel days format
@@ -172,9 +200,9 @@ class BullishScorer:
                 data_timestamp = (bar.t - EXCEL_EPOCH_OFFSET_DAYS) * SECONDS_PER_DAY
             else:
                 data_timestamp = bar.t
-            
+
             staleness_ms = (current_time - data_timestamp) * 1000
-            
+
             # Déterminer le statut selon la staleness
             if staleness_ms > 5000:  # > 5 secondes
                 staleness_status = "STALE"
@@ -182,122 +210,560 @@ class BullishScorer:
                 staleness_status = "OLD"
             else:
                 staleness_status = "OK"
-        
+
         # Logger la staleness si problématique
         try:
             from core.logger import get_logger
             logger = get_logger(__name__)
-            
+
             if staleness_status != "OK":
                 logger.warning(f"🕐 MIA Staleness: {staleness_status} - "
                              f"asof={staleness_ms:.1f}ms, score={score}, "
                              f"pressure={bar.pressure}, pos={pos}")
             else:
                 logger.debug(f"✅ MIA Fresh: asof={staleness_ms:.1f}ms → {staleness_status}")
-                
+
         except Exception:
             # Fallback silencieux si logger non disponible
             pass
-        
+
         return {
             "t": bar.t,
             "chart": self.chart_id,
             "type": "mia_bullish",
             "i": i,
-            "score": score,
+            "score": score_bidirectional,  # Score bidirectionnel (-1 à +1)
+            "score_raw": round(score, 3),  # Score brut (0 à 1) pour debug
             "pressure": bar.pressure,
             "dr": round(bar.delta_ratio, 4) if bar.delta_ratio is not None else None,
             "pos": pos,
             "close": close_price,
             "vwap": bar.vwap,
             "staleness_ms": round(staleness_ms, 1) if staleness_ms is not None else None,
-            "staleness_status": staleness_status
+            "staleness_status": staleness_status,
+            # Détails des composantes
+            "components": {
+                "orderflow": round(OF_score, 3),
+                "vwap_pos": round(VWAP_score, 3),
+                "vva": round(VVA_score, 3),
+                "cum_delta": round(CD_score, 3),
+                "vix_factor": round(vix_factor, 3)
+            }
         }
-    
-    def calculate_bullish_score(self, market_data: Dict) -> float:
+
+    # Ancienne méthode calculate_bullish_score() SUPPRIMÉE - Utiliser calculate_bullish_score_ml_ready() à la place
+
+    def calculate_bullish_score_ml_ready(self, ml_data: Dict) -> Dict[str, Any]:
         """
-        Méthode publique pour calculer le score MIA Bullish
-        avec logging de staleness intégré
-        
+        🚀 VERSION AMÉLIORÉE - Calcule le score MIA Bullish avec TOUTES les données ML_READY
+
+        Utilise 10 composantes au lieu de 5 :
+        1. OrderFlow Enhanced (Smart Money + Institutional Pressure)
+        2. VWAP Multi-Timeframe (Daily + Weekly + Monthly)
+        3. DOM Imbalances (L1-L3 + Depth)
+        4. Gamma Confluence (GEX + Call/Put Walls + Blind Spots)
+        5. Volume Profile (VPOC + Value Area)
+        6. Cumulative Delta Trend
+        7. Tick Momentum
+        8. Session Bias
+        9. Volatility Regime
+        10. VIX Factor
+
         Args:
-            market_data: Données de marché (dict avec OHLC, VWAP, etc.)
-            
+            ml_data: Données ML_READY complètes (avec DOM, Gamma, OrderFlow, etc.)
+
         Returns:
-            float: Score MIA Bullish (-1 à +1, bidirectionnel)
+            dict: {
+                'score': float (-1 à +1, bidirectionnel),
+                'confidence': float (0 à 1),
+                'components': dict (détail des composantes),
+                'signal': str ('BULLISH', 'BEARISH', 'NEUTRAL'),
+                'strength': str ('STRONG', 'MODERATE', 'WEAK')
+            }
         """
         try:
-            # Convertir les données en événement pour ingest
-            ev = {
-                "type": "basedata",
-                "chart": self.chart_id,
-                "i": market_data.get("bar_index", 1),
-                "close": market_data.get("close", 0),
-                "t": market_data.get("timestamp")
+            # Prix de référence
+            mid = ml_data.get('mid')
+            close = ml_data.get('close', mid)
+
+            if not mid or not close:
+                return self._empty_score_result()
+
+            # ========================================
+            # 1️⃣ ORDER-FLOW ENHANCED (25%)
+            # ========================================
+            orderflow_score = self._calc_orderflow_enhanced(ml_data)
+
+            # ========================================
+            # 2️⃣ VWAP MULTI-TIMEFRAME (15%)
+            # ========================================
+            vwap_score = self._calc_vwap_multi_tf(ml_data, close)
+
+            # ========================================
+            # 3️⃣ DOM IMBALANCES (15%)
+            # ========================================
+            dom_score = self._calc_dom_imbalances(ml_data)
+
+            # ========================================
+            # 4️⃣ GAMMA CONFLUENCE (15%)
+            # ========================================
+            gamma_score = self._calc_gamma_confluence(ml_data, close)
+
+            # ========================================
+            # 5️⃣ VOLUME PROFILE (10%)
+            # ========================================
+            vpoc_score = self._calc_volume_profile(ml_data, close)
+
+            # ========================================
+            # 6️⃣ CUMULATIVE DELTA TREND (10%)
+            # ========================================
+            cum_delta = ml_data.get('cum_delta_day', 0)
+            cd_score = 0.5 + (0.5 * math.tanh(cum_delta / 1000.0))
+
+            # ========================================
+            # 7️⃣ TICK MOMENTUM (5%)
+            # ========================================
+            tick_mom = ml_data.get('tick_momentum', 0.0)
+            tick_score = 0.5 + (0.5 * tick_mom)
+
+            # ========================================
+            # 8️⃣ SESSION BIAS (3%)
+            # ========================================
+            session_score = self._calc_session_bias(ml_data)
+
+            # ========================================
+            # 9️⃣ VOLATILITY REGIME (2%)
+            # ========================================
+            vol_score = self._calc_volatility_regime(ml_data)
+
+            # ========================================
+            # 🔟 VIX FACTOR (multiplicateur)
+            # ========================================
+            vix = ml_data.get('vix', 15.0)
+            if vix <= 12:
+                vix_factor = 0.95   # Complaisance
+            elif vix <= 25:
+                vix_factor = 1.00   # Normal
+            elif vix <= 35:
+                vix_factor = 0.95   # Nerveux
+            else:
+                vix_factor = 0.85   # Panique
+
+            # ========================================
+            # 📊 AGRÉGATION PONDÉRÉE
+            # ========================================
+            weights = {
+                'orderflow': 0.25,
+                'vwap': 0.15,
+                'dom': 0.15,
+                'gamma': 0.15,
+                'vpoc': 0.10,
+                'cum_delta': 0.10,
+                'tick_mom': 0.05,
+                'session': 0.03,
+                'volatility': 0.02
             }
-            
-            # Ajouter VWAP si disponible
-            if "vwap" in market_data:
-                ev.update({
-                    "type": "vwap",
-                    "value": market_data["vwap"]
-                })
-            
-            # Ajouter VVA si disponible
-            if "vva" in market_data:
-                vva = market_data["vva"]
-                ev.update({
-                    "type": "vva",
-                    "vah": vva.get("vah"),
-                    "val": vva.get("val")
-                })
-            
-            # Ajouter OrderFlow si disponible
-            if "nbcv_footprint" in market_data:
-                nbcv = market_data["nbcv_footprint"]
-                ev.update({
-                    "pressure": nbcv.get("pressure", 0),
-                    "delta_ratio": nbcv.get("delta_ratio", 0),
-                    "cumulative_delta": nbcv.get("cumulative_delta", 0)
-                })
-            
-            # Ingérer les données
-            result = self.ingest(ev)
-            
-            if result and result.get("type") == "mia_bullish":
-                score = result.get("score", 0.5)
-                staleness_ms = result.get("staleness_ms")
-                staleness_status = result.get("staleness_status", "UNKNOWN")
-                
-                # Logging spécifique pour l'utilisation dans les stratégies
+
+            score_raw = (
+                weights['orderflow'] * orderflow_score +
+                weights['vwap'] * vwap_score +
+                weights['dom'] * dom_score +
+                weights['gamma'] * gamma_score +
+                weights['vpoc'] * vpoc_score +
+                weights['cum_delta'] * cd_score +
+                weights['tick_mom'] * tick_score +
+                weights['session'] * session_score +
+                weights['volatility'] * vol_score
+            ) * vix_factor
+
+            # ========================================
+            # 🚀 GPT v3.0 ENHANCEMENTS
+            # ========================================
+            gpt_v3_active = False
+            headroom_factor = 1.0
+
+            if GPT_V3_ENABLED:
                 try:
-                    from core.logger import get_logger
-                    logger = get_logger(f"{__name__}.calculate_bullish_score")
-                    
-                    if staleness_status != "OK":
-                        logger.warning(f"🕐 MIA Strategy Usage: {staleness_status} data - "
-                                     f"asof={staleness_ms:.1f}ms, returning score={score}")
-                    else:
-                        logger.debug(f"✅ MIA Strategy Usage: Fresh data - "
-                                   f"asof={staleness_ms:.1f}ms, score={score}")
-                                   
-                except Exception:
+                    # 1. Analyser Timeframe Alignment
+                    aligner = TimeframeAligner(ml_data)
+                    alignment = aligner.get_alignment()
+                    weights_adj = aligner.get_weight_adjustments()
+
+                    # 2. Ajuster scores des composantes si conflit timeframes
+                    if alignment == -1:  # Conflit détecté
+                        # Réappliquer les ajustements de poids
+                        orderflow_adjusted = orderflow_score * weights_adj['of_weight']
+                        vwap_adjusted = vwap_score * weights_adj['vwap_weight']
+                        vpoc_adjusted = vpoc_score * weights_adj['vva_weight']
+
+                        # Recalculer score avec ajustements
+                        score_raw = (
+                            weights['orderflow'] * orderflow_adjusted +
+                            weights['vwap'] * vwap_adjusted +
+                            weights['dom'] * dom_score +
+                            weights['gamma'] * gamma_score +
+                            weights['vpoc'] * vpoc_adjusted +
+                            weights['cum_delta'] * cd_score +
+                            weights['tick_mom'] * tick_score +
+                            weights['session'] * session_score +
+                            weights['volatility'] * vol_score
+                        ) * vix_factor
+
+                    # 3. Analyser Corridor et appliquer Headroom Factor
+                    corridor = CorridorManager(ml_data)
+
+                    # Déterminer direction probable du signal
+                    probable_side = "LONG" if score_raw > 0.5 else "SHORT"
+                    headroom_factor = corridor.headroom_factor(probable_side)
+
+                    # Appliquer le facteur de headroom
+                    score_raw *= headroom_factor
+
+                    gpt_v3_active = True
+
+                except Exception as e:
+                    # Fallback silencieux au scoring v2.0
                     pass
-                
-                # Convertir en score bidirectionnel (-1 à +1)
-                # Score original est [0,1], on le convertit en [-1,+1]
-                bidirectional_score = (score - 0.5) * 2
-                return round(bidirectional_score, 3)
-            
-            return 0.0
-            
+
+            # Conversion en score BIDIRECTIONNEL (-1 à +1)
+            score_bidirectional = (score_raw - 0.5) * 2.0
+            score_bidirectional = max(-1.0, min(1.0, score_bidirectional))
+
+            # Déterminer signal et force
+            if score_bidirectional > 0.3:
+                signal = 'BULLISH'
+                strength = 'STRONG' if score_bidirectional > 0.6 else 'MODERATE'
+            elif score_bidirectional < -0.3:
+                signal = 'BEARISH'
+                strength = 'STRONG' if score_bidirectional < -0.6 else 'MODERATE'
+            else:
+                signal = 'NEUTRAL'
+                strength = 'WEAK'
+
+            # Calculer confiance (combien de composantes sont actives)
+            active_components = sum([
+                orderflow_score != 0.5,
+                vwap_score != 0.5,
+                dom_score != 0.5,
+                gamma_score != 0.5,
+                vpoc_score != 0.5
+            ])
+            confidence = active_components / 5.0  # Sur 5 composantes principales
+
+            return {
+                'score': round(score_bidirectional, 3),
+                'confidence': round(confidence, 2),
+                'signal': signal,
+                'strength': strength,
+                'components': {
+                    'orderflow': round(orderflow_score, 3),
+                    'vwap': round(vwap_score, 3),
+                    'dom': round(dom_score, 3),
+                    'gamma': round(gamma_score, 3),
+                    'vpoc': round(vpoc_score, 3),
+                    'cum_delta': round(cd_score, 3),
+                    'tick_mom': round(tick_score, 3),
+                    'session': round(session_score, 3),
+                    'volatility': round(vol_score, 3),
+                    'vix_factor': round(vix_factor, 3)
+                },
+                'gpt_v3': {
+                    'enabled': gpt_v3_active,
+                    'headroom_factor': round(headroom_factor, 3) if gpt_v3_active else None,
+                    'timeframe_alignment': alignment if gpt_v3_active else None
+                }
+            }
+
         except Exception as e:
             try:
                 from core.logger import get_logger
-                logger = get_logger(f"{__name__}.calculate_bullish_score")
-                logger.error(f"❌ Erreur calcul MIA Bullish: {e}")
+                logger = get_logger(f"{__name__}.calculate_bullish_score_ml_ready")
+                logger.error(f"❌ Erreur calcul MIA Bullish ML_READY: {e}")
             except Exception:
                 pass
-            return 0.0
+            return self._empty_score_result()
+
+    # ========================================
+    # 🔧 MÉTHODES HELPER POUR CHAQUE COMPOSANTE
+    # ========================================
+
+    def _empty_score_result(self) -> Dict[str, Any]:
+        """Retourne un résultat vide en cas d'erreur"""
+        return {
+            'score': 0.0,
+            'confidence': 0.0,
+            'signal': 'NEUTRAL',
+            'strength': 'WEAK',
+            'components': {}
+        }
+
+    def _calc_orderflow_enhanced(self, ml_data: Dict) -> float:
+        """
+        Calcule le score OrderFlow Enhanced avec Smart Money + Institutional Pressure
+
+        Returns: Score 0-1 (0.5 = neutre)
+        """
+        try:
+            # Smart Money Flow
+            smart_money = ml_data.get('smart_money_flow', 0.0)
+
+            # Institutional Pressure
+            inst_pressure = ml_data.get('institutional_pressure', 0.0)
+
+            # Delta
+            delta = ml_data.get('delta', 0)
+            volume = ml_data.get('volume', 1)
+            delta_pct = delta / max(volume, 1)
+
+            # Pression
+            pressure = ml_data.get('pressure', 0)
+
+            # Agrégation
+            of_score = 0.5  # Neutre par défaut
+
+            # Smart Money (40%)
+            of_score += 0.4 * smart_money
+
+            # Institutional (30%)
+            of_score += 0.3 * inst_pressure
+
+            # Delta PCT (20%)
+            of_score += 0.2 * delta_pct
+
+            # Pressure boost (10%)
+            if pressure == 1:
+                of_score += 0.1
+            elif pressure == -1:
+                of_score -= 0.1
+
+            return clip01(of_score)
+
+        except Exception:
+            return 0.5
+
+    def _calc_vwap_multi_tf(self, ml_data: Dict, close: float) -> float:
+        """
+        Calcule le score VWAP Multi-Timeframe (Daily + Weekly + Monthly)
+
+        Returns: Score 0-1 (0.5 = neutre)
+        """
+        try:
+            # VWAP Daily
+            vwap_daily = ml_data.get('vwap')
+            d_vwap = ml_data.get('d_vwap', 0)
+
+            # VWAP Weekly
+            vwap_weekly = ml_data.get('vwap_weekly')
+            d_vwap_weekly = ml_data.get('d_vwap_weekly', 0)
+
+            # VWAP Monthly
+            vwap_monthly = ml_data.get('vwap_monthly')
+            d_vwap_monthly = ml_data.get('d_vwap_monthly', 0)
+
+            scores = []
+
+            # Score Daily (50%)
+            if vwap_daily:
+                atr = ml_data.get('atr', 1.0)
+                z_daily = d_vwap / max(atr, 0.1)
+                score_daily = 0.5 + 0.5 * math.tanh(z_daily / 2.0)
+                scores.append((score_daily, 0.5))
+
+            # Score Weekly (30%)
+            if vwap_weekly:
+                atr = ml_data.get('atr', 1.0)
+                z_weekly = d_vwap_weekly / max(atr, 0.1)
+                score_weekly = 0.5 + 0.5 * math.tanh(z_weekly / 2.0)
+                scores.append((score_weekly, 0.3))
+
+            # Score Monthly (20%)
+            if vwap_monthly:
+                atr = ml_data.get('atr', 1.0)
+                z_monthly = d_vwap_monthly / max(atr, 0.1)
+                score_monthly = 0.5 + 0.5 * math.tanh(z_monthly / 2.0)
+                scores.append((score_monthly, 0.2))
+
+            if not scores:
+                return 0.5
+
+            # Moyenne pondérée
+            total_weight = sum(w for _, w in scores)
+            weighted_score = sum(s * w for s, w in scores) / total_weight
+
+            return clip01(weighted_score)
+
+        except Exception:
+            return 0.5
+
+    def _calc_dom_imbalances(self, ml_data: Dict) -> float:
+        """
+        Calcule le score DOM Imbalances (L1-L3 + Depth)
+
+        Returns: Score 0-1 (0.5 = neutre)
+        """
+        try:
+            # Level 1 Imbalance
+            level1_imb = ml_data.get('level1_imbalance', 0.0)
+
+            # DOM Features
+            dom_feat = ml_data.get('dom_features', {})
+            imb_1_3 = dom_feat.get('imbalance_1_3', 0.0)
+            imb_6_10 = dom_feat.get('imbalance_6_10', 0.0)
+
+            # Depth Bid/Ask
+            depth_bid = dom_feat.get('depth_bid', 0)
+            depth_ask = dom_feat.get('depth_ask', 0)
+            depth_total = depth_bid + depth_ask
+            depth_imb = (depth_bid - depth_ask) / max(depth_total, 1) if depth_total > 0 else 0.0
+
+            # Agrégation
+            score = 0.5
+            score += 0.4 * level1_imb      # 40% L1
+            score += 0.3 * imb_1_3         # 30% L1-L3
+            score += 0.2 * imb_6_10        # 20% L6-L10
+            score += 0.1 * depth_imb       # 10% Depth
+
+            return clip01(score)
+
+        except Exception:
+            return 0.5
+
+    def _calc_gamma_confluence(self, ml_data: Dict, close: float) -> float:
+        """
+        Calcule le score Gamma Confluence (GEX + Call/Put Walls + Blind Spots)
+
+        Returns: Score 0-1 (0.5 = neutre)
+        """
+        try:
+            # Gamma Walls
+            call_resistance = ml_data.get('call_resistance')
+            put_support = ml_data.get('put_support')
+
+            # HVL (High Value Level)
+            hvl = ml_data.get('hvl')
+
+            # Blind Spots
+            blind_spot_confluence = ml_data.get('blind_spot_confluence', False)
+
+            # Distances
+            menthor_dist = ml_data.get('menthor_distances', {})
+            d_call_wall = menthor_dist.get('d_call_wall_ticks')
+            d_put_wall = menthor_dist.get('d_put_wall_ticks')
+            d_hvl = menthor_dist.get('d_hvl_ticks')
+
+            score = 0.5  # Neutre
+
+            # Si près d'un PUT Support → Bullish
+            if put_support and d_put_wall is not None:
+                if abs(d_put_wall) < 20:  # < 20 ticks
+                    score += 0.3
+
+            # Si loin d'un CALL Resistance → Bullish
+            if call_resistance and d_call_wall is not None:
+                if d_call_wall > 50:  # > 50 ticks
+                    score += 0.2
+
+            # Si près d'un HVL → Magnétisme (neutre à bullish selon position)
+            if hvl and d_hvl is not None:
+                if abs(d_hvl) < 10:
+                    score += 0.1
+
+            # Blind Spot Confluence → Boost
+            if blind_spot_confluence:
+                score += 0.15
+
+            return clip01(score)
+
+        except Exception:
+            return 0.5
+
+    def _calc_volume_profile(self, ml_data: Dict, close: float) -> float:
+        """
+        Calcule le score Volume Profile (VPOC + Value Area)
+
+        Returns: Score 0-1 (0.5 = neutre)
+        """
+        try:
+            # VPOC
+            vva = ml_data.get('vva', {})
+            vpoc = vva.get('vpoc')
+            vah = vva.get('vah')
+            val = vva.get('val')
+
+            # In Value Area?
+            in_va = ml_data.get('in_value_area', False)
+
+            # Distance à VPOC
+            d_vpoc = ml_data.get('d_vpoc', 0)
+            d_vpoc_ticks = ml_data.get('d_vpoc_ticks', 0)
+
+            score = 0.5
+
+            # Position par rapport à VAH/VAL
+            if vah and val:
+                if close > vah:
+                    score = 0.8  # Au-dessus VAH → Bullish
+                elif close < val:
+                    score = 0.2  # En-dessous VAL → Bearish
+                else:
+                    score = 0.5  # Dans VA → Neutre
+
+            # Distance à VPOC (magnétisme)
+            if vpoc and abs(d_vpoc_ticks) < 20:
+                # Proche du VPOC → Augmente légèrement le score actuel
+                if score > 0.5:
+                    score += 0.1
+                elif score < 0.5:
+                    score -= 0.1
+
+            return clip01(score)
+
+        except Exception:
+            return 0.5
+
+    def _calc_session_bias(self, ml_data: Dict) -> float:
+        """
+        Calcule le score Session Bias (Asia/London/US)
+
+        Returns: Score 0-1 (0.5 = neutre)
+        """
+        try:
+            session = ml_data.get('session_id', 'Asia')
+
+            # Biais statistiques (à calibrer selon vos backtests)
+            session_bias = {
+                'Asia': 0.45,     # Légèrement bearish (range-bound)
+                'London': 0.55,   # Légèrement bullish (breakout)
+                'US': 0.50        # Neutre (volatile)
+            }
+
+            return session_bias.get(session, 0.5)
+
+        except Exception:
+            return 0.5
+
+    def _calc_volatility_regime(self, ml_data: Dict) -> float:
+        """
+        Calcule le score Volatility Regime
+
+        Returns: Score 0-1 (0.5 = neutre)
+        """
+        try:
+            vol_regime = ml_data.get('volatility_regime', 1.0)
+
+            # Volatilité Régime : 0 = low, 1 = normal, 2 = high
+            # Low vol → Légèrement bullish (tendance)
+            # High vol → Légèrement bearish (range)
+
+            if vol_regime < 0.5:
+                return 0.55  # Low vol → Bullish
+            elif vol_regime > 1.5:
+                return 0.45  # High vol → Bearish
+            else:
+                return 0.50  # Normal → Neutre
+
+        except Exception:
+            return 0.5
 
 # --- HELPER POUR SNAPSHOTS UNIFIÉS ---
 

@@ -16,11 +16,13 @@ Responsabilités:
 
 from core.logger import get_logger
 from typing import Dict, Optional, List, Tuple, Any
+# ✅ CORRECTION #5A: Dict déjà importé
 from dataclasses import dataclass, field
 from datetime import datetime, time
 from enum import Enum
 import numpy as np
 import asyncio
+import os  # 🔥 Ajouté pour variables environnement
 
 # Local imports
 from core.base_types import (
@@ -31,6 +33,19 @@ from core.base_types import (
 
 # Config sera importé dynamiquement pour éviter circular imports
 logger = get_logger(__name__)
+
+# ═══════════════════════════════════════════════════════════════
+# 🔥 MODE DATA COLLECTION - Détection automatique
+# ═══════════════════════════════════════════════════════════════
+DATA_COLLECTION_MODE = os.getenv('DATA_COLLECTION_MODE', 'False').lower() == 'true'  # ✅ FALSE par défaut !
+
+if DATA_COLLECTION_MODE:
+    logger.warning("=" * 80)
+    logger.warning("🔥 MODE DATA COLLECTION DÉTECTÉ")
+    logger.warning("   → Kill-Switch DÉSACTIVÉ (max data collection)")
+    logger.warning("   → Limites pertes/streaks SUPPRIMÉES")
+    logger.warning("   → Re-activer kill-switch en PRODUCTION !")
+    logger.warning("=" * 80)
 
 # === ENUMS ===
 
@@ -59,21 +74,27 @@ class RiskParameters:
     """Paramètres de risque configurables"""
     # Position sizing
     base_position_size: int = 2
-    max_position_size: int = 5
-    max_positions_concurrent: int = 3
+    max_position_size: int = 10  # ✅ PERMISSIF: Augmenté de 5 → 10 contrats
+    max_positions_concurrent: int = 10  # ✅ PERMISSIF: Augmenté de 3 → 10 positions simultanées
 
     # Risk per trade
     risk_per_trade_percent: float = 1.0  # 1% du capital
-    max_risk_per_trade_dollars: float = 500.0
+    max_risk_per_trade_dollars: float = 10000.0  # ✅ PERMISSIF: Aucune limite pour data collection
 
     # Daily limits (prop firm compatible)
-    daily_loss_limit: float = 500.0
-    daily_profit_target: float = 1000.0
+    daily_loss_limit: float = 999999.0  # ✅ PERMISSIF: Pas de limite daily loss
+    daily_profit_target: float = 999999.0  # ✅ PERMISSIF: Pas de limite daily profit
     max_daily_trades: int = 999  # Pas de limite pour collecter données!
 
+    # 🚨 KILL-SWITCH PARAMETERS (Phase 4.0)
+    # ✅ MODE OPTIMISATION: Désactivé pour collecte de données
+    max_daily_loss_usd: float = 999999.0  # ✅ DÉSACTIVÉ en mode optimisation
+    max_losing_streak: int = 999  # ✅ DÉSACTIVÉ en mode optimisation
+    kill_switch_enabled: bool = False  # ✅ DÉSACTIVÉ en mode optimisation
+
     # Drawdown protection
-    max_drawdown_percent: float = 5.0
-    trailing_drawdown: bool = True
+    max_drawdown_percent: float = 100.0  # ✅ PERMISSIF: Pas de limite drawdown
+    trailing_drawdown: bool = False  # ✅ DÉSACTIVÉ pour data collection
 
     # Bataille Navale specific
     min_base_quality_for_trade: float = 0.5  # Réduit pour plus de trades
@@ -84,10 +105,10 @@ class RiskParameters:
     # Mode collecte de données
     data_collection_mode: bool = True  # Active le mode permissif
 
-    # Time restrictions
-    no_trade_before: time = time(9, 35)  # 5 min après ouverture
-    no_trade_after: time = time(15, 45)   # 15 min avant fermeture
-    reduce_size_after: time = time(15, 0)  # Réduire après 15h
+    # Time restrictions ✅ PHASE 3.5: Trading 24/7 (ASIE + LONDRES + NY)
+    no_trade_before: time = time(0, 0)    # 00h00 = pas de restriction
+    no_trade_after: time = time(23, 59)   # 23h59 = pas de restriction
+    reduce_size_after: time = time(23, 59)  # Désactivé
 
     # Volatility adjustments
     high_volatility_threshold: float = 30.0  # VIX level
@@ -129,6 +150,26 @@ class RiskMetrics:
     # Session start values
     session_start_equity: float = 0.0
     session_start_time: Optional[datetime] = None
+
+    # 🚨 KILL-SWITCH METRICS (Phase 4.0)
+    consecutive_losses: int = 0
+    consecutive_wins: int = 0
+    last_trade_pnl: float = 0.0
+    kill_switch_triggered: bool = False
+    kill_switch_reason: str = ""
+
+    # ✅ CORRECTION #5A: NOUVEAUX CHAMPS
+    pnl_by_market: Dict[str, float] = field(default_factory=lambda: {
+        "ES": 0.0,
+        "NQ": 0.0,
+        "RTY": 0.0
+    })
+    trades_by_market: Dict[str, Dict[str, int]] = field(default_factory=lambda: {
+        "ES": {"wins": 0, "losses": 0},
+        "NQ": {"wins": 0, "losses": 0},
+        "RTY": {"wins": 0, "losses": 0}
+    })
+    # ✅ CORRECTION #5A appliquée - 18/11/2025
 
 
 @dataclass
@@ -179,6 +220,118 @@ class RiskManager:
                     f"Loss: ${self.params.daily_loss_limit}, "
                     f"Target: ${self.params.daily_profit_target}")
 
+    def reset_daily_metrics(self):
+        """
+        ♻️ Réinitialise les métriques quotidiennes à minuit
+
+        Appelé automatiquement:
+        - À minuit (00:00) chaque jour
+        - Au démarrage du bot si c'est un nouveau jour
+
+        Réinitialise:
+        - daily_pnl → 0.0
+        - daily_trades_count → 0
+        - daily_winners → 0
+        - daily_losers → 0
+        - pnl_by_market (si existe) → {"ES": 0.0, "NQ": 0.0, "RTY": 0.0}
+        - trades_by_market (si existe) → reset à 0W/0L
+        """
+        from datetime import datetime
+
+        # Sauvegarder anciennes valeurs pour logging
+        old_pnl = getattr(self.metrics, 'daily_pnl', 0.0)
+        old_trades = getattr(self.metrics, 'daily_trades_count', 0)
+
+        # Réinitialiser métriques
+        self.metrics.daily_pnl = 0.0
+        self.metrics.daily_trades_count = 0
+        self.metrics.daily_winners = 0
+        self.metrics.daily_losers = 0
+
+        # Réinitialiser pnl_by_market si existe
+        if hasattr(self.metrics, 'pnl_by_market'):
+            self.metrics.pnl_by_market = {"ES": 0.0, "NQ": 0.0, "RTY": 0.0}
+
+        if hasattr(self.metrics, 'trades_by_market'):
+            self.metrics.trades_by_market = {
+                "ES": {"wins": 0, "losses": 0},
+                "NQ": {"wins": 0, "losses": 0},
+                "RTY": {"wins": 0, "losses": 0}
+            }
+
+        logger.info(
+            f"♻️ Risk Manager daily metrics réinitialisés:\n"
+            f"  Ancien P&L: ${old_pnl:+.2f} | Anciens trades: {old_trades}\n"
+            f"  → Nouveau P&L: $0.00 | Nouveaux trades: 0"
+        )
+
+    # ✅ CORRECTION #4A appliquée - 18/11/2025
+
+    def update_daily_pnl(self, symbol: str, pnl: float):
+        """
+        💰 Met à jour daily_pnl ET pnl_by_market en même temps
+
+        Args:
+            symbol: Symbole du trade (ES, MES, NQ, MNQ, etc.)
+            pnl: P&L NET du trade (déjà incluant fees)
+
+        Note:
+            Normalise automatiquement les symboles:
+            - MES/ES → ES
+            - MNQ/NQ → NQ
+            - M2K/RTY → RTY
+        """
+        # Normaliser symbole (MES → ES, MNQ → NQ)
+        symbol_upper = symbol.upper()
+        if '_' in symbol_upper:
+            symbol_upper = symbol_upper.split('_')[0]
+
+        if symbol_upper.startswith('MES') or symbol_upper.startswith('ES'):
+            base_symbol = 'ES'
+        elif symbol_upper.startswith('MNQ') or symbol_upper.startswith('NQ'):
+            base_symbol = 'NQ'
+        elif symbol_upper.startswith('M2K') or symbol_upper.startswith('RTY'):
+            base_symbol = 'RTY'
+        else:
+            logger.warning(f"⚠️ Symbole inconnu pour stats: {symbol}, utilisation tel quel")
+            base_symbol = symbol
+
+        # Mettre à jour daily_pnl
+        if not hasattr(self.metrics, 'daily_pnl'):
+            self.metrics.daily_pnl = 0.0
+        self.metrics.daily_pnl += pnl
+
+        # Mettre à jour pnl_by_market
+        if not hasattr(self.metrics, 'pnl_by_market'):
+            self.metrics.pnl_by_market = {"ES": 0.0, "NQ": 0.0, "RTY": 0.0}
+
+        if base_symbol in self.metrics.pnl_by_market:
+            self.metrics.pnl_by_market[base_symbol] += pnl
+
+        # Mettre à jour trades_by_market (wins/losses)
+        if not hasattr(self.metrics, 'trades_by_market'):
+            self.metrics.trades_by_market = {
+                "ES": {"wins": 0, "losses": 0},
+                "NQ": {"wins": 0, "losses": 0},
+                "RTY": {"wins": 0, "losses": 0}
+            }
+
+        if base_symbol in self.metrics.trades_by_market:
+            if pnl > 0:
+                self.metrics.trades_by_market[base_symbol]["wins"] += 1
+            elif pnl < 0:
+                self.metrics.trades_by_market[base_symbol]["losses"] += 1
+
+        logger.debug(
+            f"💰 Risk Manager updated:\n"
+            f"  Symbol: {symbol} → {base_symbol}\n"
+            f"  P&L: ${pnl:+.2f}\n"
+            f"  Total daily_pnl: ${self.metrics.daily_pnl:.2f}\n"
+            f"  {base_symbol} P&L: ${self.metrics.pnl_by_market.get(base_symbol, 0.0):.2f}"
+        )
+
+    # ✅ CORRECTION #5B appliquée - 18/11/2025
+
     def _load_default_config(self) -> Dict:
         """Charge configuration par défaut"""
         try:
@@ -192,6 +345,35 @@ class RiskManager:
         """Charge paramètres de risque depuis config"""
         params = RiskParameters()
 
+        # ✅ MODE OPTIMISATION: Désactiver TOUTES les limites pour collecte de données
+        # Vérifier DATA_COLLECTION_MODE depuis variable d'environnement OU config
+        is_optimization_mode = DATA_COLLECTION_MODE
+
+        # Vérifier aussi dans la config si disponible
+        if isinstance(self.config, dict):
+            is_optimization_mode = is_optimization_mode or self.config.get('data_collection_mode', False)
+        elif hasattr(self.config, 'data_collection_mode'):
+            is_optimization_mode = is_optimization_mode or getattr(self.config, 'data_collection_mode', False)
+
+        if is_optimization_mode:
+            params.data_collection_mode = True
+            params.daily_loss_limit = 999999.0
+            params.daily_profit_target = 999999.0
+            params.max_daily_trades = 999
+            params.max_daily_loss_usd = 999999.0
+            params.max_losing_streak = 999
+            params.kill_switch_enabled = False
+            params.max_drawdown_percent = 100.0  # Pas de limite drawdown
+            logger.warning("=" * 80)
+            logger.warning("🔥 MODE OPTIMISATION ACTIVÉ - TOUTES LIMITES DÉSACTIVÉES")
+            logger.warning("   → Daily Loss Limit: DÉSACTIVÉ")
+            logger.warning("   → Daily Profit Target: DÉSACTIVÉ")
+            logger.warning("   → Max Daily Trades: DÉSACTIVÉ")
+            logger.warning("   → Kill-Switch: DÉSACTIVÉ")
+            logger.warning("   → Max Drawdown: DÉSACTIVÉ")
+            logger.warning("   → Losing Streak: DÉSACTIVÉ")
+            logger.warning("=" * 80)
+
         # Override depuis config si disponible
         try:
             # Gérer le cas où config est un objet ou un dict
@@ -201,52 +383,140 @@ class RiskManager:
                 risk_config = self.config['risk_management']
             else:
                 risk_config = {}
-            
+
             # Convertir en dict si nécessaire
             if hasattr(risk_config, '__dict__'):
                 risk_config = risk_config.__dict__
-            
-            # Appliquer les paramètres
+
+            # Appliquer les paramètres (mais respecter mode calibrage)
             for key, value in risk_config.items():
                 if hasattr(params, key):
+                    # Ne pas override les valeurs de calibrage si DATA_COLLECTION_MODE est activé
+                    if DATA_COLLECTION_MODE and key in ['daily_loss_limit', 'daily_profit_target', 'max_daily_trades', 'max_daily_loss_usd', 'max_losing_streak', 'kill_switch_enabled', 'data_collection_mode']:
+                        continue  # Garder les valeurs de calibrage
                     setattr(params, key, value)
-                    
+
         except Exception as e:
             logger.warning(f"Erreur chargement config risk: {e}")
             # Utiliser les valeurs par défaut
 
         return params
 
-    def evaluate_signal(self, signal: TradingSignal,
-                        current_price: float,
-                        account_equity: float = 100000.0) -> RiskDecision:
+    # 🚨 KILL-SWITCH (Phase 4.0)
+    def check_kill_switch(self) -> Tuple[bool, str]:
         """
-        Évalue un signal et détermine l'action appropriée
+        Vérifie si le kill-switch doit être déclenché
+        🔥 MODE DATA COLLECTION: Kill-switch désactivé automatiquement
+
+        Returns:
+            (should_halt, reason)
+        """
+        if not self.params.kill_switch_enabled:
+            if DATA_COLLECTION_MODE:
+                logger.debug("🔥 Kill-Switch désactivé (Mode Data Collection)")
+            return False, ""
+
+        # Déjà déclenché
+        if self.metrics.kill_switch_triggered:
+            return True, self.metrics.kill_switch_reason
+
+        # Check 1: Daily loss limit
+        if self.metrics.daily_pnl <= -self.params.max_daily_loss_usd:
+            reason = f"KILL-SWITCH: Daily loss ${abs(self.metrics.daily_pnl):.2f} >= ${self.params.max_daily_loss_usd}"
+            self.metrics.kill_switch_triggered = True
+            self.metrics.kill_switch_reason = reason
+            self.is_halted = True
+            self.halt_reason = reason
+            logger.critical(f"🛑 {reason}")
+            return True, reason
+
+        # Check 2: Losing streak
+        if self.metrics.consecutive_losses >= self.params.max_losing_streak:
+            reason = f"KILL-SWITCH: {self.metrics.consecutive_losses} pertes consécutives >= {self.params.max_losing_streak}"
+            self.metrics.kill_switch_triggered = True
+            self.metrics.kill_switch_reason = reason
+            self.is_halted = True
+            self.halt_reason = reason
+            logger.critical(f"🛑 {reason}")
+            return True, reason
+
+        return False, ""
+
+    def update_trade_result(self, pnl: float):
+        """
+        Met à jour les métriques après un trade
 
         Args:
-            signal: Signal de trading à évaluer
-            current_price: Prix actuel du marché
+            pnl: Profit/Loss du trade
+        """
+        self.metrics.last_trade_pnl = pnl
+        self.metrics.daily_pnl += pnl
+        self.metrics.daily_trades_count += 1
+
+        if pnl > 0:
+            self.metrics.daily_winners += 1
+            self.metrics.consecutive_wins += 1
+            self.metrics.consecutive_losses = 0
+        else:
+            self.metrics.daily_losers += 1
+            self.metrics.consecutive_losses += 1
+            self.metrics.consecutive_wins = 0
+
+        # Check kill-switch après chaque trade
+        should_halt, reason = self.check_kill_switch()
+        if should_halt:
+            logger.critical(f"🛑 KILL-SWITCH TRIGGERED: {reason}")
+
+    def evaluate_signal(self,
+                       symbol: str,
+                       signal: Any,
+                       ml_data: Dict[str, Any],
+                       account_equity: float = 100000.0) -> Dict[str, Any]:
+        """
+        Évalue un signal et détermine l'action appropriée
+        Version ML_READY - Compatible avec TradingSignal dataclass ou dict
+
+        Args:
+            symbol: Symbol (ES ou NQ)
+            signal: Signal de trading à évaluer (TradingSignal ML_READY)
+            ml_data: Données ML_READY complètes pour contexte
             account_equity: Capital du compte
 
         Returns:
-            RiskDecision avec action et paramètres
+            Dict avec 'approved', 'reason', 'position_size', 'stop_loss', 'take_profit', etc.
         """
+        # Extraire current_price depuis ml_data
+        current_price = ml_data.get('mid', getattr(signal, 'entry_price', 0))
+
+        # Wrapper pour retourner dict au lieu de RiskDecision
+        def _risk_decision_to_dict(decision: RiskDecision) -> Dict[str, Any]:
+            return {
+                'approved': decision.action == RiskAction.APPROVE,
+                'action': decision.action.value,
+                'reason': decision.reason,
+                'position_size': decision.approved_size,
+                'stop_loss': decision.stop_loss_price,
+                'take_profit': decision.take_profit_price,
+                'max_loss_dollars': decision.max_loss_dollars,
+                'risk_score': decision.risk_score,
+                'adjustments': decision.adjustments
+            }
         # Check si trading halté
         if self.is_halted:
-            return RiskDecision(
+            return _risk_decision_to_dict(RiskDecision(
                 action=RiskAction.REJECT,
                 reason=f"Trading halté: {self.halt_reason}"
-            )
+            ))
 
         # 1. Vérifications de base
         basic_check = self._check_basic_conditions()
         if basic_check.action == RiskAction.REJECT:
-            return basic_check
+            return _risk_decision_to_dict(basic_check)
 
         # 2. Vérifier qualité signal Bataille Navale
         quality_check = self._check_signal_quality(signal)
         if quality_check.action == RiskAction.REJECT:
-            return quality_check
+            return _risk_decision_to_dict(quality_check)
 
         # 3. Calculer position size
         position_size = self._calculate_position_size(
@@ -254,10 +524,10 @@ class RiskManager:
         )
 
         if position_size == 0:
-            return RiskDecision(
+            return _risk_decision_to_dict(RiskDecision(
                 action=RiskAction.REJECT,
                 reason="Position size calculée = 0"
-            )
+            ))
 
         # 4. Calculer stop loss adaptatif
         stop_loss = self._calculate_adaptive_stop(
@@ -272,10 +542,10 @@ class RiskManager:
         # 6. Vérifier risk/reward
         risk_reward = abs(take_profit - current_price) / abs(stop_loss - current_price)
         if risk_reward < 1.5:  # Minimum 1.5:1
-            return RiskDecision(
+            return _risk_decision_to_dict(RiskDecision(
                 action=RiskAction.REJECT,
                 reason=f"Risk/Reward insuffisant: {risk_reward:.1f}"
-            )
+            ))
 
         # 7. Calculer risk en dollars
         risk_dollars = position_size * abs(current_price - stop_loss) * ES_TICK_VALUE / ES_TICK_SIZE
@@ -289,10 +559,10 @@ class RiskManager:
                 risk_dollars = position_size * \
                     abs(current_price - stop_loss) * ES_TICK_VALUE / ES_TICK_SIZE
             else:
-                return RiskDecision(
+                return _risk_decision_to_dict(RiskDecision(
                     action=RiskAction.REJECT,
                     reason="Risque trop élevé même après réduction"
-                )
+                ))
 
         # 9. Score de risque final
         risk_score = self._calculate_risk_score(signal, risk_dollars)
@@ -328,36 +598,43 @@ class RiskManager:
                     f"Size: {position_size}, Stop: {stop_loss}, "
                     f"TP: {take_profit}, Risk: ${risk_dollars:.0f}")
 
-        return decision
+        return _risk_decision_to_dict(decision)
 
     def _check_basic_conditions(self) -> RiskDecision:
         """Vérifie conditions de base pour trader"""
+        # ✅ CORRIGÉ 17/11: Désactiver toutes les limites en mode calibrage/data_collection
+        # En mode calibrage, on veut collecter des données sans limites
+
         # Limite quotidienne atteinte?
-        if self.metrics.daily_pnl <= -self.params.daily_loss_limit:
-            self._halt_trading("Limite de perte quotidienne atteinte")
-            return RiskDecision(
-                action=RiskAction.HALT_TRADING,
-                reason=f"Daily loss limit hit: ${self.metrics.daily_pnl:.0f}"
-            )
+        if not self.params.data_collection_mode:  # Seulement si PAS en mode calibrage
+            if self.metrics.daily_pnl <= -self.params.daily_loss_limit:
+                self._halt_trading("Limite de perte quotidienne atteinte")
+                return RiskDecision(
+                    action=RiskAction.HALT_TRADING,
+                    reason=f"Daily loss limit hit: ${self.metrics.daily_pnl:.0f}"
+                )
+        else:
+            logger.debug(f"🔥 Mode calibrage: Limite daily loss désactivée (P&L: ${self.metrics.daily_pnl:.2f})")
 
         # Target quotidien atteint?
-        if self.metrics.daily_pnl >= self.params.daily_profit_target:
-            if not self.params.data_collection_mode:
+        if not self.params.data_collection_mode:  # Seulement si PAS en mode calibrage
+            if self.metrics.daily_pnl >= self.params.daily_profit_target:
                 return RiskDecision(
                     action=RiskAction.REJECT,
                     reason=f"Daily target atteint: ${self.metrics.daily_pnl:.0f}"
                 )
-            else:
-                logger.info(
-                    f"Target atteint (${
-                        self.metrics.daily_pnl:.0f}) mais on continue (mode data collection)")
+        else:
+            logger.debug(f"🔥 Mode calibrage: Limite daily profit désactivée (P&L: ${self.metrics.daily_pnl:.2f})")
 
-        # Max trades quotidiens?
-        if self.metrics.daily_trades_count >= self.params.max_daily_trades:
-            return RiskDecision(
-                action=RiskAction.REJECT,
-                reason=f"Max trades quotidiens atteint: {self.metrics.daily_trades_count}"
-            )
+        # Max trades quotidiens? (ILLIMITÉ en mode optimisation)
+        if not self.params.data_collection_mode:  # Seulement si PAS en mode optimisation
+            if self.metrics.daily_trades_count >= self.params.max_daily_trades:
+                return RiskDecision(
+                    action=RiskAction.REJECT,
+                    reason=f"Max trades quotidiens atteint: {self.metrics.daily_trades_count}"
+                )
+        else:
+            logger.debug(f"🔥 Mode optimisation: Limite max trades ILLIMITÉE ({self.metrics.daily_trades_count} trades)")
 
         # Positions concurrentes?
         if self.metrics.open_positions_count >= self.params.max_positions_concurrent:
@@ -366,27 +643,32 @@ class RiskManager:
                 reason=f"Max positions concurrentes: {self.metrics.open_positions_count}"
             )
 
-        # Horaires de trading?
-        current_time = datetime.now().time()
+        # Horaires de trading? ✅ PHASE 3.5: Utiliser l'heure EST
+        from datetime import timezone, timedelta
+        est_tz = timezone(timedelta(hours=-5))  # EST = UTC-5
+        current_time = datetime.now(est_tz).time()
         if current_time < self.params.no_trade_before:
             return RiskDecision(
                 action=RiskAction.REJECT,
-                reason=f"Trop tôt pour trader (avant {self.params.no_trade_before})"
+                reason=f"Trop tôt pour trader (avant {self.params.no_trade_before} EST)"
             )
 
         if current_time > self.params.no_trade_after:
             return RiskDecision(
                 action=RiskAction.REJECT,
-                reason=f"Trop tard pour trader (après {self.params.no_trade_after})"
+                reason=f"Trop tard pour trader (après {self.params.no_trade_after} EST)"
             )
 
-        # Drawdown check
-        if self.metrics.current_drawdown >= self.params.max_drawdown_percent:
-            self._halt_trading("Drawdown maximum atteint")
-            return RiskDecision(
-                action=RiskAction.HALT_TRADING,
-                reason=f"Max drawdown hit: {self.metrics.current_drawdown:.1f}%"
-            )
+        # Drawdown check (désactivé en mode optimisation)
+        if not self.params.data_collection_mode:
+            if self.metrics.current_drawdown >= self.params.max_drawdown_percent:
+                self._halt_trading("Drawdown maximum atteint")
+                return RiskDecision(
+                    action=RiskAction.HALT_TRADING,
+                    reason=f"Max drawdown hit: {self.metrics.current_drawdown:.1f}%"
+                )
+        else:
+            logger.debug(f"🔥 Mode optimisation: Limite drawdown désactivée (DD: {self.metrics.current_drawdown:.1f}%)")
 
         return RiskDecision(action=RiskAction.APPROVE)
 
@@ -394,15 +676,17 @@ class RiskManager:
         """Vérifie qualité signal selon méthode Bataille Navale"""
 
         # NOUVEAU: Vérifier probabilité/confiance minimum
-        if hasattr(signal, 'confidence') or hasattr(signal, 'probability'):
-            signal_prob = getattr(signal, 'confidence', getattr(signal, 'probability', 0))
-            if signal_prob < self.params.min_signal_probability:
-                return RiskDecision(
-                    action=RiskAction.REJECT,
-                    reason=f"Probabilité insuffisante: {
-                        signal_prob:.2f} < {
-                        self.params.min_signal_probability}"
-                )
+        # ⚠️ DÉSACTIVÉ EN MODE DATA COLLECTION (ADVISORY MODE)
+        if not self.params.data_collection_mode:
+            if hasattr(signal, 'confidence') or hasattr(signal, 'probability'):
+                signal_prob = getattr(signal, 'confidence', getattr(signal, 'probability', 0))
+                if signal_prob < self.params.min_signal_probability:
+                    return RiskDecision(
+                        action=RiskAction.REJECT,
+                        reason=f"Probabilité insuffisante: {
+                            signal_prob:.2f} < {
+                            self.params.min_signal_probability}"
+                    )
 
         # Base quality check (plus permissif en mode data collection)
         if hasattr(signal, 'base_quality'):
@@ -489,35 +773,88 @@ class RiskManager:
                                  current_price: float) -> float:
         """
         Calcule stop loss adaptatif selon régime et Bataille Navale
+        🔥 PARAMÈTRES ÉLARGIS: Laisser respirer le trade
+        ⚠️ MODIFIÉ 20/11/2025: Minimums stricts pour empêcher trades catastrophiques
         """
-        # Distance de base en ticks
-        if signal.market_regime == MarketRegime.TREND:
-            base_stop_ticks = 8  # Plus large en trend
-        elif signal.market_regime == MarketRegime.RANGE:
-            base_stop_ticks = 4  # Plus serré en range
+        # Extraire symbole depuis signal
+        symbol = getattr(signal, 'symbol', 'ES')
+        # Normaliser symbole (MES → ES, MNQ → NQ)
+        if 'ES' in symbol.upper() or 'MES' in symbol.upper():
+            symbol = 'ES'
+        elif 'NQ' in symbol.upper() or 'MNQ' in symbol.upper():
+            symbol = 'NQ'
+        elif 'RTY' in symbol.upper() or 'M2K' in symbol.upper():
+            symbol = 'RTY'
         else:
-            base_stop_ticks = 6  # Défaut
+            symbol = 'ES'  # Default
 
-        # Ajustement selon base quality
-        if hasattr(signal, 'base_quality') and signal.base_quality > 0.8:
-            # Base solide = stop plus serré
-            stop_ticks = base_stop_ticks * 0.8
+        # Extraire session depuis signal ou snapshot
+        session = getattr(signal, 'session', None)
+        if session is None and hasattr(signal, 'snapshot'):
+            session = getattr(signal.snapshot, 'session', None) if hasattr(signal, 'snapshot') else None
+
+        # ═══════════════════════════════════════════════════════════
+        # MINIMUMS STRICTS PAR SYMBOLE (ajouté 20/11/2025)
+        # ═══════════════════════════════════════════════════════════
+        MIN_STOP_LOSS = {
+            'ES': 30,  # ticks (avant: 22t)
+            'NQ': 35,  # ticks (avant: 24t) - Trade avait 22t!
+            'RTY': 25  # ticks (avant: 20t)
+        }
+
+        base_sl = MIN_STOP_LOSS.get(symbol, 30)
+
+        # Multiplier par 1.5 en session ASIA
+        if session == 'ASIA':
+            base_sl = int(base_sl * 1.5)
+            logger.info(
+                f"[{symbol}] ⚠️ Session ASIA: SL augmenté à {base_sl}t"
+            )
+
+        # Distance de base en ticks - Utiliser minimum strict
+        # ✅ Safe access pour PatternSignal (peut ne pas avoir market_regime)
+        market_regime = getattr(signal, 'market_regime', None)
+
+        if market_regime in (MarketRegime.TREND_BULLISH, MarketRegime.TREND_BEARISH):
+            base_stop_ticks = max(20, base_sl)  # Minimum strict ou plus large
+        elif market_regime in (MarketRegime.RANGE_TIGHT, MarketRegime.RANGE_WIDE):
+            base_stop_ticks = max(10, base_sl)  # Minimum strict ou plus large
         else:
-            stop_ticks = base_stop_ticks
+            base_stop_ticks = max(15, base_sl)  # Minimum strict ou plus large
+
+        # PAS d'ajustement serré sur base_quality - on laisse respirer!
+        stop_ticks = base_stop_ticks
 
         # Ajustement volatilité
         if self._is_high_volatility():
-            stop_ticks *= 1.5  # Stop plus large si volatile
+            stop_ticks = max(stop_ticks, int(base_sl * 1.2))  # Au moins 20% de plus si volatile
 
         # Calcul prix stop selon direction
-        if signal.signal_type in [SignalType.LONG, SignalType.LONG_SETUP]:
-            stop_price = current_price - (stop_ticks * ES_TICK_SIZE)
+        # ✅ Safe access pour PatternSignal (utiliser 'side' au lieu de 'signal_type')
+        # PatternSignal a: side="LONG"/"SHORT", TradingSignal a: signal_type=SignalType.LONG_TREND/etc
+        signal_side = getattr(signal, 'side', None)  # PatternSignal
+        signal_type = getattr(signal, 'signal_type', None)  # TradingSignal
+
+        is_long = False
+        if signal_side:
+            is_long = signal_side.upper() == "LONG"
+        elif signal_type:
+            is_long = signal_type in [SignalType.LONG_TREND, SignalType.LONG_RANGE]
+        else:
+            is_long = True  # Default LONG si aucun attribut trouvé
+
+        # Calculer SL en prix
+        tick_size = ES_TICK_SIZE
+        sl_distance = stop_ticks * tick_size
+
+        if is_long:
+            stop_price = current_price - sl_distance
 
             # Si base détectée, mettre stop sous la base
             if hasattr(signal, 'base_low') and signal.base_low:
                 stop_price = min(stop_price, signal.base_low - 2 * ES_TICK_SIZE)
         else:
-            stop_price = current_price + (stop_ticks * ES_TICK_SIZE)
+            stop_price = current_price + sl_distance
 
             # Si base détectée, mettre stop au-dessus de la base
             if hasattr(signal, 'base_high') and signal.base_high:
@@ -526,29 +863,43 @@ class RiskManager:
         # Arrondir au tick
         stop_price = round(stop_price / ES_TICK_SIZE) * ES_TICK_SIZE
 
+        logger.info(
+            f"[{symbol}] Stop Loss: {stop_price:.2f} "
+            f"({stop_ticks}t, session={session})"
+        )
+
         return stop_price
 
     def _calculate_take_profit(self, signal: TradingSignal,
                                current_price: float,
                                stop_loss: float) -> float:
-        """Calcule take profit avec ratio risk/reward"""
+        """Calcule take profit avec ratio risk/reward
+        🔥 RATIO UNIFIÉ 2:1 - Objectifs réalistes et atteignables
+        """
         # Distance du stop
         stop_distance = abs(current_price - stop_loss)
 
-        # Ratio selon régime
-        if signal.market_regime == MarketRegime.TREND:
-            rr_ratio = 2.5  # Viser plus loin en trend
-        elif signal.market_regime == MarketRegime.RANGE:
-            rr_ratio = 1.5  # Plus conservateur en range
-        else:
-            rr_ratio = 2.0
+        # Ratio 2:1 unifié pour tous les régimes
+        rr_ratio = 2.0  # RANGE: 10→20 ticks, CHOPPY: 15→30 ticks, TREND: 20→40 ticks
 
-        # Ajustement selon confluence
+        # Ajustement selon confluence FORTE (garde un bonus pour setups exceptionnels)
         if hasattr(signal, 'confluence_score') and signal.confluence_score > 0.8:
-            rr_ratio *= 1.2  # Viser plus loin si forte confluence
+            rr_ratio *= 1.2  # 2.4:1 si confluence exceptionnelle
 
         # Calcul TP
-        if signal.signal_type in [SignalType.LONG, SignalType.LONG_SETUP]:
+        # ✅ Recalculer is_long (même logique que _calculate_stop_loss)
+        signal_side = getattr(signal, 'side', None)  # PatternSignal
+        signal_type = getattr(signal, 'signal_type', None)  # TradingSignal
+
+        is_long = False
+        if signal_side:
+            is_long = signal_side.upper() == "LONG"
+        elif signal_type:
+            is_long = signal_type in [SignalType.LONG_TREND, SignalType.LONG_RANGE]
+        else:
+            is_long = True  # Default LONG si aucun attribut trouvé
+
+        if is_long:
             tp_price = current_price + (stop_distance * rr_ratio)
         else:
             tp_price = current_price - (stop_distance * rr_ratio)
@@ -817,7 +1168,7 @@ def test_risk_manager():
 
     test_signal = TradingSignal(
         timestamp=datetime.now(),
-        signal_type=SignalType.LONG_SETUP,
+        signal_type=SignalType.LONG_TREND,  # ✅ CORRIGÉ: LONG_TREND au lieu de LONG_SETUP
         symbol="ES",
         entry_price=4500.0,
         confidence=0.8,

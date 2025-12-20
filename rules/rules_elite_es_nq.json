@@ -1,0 +1,1166 @@
+{
+  "version": "1.0.0_ELITE",
+  "description": "Règles Elite utilisant Battle Navale + MenthorQ + Confluence PRÉ-CALCULÉS",
+  "symbols": ["ES", "NQ"],
+
+  "global_filters": {
+    "spread_ticks_max": 2,
+    "volatility_regime_allowed": [1, 2],
+    "session_allowed": ["US", "Asia"],
+    "min_dom_depth_total": 200,
+    "is_dom_fresh": true,
+    "data_quality": "OK"
+  },
+
+  "rules": [
+    {
+      "id": "ELITE_01_LONG_BN_CONFLUENCE",
+      "name": "🔥 LONG Elite: Battle Navale + Confluence Max",
+      "description": "Signal LONG avec Battle Navale fort + Confluence élevée + Next Wall support",
+      "priority": 10,
+      "enabled": true,
+
+      "conditions": {
+        "and": [
+          {
+            "comment": "Battle Navale signal FORT (PRÉ-CALCULÉ)",
+            "field": "battle_navale_signal_strength",
+            "operator": ">=",
+            "value": 0.70
+          },
+          {
+            "comment": "Battle Navale confidence HAUTE",
+            "field": "battle_navale_confidence",
+            "operator": ">=",
+            "value": 0.75
+          },
+          {
+            "comment": "Confluence ÉLEVÉE (PRÉ-CALCULÉ)",
+            "field": "confluence_strength",
+            "operator": ">=",
+            "value": 1.0
+          },
+          {
+            "comment": "Smart Money Flow PAS trop négatif",
+            "field": "smart_money_flow",
+            "operator": ">=",
+            "value": -0.30
+          },
+          {
+            "comment": "Next Wall = PUT (support en dessous)",
+            "field": "next_wall.side",
+            "operator": "==",
+            "value": "put"
+          },
+          {
+            "comment": "Distance au mur < 10 ticks",
+            "field": "next_wall.dist_ticks",
+            "operator": "<=",
+            "value": 10
+          },
+          {
+            "comment": "Strength du mur > 0.6",
+            "field": "next_wall.strength",
+            "operator": ">=",
+            "value": 0.6
+          },
+          {
+            "comment": "Prix proche du VWAP (daily)",
+            "field": "d_vwap_ticks",
+            "operator": "between",
+            "value": [-20, 20]
+          },
+          {
+            "comment": "DOM pas trop déséquilibré contre nous",
+            "field": "level1_imbalance",
+            "operator": ">=",
+            "value": -0.50
+          }
+        ]
+      },
+
+      "entry": {
+        "side": "BUY",
+        "type": "LIMIT",
+        "price_strategy": "next_wall_price",
+        "comment": "Entrer au niveau du put support"
+      },
+
+      "risk_management": {
+        "stop_loss": {
+          "strategy": "atr_based",
+          "atr_multiplier": 1.5,
+          "min_ticks": 8,
+          "max_ticks": 20,
+          "comment": "SL adaptatif selon ATR"
+        },
+        "take_profit": [
+          {
+            "target": 1,
+            "strategy": "fixed_ticks",
+            "ticks": 15,
+            "quantity_percent": 50,
+            "comment": "TP1: 15 ticks (50% position)"
+          },
+          {
+            "target": 2,
+            "strategy": "next_gex_level",
+            "field": "gex_3",
+            "quantity_percent": 50,
+            "comment": "TP2: GEX_3 level (reste 50%)"
+          }
+        ],
+        "breakeven": {
+          "enabled": true,
+          "trigger_ticks": 10,
+          "offset_ticks": 2,
+          "comment": "Breakeven +2 après +10 ticks"
+        }
+      },
+
+      "position_sizing": {
+        "base_size": 1,
+        "confidence_scaling": true,
+        "scaling_factor": "battle_navale_confidence",
+        "max_size": 2,
+        "comment": "Taille adaptée à la confiance"
+      },
+
+      "cooldown": {
+        "bars": 5,
+        "same_direction_only": true
+      }
+    },
+
+    {
+      "id": "ELITE_02_SHORT_BN_CONFLUENCE",
+      "name": "🔥 SHORT Elite: Battle Navale + Confluence Max",
+      "description": "Signal SHORT avec Battle Navale faible + Confluence élevée + Next Wall resistance",
+      "priority": 10,
+      "enabled": true,
+
+      "conditions": {
+        "and": [
+          {
+            "comment": "Battle Navale signal FAIBLE (bearish)",
+            "field": "battle_navale_signal_strength",
+            "operator": "<=",
+            "value": 0.30
+          },
+          {
+            "comment": "Battle Navale confidence HAUTE",
+            "field": "battle_navale_confidence",
+            "operator": ">=",
+            "value": 0.75
+          },
+          {
+            "comment": "Confluence ÉLEVÉE",
+            "field": "confluence_strength",
+            "operator": ">=",
+            "value": 1.0
+          },
+          {
+            "comment": "Smart Money Flow PAS trop positif",
+            "field": "smart_money_flow",
+            "operator": "<=",
+            "value": 0.30
+          },
+          {
+            "comment": "Next Wall = CALL (resistance au-dessus)",
+            "field": "next_wall.side",
+            "operator": "==",
+            "value": "call"
+          },
+          {
+            "comment": "Distance au mur < 5 ticks",
+            "field": "next_wall.dist_ticks",
+            "operator": "<=",
+            "value": 5
+          },
+          {
+            "comment": "Strength du mur > 0.6",
+            "field": "next_wall.strength",
+            "operator": ">=",
+            "value": 0.6
+          },
+          {
+            "comment": "Prix proche du VWAP",
+            "field": "d_vwap_ticks",
+            "operator": "between",
+            "value": [-20, 20]
+          },
+          {
+            "comment": "DOM imbalance négatif (ask-heavy)",
+            "field": "level1_imbalance",
+            "operator": "<=",
+            "value": -0.15
+          }
+        ]
+      },
+
+      "entry": {
+        "side": "SELL",
+        "type": "MARKET",
+        "comment": "Market order pour SHORT agressif"
+      },
+
+      "risk_management": {
+        "stop_loss": {
+          "strategy": "atr_based",
+          "atr_multiplier": 1.5,
+          "min_ticks": 8,
+          "max_ticks": 20
+        },
+        "take_profit": [
+          {
+            "target": 1,
+            "strategy": "fixed_ticks",
+            "ticks": 15,
+            "quantity_percent": 50
+          },
+          {
+            "target": 2,
+            "strategy": "next_gex_level",
+            "field": "gex_2",
+            "quantity_percent": 50
+          }
+        ],
+        "breakeven": {
+          "enabled": true,
+          "trigger_ticks": 10,
+          "offset_ticks": 2
+        }
+      },
+
+      "position_sizing": {
+        "base_size": 1,
+        "confidence_scaling": true,
+        "scaling_factor": "battle_navale_confidence",
+        "max_size": 2
+      },
+
+      "cooldown": {
+        "bars": 5,
+        "same_direction_only": true
+      }
+    },
+
+    {
+      "id": "ELITE_03_LONG_MENTHORQ_BLIND_SPOT",
+      "name": "🎯 LONG MenthorQ: Blind Spot Touch + OrderFlow",
+      "description": "Signal LONG sur touch Blind Spot avec OrderFlow favorable",
+      "priority": 9,
+      "enabled": true,
+
+      "conditions": {
+        "and": [
+          {
+            "comment": "Battle Navale neutre/bullish",
+            "field": "battle_navale_signal_strength",
+            "operator": ">=",
+            "value": 0.45
+          },
+          {
+            "comment": "Blind Spot confluence ACTIF",
+            "field": "blind_spot_confluence",
+            "operator": "==",
+            "value": true
+          },
+          {
+            "comment": "Distance au Blind Spot proche",
+            "field": "menthor_distances.near_blind",
+            "operator": "<=",
+            "value": 20
+          },
+          {
+            "comment": "Smart Money Flow POSITIF",
+            "field": "smart_money_flow",
+            "operator": ">=",
+            "value": 0.20
+          },
+          {
+            "comment": "DOM imbalance bid-heavy",
+            "field": "level1_imbalance",
+            "operator": ">=",
+            "value": 0.30
+          },
+          {
+            "comment": "OrderFlow delta positif",
+            "field": "nbcv.delta",
+            "operator": ">",
+            "value": 0
+          },
+          {
+            "comment": "Confluence strength > 0.8",
+            "field": "confluence_strength",
+            "operator": ">=",
+            "value": 0.8
+          }
+        ]
+      },
+
+      "entry": {
+        "side": "BUY",
+        "type": "LIMIT",
+        "price_strategy": "current_bid",
+        "comment": "Limit au bid actuel"
+      },
+
+      "risk_management": {
+        "stop_loss": {
+          "strategy": "fixed_ticks",
+          "ticks": 12
+        },
+        "take_profit": [
+          {
+            "target": 1,
+            "strategy": "fixed_ticks",
+            "ticks": 18,
+            "quantity_percent": 60
+          },
+          {
+            "target": 2,
+            "strategy": "vwap_band",
+            "band": "vwap_up1",
+            "quantity_percent": 40
+          }
+        ],
+        "breakeven": {
+          "enabled": true,
+          "trigger_ticks": 12,
+          "offset_ticks": 3
+        }
+      },
+
+      "position_sizing": {
+        "base_size": 1,
+        "confidence_scaling": false
+      },
+
+      "cooldown": {
+        "bars": 3,
+        "same_direction_only": false
+      }
+    },
+
+    {
+      "id": "ELITE_04_SHORT_MENTHORQ_GAMMA",
+      "name": "🎯 SHORT MenthorQ: Near Gamma Resistance",
+      "description": "Signal SHORT proche d'un niveau gamma call resistance",
+      "priority": 9,
+      "enabled": true,
+
+      "conditions": {
+        "and": [
+          {
+            "comment": "Battle Navale neutre/bearish",
+            "field": "battle_navale_signal_strength",
+            "operator": "<=",
+            "value": 0.55
+          },
+          {
+            "comment": "Gamma call confluence ACTIF",
+            "field": "gamma_call_confluence",
+            "operator": "==",
+            "value": true
+          },
+          {
+            "comment": "Distance au GEX proche (en haut)",
+            "field": "menthor_distances.near_gex_up",
+            "operator": "<=",
+            "value": 10
+          },
+          {
+            "comment": "Smart Money Flow NÉGATIF",
+            "field": "smart_money_flow",
+            "operator": "<=",
+            "value": -0.20
+          },
+          {
+            "comment": "DOM imbalance ask-heavy",
+            "field": "level1_imbalance",
+            "operator": "<=",
+            "value": -0.30
+          },
+          {
+            "comment": "Confluence strength > 0.8",
+            "field": "confluence_strength",
+            "operator": ">=",
+            "value": 0.8
+          }
+        ]
+      },
+
+      "entry": {
+        "side": "SELL",
+        "type": "LIMIT",
+        "price_strategy": "current_ask",
+        "comment": "Limit au ask actuel"
+      },
+
+      "risk_management": {
+        "stop_loss": {
+          "strategy": "fixed_ticks",
+          "ticks": 12
+        },
+        "take_profit": [
+          {
+            "target": 1,
+            "strategy": "fixed_ticks",
+            "ticks": 18,
+            "quantity_percent": 60
+          },
+          {
+            "target": 2,
+            "strategy": "vwap_band",
+            "band": "vwap_dn1",
+            "quantity_percent": 40
+          }
+        ],
+        "breakeven": {
+          "enabled": true,
+          "trigger_ticks": 12,
+          "offset_ticks": 3
+        }
+      },
+
+      "position_sizing": {
+        "base_size": 1,
+        "confidence_scaling": false
+      },
+
+      "cooldown": {
+        "bars": 3,
+        "same_direction_only": false
+      }
+    },
+
+    {
+      "id": "STANDARD_01_LONG_VWAP_BOUNCE",
+      "name": "📊 LONG Standard: VWAP Bounce + Confluence",
+      "description": "Rebond sur VWAP daily avec confluence modérée",
+      "priority": 5,
+      "enabled": true,
+
+      "conditions": {
+        "and": [
+          {
+            "comment": "Battle Navale neutre ou positif",
+            "field": "battle_navale_signal_strength",
+            "operator": ">=",
+            "value": 0.50
+          },
+          {
+            "comment": "Prix proche VWAP lower band 1",
+            "field": "d_w_dn1_ticks",
+            "operator": "between",
+            "value": [-5, 5]
+          },
+          {
+            "comment": "Confluence strength > 0.6",
+            "field": "confluence_strength",
+            "operator": ">=",
+            "value": 0.6
+          },
+          {
+            "comment": "Smart Money Flow pas trop négatif",
+            "field": "smart_money_flow",
+            "operator": ">=",
+            "value": -0.40
+          },
+          {
+            "comment": "DOM imbalance positif ou neutre",
+            "field": "level1_imbalance",
+            "operator": ">=",
+            "value": -0.20
+          },
+          {
+            "comment": "Volatility regime normal",
+            "field": "volatility_regime",
+            "operator": "in",
+            "value": [1, 2]
+          }
+        ]
+      },
+
+      "entry": {
+        "side": "BUY",
+        "type": "LIMIT",
+        "price_strategy": "vwap_dn1",
+        "comment": "Limit à la bande inférieure VWAP"
+      },
+
+      "risk_management": {
+        "stop_loss": {
+          "strategy": "fixed_ticks",
+          "ticks": 10
+        },
+        "take_profit": [
+          {
+            "target": 1,
+            "strategy": "vwap_level",
+            "level": "vwap",
+            "quantity_percent": 70
+          },
+          {
+            "target": 2,
+            "strategy": "vwap_band",
+            "band": "vwap_up1",
+            "quantity_percent": 30
+          }
+        ],
+        "breakeven": {
+          "enabled": true,
+          "trigger_ticks": 8,
+          "offset_ticks": 2
+        }
+      },
+
+      "position_sizing": {
+        "base_size": 1,
+        "confidence_scaling": false
+      },
+
+      "cooldown": {
+        "bars": 2,
+        "same_direction_only": true
+      }
+    },
+
+    {
+      "id": "STANDARD_02_SHORT_VWAP_REJECTION",
+      "name": "📊 SHORT Standard: VWAP Rejection + Confluence",
+      "description": "Rejet de VWAP upper band avec confluence modérée",
+      "priority": 5,
+      "enabled": true,
+
+      "conditions": {
+        "and": [
+          {
+            "comment": "Battle Navale neutre ou négatif",
+            "field": "battle_navale_signal_strength",
+            "operator": "<=",
+            "value": 0.50
+          },
+          {
+            "comment": "Prix proche VWAP upper band 1",
+            "field": "d_w_up1_ticks",
+            "operator": "between",
+            "value": [-5, 5]
+          },
+          {
+            "comment": "Confluence strength > 0.6",
+            "field": "confluence_strength",
+            "operator": ">=",
+            "value": 0.6
+          },
+          {
+            "comment": "Smart Money Flow pas trop positif",
+            "field": "smart_money_flow",
+            "operator": "<=",
+            "value": 0.40
+          },
+          {
+            "comment": "DOM imbalance négatif ou neutre",
+            "field": "level1_imbalance",
+            "operator": "<=",
+            "value": 0.20
+          },
+          {
+            "comment": "Volatility regime normal",
+            "field": "volatility_regime",
+            "operator": "in",
+            "value": [1, 2]
+          }
+        ]
+      },
+
+      "entry": {
+        "side": "SELL",
+        "type": "LIMIT",
+        "price_strategy": "vwap_up1",
+        "comment": "Limit à la bande supérieure VWAP"
+      },
+
+      "risk_management": {
+        "stop_loss": {
+          "strategy": "fixed_ticks",
+          "ticks": 10
+        },
+        "take_profit": [
+          {
+            "target": 1,
+            "strategy": "vwap_level",
+            "level": "vwap",
+            "quantity_percent": 70
+          },
+          {
+            "target": 2,
+            "strategy": "vwap_band",
+            "band": "vwap_dn1",
+            "quantity_percent": 30
+          }
+        ],
+        "breakeven": {
+          "enabled": true,
+          "trigger_ticks": 8,
+          "offset_ticks": 2
+        }
+      },
+
+      "position_sizing": {
+        "base_size": 1,
+        "confidence_scaling": false
+      },
+
+      "cooldown": {
+        "bars": 2,
+        "same_direction_only": true
+      }
+    },
+
+    {
+      "id": "OPPORTUNIST_01_SCALP_DOM_IMBALANCE",
+      "name": "⚡ SCALP: DOM Imbalance Extreme",
+      "description": "Scalp rapide sur déséquilibre DOM extrême",
+      "priority": 3,
+      "enabled": true,
+
+      "conditions": {
+        "and": [
+          {
+            "comment": "DOM Level 1 imbalance TRÈS positif",
+            "field": "level1_imbalance",
+            "operator": ">=",
+            "value": 0.60
+          },
+          {
+            "comment": "DOM depth imbalance positif",
+            "field": "depth_imbalance",
+            "operator": ">=",
+            "value": 0.10
+          },
+          {
+            "comment": "Smart Money Flow positif",
+            "field": "smart_money_flow",
+            "operator": ">=",
+            "value": 0.30
+          },
+          {
+            "comment": "Tick momentum positif",
+            "field": "tick_momentum",
+            "operator": ">=",
+            "value": 0.20
+          },
+          {
+            "comment": "Battle Navale pas trop bearish",
+            "field": "battle_navale_signal_strength",
+            "operator": ">=",
+            "value": 0.40
+          },
+          {
+            "comment": "Spread 1 tick seulement",
+            "field": "is_1tick_spread",
+            "operator": "==",
+            "value": true
+          }
+        ]
+      },
+
+      "entry": {
+        "side": "BUY",
+        "type": "MARKET",
+        "comment": "Market order pour scalp rapide"
+      },
+
+      "risk_management": {
+        "stop_loss": {
+          "strategy": "fixed_ticks",
+          "ticks": 6
+        },
+        "take_profit": [
+          {
+            "target": 1,
+            "strategy": "fixed_ticks",
+            "ticks": 8,
+            "quantity_percent": 100
+          }
+        ],
+        "breakeven": {
+          "enabled": true,
+          "trigger_ticks": 5,
+          "offset_ticks": 1
+        }
+      },
+
+      "position_sizing": {
+        "base_size": 1,
+        "confidence_scaling": false
+      },
+
+      "cooldown": {
+        "bars": 1,
+        "same_direction_only": false
+      }
+    },
+
+    {
+      "id": "OPPORTUNIST_02_SCALP_DOM_IMBALANCE_SHORT",
+      "name": "⚡ SCALP SHORT: DOM Imbalance Extreme",
+      "description": "Scalp rapide SHORT sur déséquilibre DOM extrême",
+      "priority": 3,
+      "enabled": true,
+
+      "conditions": {
+        "and": [
+          {
+            "comment": "DOM Level 1 imbalance TRÈS négatif",
+            "field": "level1_imbalance",
+            "operator": "<=",
+            "value": -0.60
+          },
+          {
+            "comment": "DOM depth imbalance négatif",
+            "field": "depth_imbalance",
+            "operator": "<=",
+            "value": -0.10
+          },
+          {
+            "comment": "Smart Money Flow négatif",
+            "field": "smart_money_flow",
+            "operator": "<=",
+            "value": -0.30
+          },
+          {
+            "comment": "Tick momentum négatif",
+            "field": "tick_momentum",
+            "operator": "<=",
+            "value": -0.20
+          },
+          {
+            "comment": "Battle Navale pas trop bullish",
+            "field": "battle_navale_signal_strength",
+            "operator": "<=",
+            "value": 0.60
+          },
+          {
+            "comment": "Spread 1 tick seulement",
+            "field": "is_1tick_spread",
+            "operator": "==",
+            "value": true
+          }
+        ]
+      },
+
+      "entry": {
+        "side": "SELL",
+        "type": "MARKET",
+        "comment": "Market order pour scalp rapide SHORT"
+      },
+
+      "risk_management": {
+        "stop_loss": {
+          "strategy": "fixed_ticks",
+          "ticks": 6
+        },
+        "take_profit": [
+          {
+            "target": 1,
+            "strategy": "fixed_ticks",
+            "ticks": 8,
+            "quantity_percent": 100
+          }
+        ],
+        "breakeven": {
+          "enabled": true,
+          "trigger_ticks": 5,
+          "offset_ticks": 1
+        }
+      },
+
+      "position_sizing": {
+        "base_size": 1,
+        "confidence_scaling": false
+      },
+
+      "cooldown": {
+        "bars": 1,
+        "same_direction_only": false
+      }
+    },
+
+    {
+      "id": "MQ_01_LONG_GEX_SMF",
+      "name": "🎲 MENTHORQ: LONG GEX Support + Smart Money",
+      "description": "Touch GEX put support avec Smart Money bullish + institutional pressure + DOM bid-heavy",
+      "priority": 10,
+      "enabled": true,
+
+      "conditions": {
+        "and": [
+          {
+            "comment": "Proche d'un GEX put support (< 5 ticks)",
+            "field": "menthor_distances.near_gex_dn",
+            "operator": "<=",
+            "value": 5
+          },
+          {
+            "comment": "Confluence gamma put active",
+            "field": "gamma_put_confluence",
+            "operator": "==",
+            "value": true
+          },
+          {
+            "comment": "Smart Money Flow BULLISH",
+            "field": "smart_money_flow",
+            "operator": ">=",
+            "value": 0.40
+          },
+          {
+            "comment": "Institutional Pressure confirme",
+            "field": "institutional_pressure",
+            "operator": ">=",
+            "value": 0.40
+          },
+          {
+            "comment": "DOM bid-heavy",
+            "field": "level1_imbalance",
+            "operator": ">=",
+            "value": 0.30
+          }
+        ]
+      },
+
+      "entry": {
+        "side": "BUY",
+        "type": "LIMIT",
+        "price_strategy": "near_gex_level",
+        "comment": "LIMIT au niveau GEX support"
+      },
+
+      "risk_management": {
+        "stop_loss": {
+          "strategy": "fixed_ticks",
+          "ticks": 12,
+          "comment": "SL 12 ticks sous GEX"
+        },
+        "take_profit": [
+          {
+            "target": 1,
+            "strategy": "fixed_ticks",
+            "ticks": 20,
+            "quantity_percent": 60,
+            "comment": "TP1: 20 ticks"
+          },
+          {
+            "target": 2,
+            "strategy": "next_gex_level",
+            "quantity_percent": 40,
+            "comment": "TP2: Prochain GEX"
+          }
+        ],
+        "breakeven": {
+          "enabled": true,
+          "trigger_ticks": 12,
+          "offset_ticks": 3
+        }
+      },
+
+      "position_sizing": {
+        "base_size": 1,
+        "confidence_scaling": false
+      },
+
+      "cooldown": {
+        "bars": 5,
+        "same_direction_only": true
+      }
+    },
+
+    {
+      "id": "MQ_02_SHORT_GEX_SMF",
+      "name": "🎲 MENTHORQ: SHORT GEX Resistance + Smart Money",
+      "description": "Touch GEX call resistance avec Smart Money bearish + institutional pressure + DOM ask-heavy",
+      "priority": 10,
+      "enabled": true,
+
+      "conditions": {
+        "and": [
+          {
+            "comment": "Proche d'un GEX call resistance (< 5 ticks)",
+            "field": "menthor_distances.near_gex_up",
+            "operator": "<=",
+            "value": 5
+          },
+          {
+            "comment": "Confluence gamma call active",
+            "field": "gamma_call_confluence",
+            "operator": "==",
+            "value": true
+          },
+          {
+            "comment": "Smart Money Flow BEARISH",
+            "field": "smart_money_flow",
+            "operator": "<=",
+            "value": -0.40
+          },
+          {
+            "comment": "Institutional Pressure confirme",
+            "field": "institutional_pressure",
+            "operator": ">=",
+            "value": 0.40
+          },
+          {
+            "comment": "DOM ask-heavy",
+            "field": "level1_imbalance",
+            "operator": "<=",
+            "value": -0.30
+          }
+        ]
+      },
+
+      "entry": {
+        "side": "SELL",
+        "type": "LIMIT",
+        "price_strategy": "near_gex_level",
+        "comment": "LIMIT au niveau GEX resistance"
+      },
+
+      "risk_management": {
+        "stop_loss": {
+          "strategy": "fixed_ticks",
+          "ticks": 12
+        },
+        "take_profit": [
+          {
+            "target": 1,
+            "strategy": "fixed_ticks",
+            "ticks": 20,
+            "quantity_percent": 60
+          },
+          {
+            "target": 2,
+            "strategy": "next_gex_level",
+            "quantity_percent": 40
+          }
+        ],
+        "breakeven": {
+          "enabled": true,
+          "trigger_ticks": 12,
+          "offset_ticks": 3
+        }
+      },
+
+      "position_sizing": {
+        "base_size": 1,
+        "confidence_scaling": false
+      },
+
+      "cooldown": {
+        "bars": 5,
+        "same_direction_only": true
+      }
+    },
+
+    {
+      "id": "MQ_07_LONG_WALL_STACKED",
+      "name": "🎲 MENTHORQ: LONG Next Wall Put + DOM Stacked",
+      "description": "Next Wall PUT proche avec DOM fortement bid-stacked (double imbalance)",
+      "priority": 10,
+      "enabled": true,
+
+      "conditions": {
+        "and": [
+          {
+            "comment": "Next Wall = PUT (support)",
+            "field": "next_wall.side",
+            "operator": "==",
+            "value": "put"
+          },
+          {
+            "comment": "Distance au mur < 5 ticks",
+            "field": "next_wall.dist_ticks",
+            "operator": "<=",
+            "value": 5
+          },
+          {
+            "comment": "Strength du mur élevée",
+            "field": "next_wall.strength",
+            "operator": ">=",
+            "value": 0.70
+          },
+          {
+            "comment": "DOM imbalance 1-3 bid-heavy",
+            "field": "dom_features.imbalance_1_3",
+            "operator": ">=",
+            "value": 0.30
+          },
+          {
+            "comment": "Level 1 imbalance bid-heavy",
+            "field": "level1_imbalance",
+            "operator": ">=",
+            "value": 0.40
+          }
+        ]
+      },
+
+      "entry": {
+        "side": "BUY",
+        "type": "LIMIT",
+        "price_strategy": "next_wall_price",
+        "comment": "LIMIT au prix du wall"
+      },
+
+      "risk_management": {
+        "stop_loss": {
+          "strategy": "fixed_ticks",
+          "ticks": 10
+        },
+        "take_profit": [
+          {
+            "target": 1,
+            "strategy": "fixed_ticks",
+            "ticks": 18,
+            "quantity_percent": 70
+          },
+          {
+            "target": 2,
+            "strategy": "fixed_ticks",
+            "ticks": 30,
+            "quantity_percent": 30
+          }
+        ],
+        "breakeven": {
+          "enabled": true,
+          "trigger_ticks": 10,
+          "offset_ticks": 2
+        }
+      },
+
+      "position_sizing": {
+        "base_size": 1,
+        "confidence_scaling": false
+      },
+
+      "cooldown": {
+        "bars": 3,
+        "same_direction_only": true
+      }
+    },
+
+    {
+      "id": "MQ_08_SHORT_WALL_STACKED",
+      "name": "🎲 MENTHORQ: SHORT Next Wall Call + DOM Stacked",
+      "description": "Next Wall CALL proche avec DOM fortement ask-stacked (double imbalance)",
+      "priority": 10,
+      "enabled": true,
+
+      "conditions": {
+        "and": [
+          {
+            "comment": "Next Wall = CALL (resistance)",
+            "field": "next_wall.side",
+            "operator": "==",
+            "value": "call"
+          },
+          {
+            "comment": "Distance au mur < 5 ticks",
+            "field": "next_wall.dist_ticks",
+            "operator": "<=",
+            "value": 5
+          },
+          {
+            "comment": "Strength du mur élevée",
+            "field": "next_wall.strength",
+            "operator": ">=",
+            "value": 0.70
+          },
+          {
+            "comment": "DOM imbalance 1-3 ask-heavy",
+            "field": "dom_features.imbalance_1_3",
+            "operator": "<=",
+            "value": -0.30
+          },
+          {
+            "comment": "Level 1 imbalance ask-heavy",
+            "field": "level1_imbalance",
+            "operator": "<=",
+            "value": -0.40
+          }
+        ]
+      },
+
+      "entry": {
+        "side": "SELL",
+        "type": "LIMIT",
+        "price_strategy": "next_wall_price",
+        "comment": "LIMIT au prix du wall"
+      },
+
+      "risk_management": {
+        "stop_loss": {
+          "strategy": "fixed_ticks",
+          "ticks": 10
+        },
+        "take_profit": [
+          {
+            "target": 1,
+            "strategy": "fixed_ticks",
+            "ticks": 18,
+            "quantity_percent": 70
+          },
+          {
+            "target": 2,
+            "strategy": "fixed_ticks",
+            "ticks": 30,
+            "quantity_percent": 30
+          }
+        ],
+        "breakeven": {
+          "enabled": true,
+          "trigger_ticks": 10,
+          "offset_ticks": 2
+        }
+      },
+
+      "position_sizing": {
+        "base_size": 1,
+        "confidence_scaling": false
+      },
+
+      "cooldown": {
+        "bars": 3,
+        "same_direction_only": true
+      }
+    }
+  ],
+
+  "metadata": {
+    "created": "2025-10-31",
+    "author": "MIA_IA_SYSTEM",
+    "compatible_with": "ML_READY_v3.1_complete",
+    "pre_calculated_scores": [
+      "battle_navale_signal_strength",
+      "battle_navale_confidence",
+      "menthorq_impact_score",
+      "smart_money_flow",
+      "institutional_pressure",
+      "tick_momentum",
+      "confluence_strength"
+    ],
+    "total_rules": 13,
+    "rule_categories": {
+      "elite": 4,
+      "elite_menthorq": 4,
+      "standard": 2,
+      "opportunist": 2,
+      "scalp": 1
+    },
+    "menthorq_focus": {
+      "total_menthorq_rules": 8,
+      "gex_levels_used": ["near_gex_up", "near_gex_dn", "gex_1-10"],
+      "orderflow_validators": ["smart_money_flow", "institutional_pressure", "level1_imbalance", "dom_features.imbalance_1_3"],
+      "next_wall_rules": 2
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "test_name": "Pressure Strength par Session",
+  "test_date": "2025-12-06T14:30:00",
+  "date_range": ["20251202", "20251203", "20251204", "20251205"],
+  "period_days": 4,
+  "snapshots_total": 144817,
+  "symbols": ["ES", "NQ"],
+
+  "custom_params": {
+    "MIN_PRESSURE_BY_SESSION": {
+      "London": 0.10,
+      "US Morning": 0.03,
+      "US Power Hour": 0.10
+    }
+  },
+
+  "results": {
+    "SANS_FILTRE": {
+      "trades": 124,
+      "wins": 30,
+      "losses": 44,
+      "be": 50,
+      "win_rate": 24.2,
+      "pnl_total": -1300.00,
+      "by_session": {
+        "London": {"trades": 28, "wins": 1, "pnl": -1825.00},
+        "US Morning": {"trades": 51, "wins": 18, "pnl": -2075.00},
+        "US Power Hour": {"trades": 45, "wins": 11, "pnl": 2600.00}
+      }
+    },
+    "AVEC_FILTRE": {
+      "trades": 121,
+      "wins": 31,
+      "losses": 41,
+      "be": 49,
+      "win_rate": 25.6,
+      "pnl_total": -175.00,
+      "rejected_by_pressure": 236,
+      "by_session": {
+        "London": {"trades": 25, "wins": 2, "pnl": -700.00},
+        "US Morning": {"trades": 51, "wins": 18, "pnl": -2075.00},
+        "US Power Hour": {"trades": 45, "wins": 11, "pnl": 2600.00}
+      }
+    }
+  },
+
+  "comparison": {
+    "pnl_diff": 1125.00,
+    "win_rate_diff": 1.4,
+    "trades_diff": -3,
+    "wins_diff": 1,
+    "losses_diff": -3
+  },
+
+  "verdict": "VALIDATED",
+  "applied_to_production": true,
+  "applied_date": "2025-12-06"
+}

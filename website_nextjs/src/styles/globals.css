@@ -1,0 +1,240 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════════
+   BASE STYLES
+═══════════════════════════════════════════════════════════════ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-dark text-light font-sans antialiased;
+  }
+  
+  ::selection {
+    @apply bg-mia-cyan/30 text-white;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-dark-200;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-dark-400 rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-mia-gold/50;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   COMPONENT STYLES
+═══════════════════════════════════════════════════════════════ */
+@layer components {
+  /* Glassmorphism card */
+  .glass {
+    @apply bg-dark-200/60 backdrop-blur-xl border border-white/10 rounded-2xl;
+  }
+  
+  .glass-hover {
+    @apply transition-all duration-300;
+  }
+  
+  .glass-hover:hover {
+    @apply border-mia-cyan/30 shadow-glow-cyan translate-y-[-4px];
+  }
+  
+  /* Gradient text */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-white via-mia-cyan to-mia-gold;
+  }
+  
+  .text-gradient-gold {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-mia-gold-light via-mia-gold to-mia-gold-dark;
+  }
+  
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold 
+           transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 
+           focus:ring-offset-dark disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-primary {
+    @apply btn bg-gradient-to-r from-mia-cyan to-mia-cyan-dark text-dark 
+           hover:shadow-glow-cyan hover:translate-y-[-2px] focus:ring-mia-cyan;
+  }
+  
+  .btn-secondary {
+    @apply btn bg-transparent border-2 border-white/20 text-white 
+           hover:border-mia-cyan hover:text-mia-cyan focus:ring-mia-cyan;
+  }
+  
+  .btn-gold {
+    @apply btn bg-gradient-to-r from-mia-gold to-mia-gold-dark text-dark 
+           hover:shadow-glow-gold hover:translate-y-[-2px] focus:ring-mia-gold;
+  }
+  
+  /* Section styles */
+  .section {
+    @apply py-20 md:py-28 px-4 md:px-8;
+  }
+  
+  .section-title {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-4;
+  }
+  
+  .section-subtitle {
+    @apply text-lg md:text-xl text-light-400 text-center max-w-2xl mx-auto mb-12;
+  }
+  
+  /* Container */
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  /* Logo glow effect */
+  .logo-glow {
+    @apply rounded-full border-[3px] border-mia-gold/70;
+    box-shadow: 
+      0 0 40px rgba(212, 175, 55, 0.4),
+      0 0 80px rgba(0, 180, 220, 0.2);
+    animation: glow 4s ease-in-out infinite;
+  }
+  
+  /* Ring animation */
+  .ring-pulse {
+    @apply absolute rounded-full border border-mia-gold/40;
+    animation: ringPulse 3s ease-in-out infinite;
+  }
+  
+  @keyframes ringPulse {
+    0%, 100% { 
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 0.6;
+    }
+    50% { 
+      transform: translate(-50%, -50%) scale(1.05);
+      opacity: 1;
+    }
+  }
+  
+  /* Feature card */
+  .feature-card {
+    @apply glass p-6 md:p-8 text-center transition-all duration-300;
+  }
+  
+  .feature-card:hover {
+    @apply border-mia-cyan/30 translate-y-[-8px];
+    box-shadow: 
+      0 20px 40px rgba(0, 0, 0, 0.3),
+      0 0 40px rgba(0, 212, 170, 0.1);
+  }
+  
+  /* Pricing card */
+  .pricing-card {
+    @apply glass p-8 text-center relative;
+  }
+  
+  .pricing-card-highlight {
+    @apply pricing-card border-mia-cyan shadow-glow-cyan;
+  }
+  
+  /* FAQ item */
+  .faq-item {
+    @apply glass mb-4 overflow-hidden;
+  }
+  
+  .faq-question {
+    @apply w-full flex items-center justify-between p-5 text-left font-medium 
+           hover:text-mia-cyan transition-colors;
+  }
+  
+  .faq-answer {
+    @apply px-5 pb-5 text-light-400;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITY STYLES
+═══════════════════════════════════════════════════════════════ */
+@layer utilities {
+  /* Animation delays */
+  .animation-delay-100 { animation-delay: 0.1s; }
+  .animation-delay-200 { animation-delay: 0.2s; }
+  .animation-delay-300 { animation-delay: 0.3s; }
+  .animation-delay-400 { animation-delay: 0.4s; }
+  .animation-delay-500 { animation-delay: 0.5s; }
+  
+  /* Background mesh gradient */
+  .bg-mesh {
+    background-image: 
+      radial-gradient(at 20% 20%, rgba(0, 180, 220, 0.15) 0%, transparent 50%),
+      radial-gradient(at 80% 80%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+      radial-gradient(at 50% 50%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
+  }
+  
+  /* Grid pattern overlay */
+  .bg-grid {
+    background-image: 
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+  
+  /* Mask gradient */
+  .mask-gradient {
+    mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+  }
+  
+  /* Hide scrollbar */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CUSTOM ANIMATIONS
+═══════════════════════════════════════════════════════════════ */
+@keyframes glow {
+  0%, 100% { 
+    box-shadow: 
+      0 0 40px rgba(212, 175, 55, 0.4),
+      0 0 80px rgba(0, 180, 220, 0.2);
+    border-color: rgba(212, 175, 55, 0.7);
+  }
+  50% { 
+    box-shadow: 
+      0 0 60px rgba(212, 175, 55, 0.6),
+      0 0 120px rgba(0, 180, 220, 0.3);
+    border-color: rgba(212, 175, 55, 0.9);
+  }
+}
+
+/* Gradient animation for hero background */
+@keyframes gradientMove {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.1) rotate(5deg); }
+}
+
+.animate-gradient-move {
+  animation: gradientMove 15s ease-in-out infinite;
+}

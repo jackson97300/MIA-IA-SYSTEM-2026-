@@ -142,6 +142,97 @@ class PostMortemAnalyzer:
 
         logger.info("✅ PostMortemAnalyzer initialisé")
 
+    def analyze_trade(self, symbol: str, direction: str, entry_price: float,
+                     exit_price: float, pnl: float, exit_reason: str,
+                     mae: float = 0.0, mfe: float = 0.0) -> Dict[str, Any]:
+        """
+        Analyse un trade après fermeture (synchrone, pour intégration simple)
+        
+        Args:
+            symbol: Symbole tradé (ES, NQ, RTY)
+            direction: Direction du trade (LONG/SHORT)
+            entry_price: Prix d'entrée
+            exit_price: Prix de sortie
+            pnl: P&L en dollars
+            exit_reason: Raison de sortie (TP Hit, SL Hit, Manual, etc.)
+            mae: Max Adverse Excursion (perte max pendant trade)
+            mfe: Max Favorable Excursion (profit max pendant trade)
+            
+        Returns:
+            Dict avec analyse du trade et insights
+        """
+        try:
+            # Déterminer le résultat du trade
+            outcome = self._determine_trade_outcome(pnl)
+            
+            # Calculer métriques
+            tick_size = 0.25 if symbol.startswith("ES") else 0.25  # ES/NQ tick size
+            tick_value = 12.50 if symbol.startswith("ES") else 5.00
+            
+            pnl_ticks = (exit_price - entry_price) / tick_size
+            if direction == "SHORT":
+                pnl_ticks = -pnl_ticks
+                
+            # Analyse selon le type de résultat
+            analysis = {
+                'trade_id': f"{symbol}_{int(time.time())}",
+                'symbol': symbol,
+                'direction': direction,
+                'outcome': outcome.value,
+                'pnl': pnl,
+                'pnl_ticks': pnl_ticks,
+                'entry_price': entry_price,
+                'exit_price': exit_price,
+                'exit_reason': exit_reason,
+                'mae': mae,
+                'mfe': mfe,
+                'timestamp': datetime.now(timezone.utc).isoformat()
+            }
+            
+            # Insights basés sur MAE/MFE
+            insights = []
+            
+            if outcome == TradeOutcome.WIN:
+                # Trade gagnant
+                if mfe > 0 and pnl < mfe * 0.6:
+                    insights.append("EXIT_TOO_EARLY: Profit capturé < 60% du MFE")
+                    analysis['efficiency'] = (pnl / mfe * 100) if mfe > 0 else 100
+                else:
+                    insights.append("EXIT_OPTIMAL: Bon timing de sortie")
+                    analysis['efficiency'] = 100 if mfe == 0 else min(100, pnl / mfe * 100)
+                    
+            elif outcome == TradeOutcome.LOSS:
+                # Trade perdant
+                if mae > 0 and abs(pnl) < mae * 0.8:
+                    insights.append("STOP_SAVED_MONEY: SL a limité les pertes")
+                    analysis['stop_effectiveness'] = ((mae - abs(pnl)) / mae * 100) if mae > 0 else 0
+                    
+                if 'SL' in exit_reason.upper():
+                    # Vérifier si le stop était justifié
+                    if mfe > abs(pnl) * 0.5:
+                        insights.append("STOP_TOO_TIGHT: Trade était en profit avant SL")
+                    else:
+                        insights.append("STOP_JUSTIFIED: Direction incorrecte")
+            else:
+                # Breakeven
+                insights.append("BREAKEVEN: Position fermée sans P&L significatif")
+                
+            analysis['insights'] = insights
+            analysis['summary'] = insights[0] if insights else "Trade analysé"
+            
+            # Log
+            logger.info(f"📊 [{symbol}] Post-mortem: {analysis['summary']}")
+            
+            return analysis
+            
+        except Exception as e:
+            logger.error(f"❌ Erreur analyze_trade: {e}")
+            return {
+                'error': str(e),
+                'symbol': symbol,
+                'summary': f"Erreur analyse: {e}"
+            }
+
     def start_post_mortem_tracking(self,
                                   trade_id: str,
                                   trade_result: Dict[str, Any],
@@ -152,6 +243,8 @@ class PostMortemAnalyzer:
 
         ✅ MODIFIÉ Phase 3.5: Accepte maintenant Dict[str, Any] (ML_READY) OU MarketData
         À appeler depuis launch_ml_v3_production.py dans _close_position()
+
+        ✅ CORRIGÉ 17/11: Envoie aussi une analyse immédiate basée sur les données disponibles
         """
         try:
             # ═══════════════════════════════════════════════════════════════
@@ -177,10 +270,14 @@ class PostMortemAnalyzer:
             pnl = trade_result.get('pnl', 0.0)
             outcome = self._determine_trade_outcome(pnl)
 
+            # ✅ CORRIGÉ 17/11: Envoyer analyse immédiate basée sur données disponibles
+            # (sans attendre 12-20 minutes de tracking)
+            asyncio.create_task(self._send_immediate_analysis(trade_id, trade_result, market_data, outcome))
+
             # Configuration tracking
             config = self.tracking_configs[outcome]
 
-            # Créer task async
+            # Créer task async pour tracking long terme (optionnel)
             tracking_task = asyncio.create_task(
                 self._execute_post_mortem_tracking(
                     trade_id, trade_result, market_data, config
@@ -201,6 +298,25 @@ class PostMortemAnalyzer:
                                           config: Dict[str, Any]):
         """Exécute le tracking post-mortem complet"""
 
+        # ✅ PATCH: Wrapper global pour éviter exception non récupérée
+        try:
+            await self._execute_post_mortem_tracking_internal(
+                trade_id, trade_result, initial_market_data, config
+            )
+        except Exception as e:
+            # Log sans reraise pour éviter "Task exception was never retrieved"
+            try:
+                logger.error(f"❌ Erreur critique post-mortem tracking {trade_id}: {e}")
+            except:
+                pass  # Ignorer si logger échoue pendant shutdown
+
+    async def _execute_post_mortem_tracking_internal(self,
+                                          trade_id: str,
+                                          trade_result: Dict[str, Any],
+                                          initial_market_data: MarketData,
+                                          config: Dict[str, Any]):
+        """Exécute le tracking post-mortem complet (internal wrapper)"""
+
         tracking_start = datetime.now(timezone.utc)
         duration_minutes = config['duration_minutes']
 
@@ -213,7 +329,9 @@ class PostMortemAnalyzer:
             price_at_exit=trade_result.get('exit_price', 0.0),
             max_favorable_price=trade_result.get('exit_price', 0.0),
             max_adverse_price=trade_result.get('exit_price', 0.0),
-            final_price=0.0
+            final_price=0.0,
+            time_to_max_favorable=0,  # ✅ PATCH: Initialisé à 0, sera mis à jour pendant tracking
+            time_to_max_adverse=0     # ✅ PATCH: Initialisé à 0, sera mis à jour pendant tracking
         )
 
         # Notification immédiate
@@ -238,7 +356,13 @@ class PostMortemAnalyzer:
                 logger.error(f"❌ Erreur pendant tracking {trade_id}: {e}")
 
         # Finaliser tracking
-        tracking_data.final_price = current_data.close if current_data else tracking_data.price_at_exit
+        # ✅ CORRIGÉ 17/11: Gérer le cas où current_data est None (pas de données marché disponibles)
+        if current_data:
+            tracking_data.final_price = current_data.close
+        else:
+            # Si pas de données marché, utiliser le prix de sortie
+            tracking_data.final_price = tracking_data.price_at_exit
+            logger.warning(f"⚠️ Post-mortem {trade_id}: Pas de données marché disponibles, utilisation prix de sortie")
 
         # Analyser résultats
         analysis = self._perform_complete_analysis(trade_result, tracking_data)
@@ -438,56 +562,83 @@ class PostMortemAnalyzer:
                                          trade_id: str,
                                          trade_result: Dict[str, Any],
                                          tracking_data: PostTradeTracking):
-        """Notification immédiate début tracking"""
+        """
+        Notification immédiate début tracking
 
-        if not self.discord:
-            return
+        ❌ DÉSACTIVÉ 17/11: Post-mortem enregistré mais pas envoyé à Discord
+        Éviter doublons avec TRADE FERMÉ principal
+        """
+        # ❌ DÉSACTIVÉ: Éviter doublons avec TRADE FERMÉ principal
+        # Les données sont toujours enregistrées pour analyse future
+        return
 
-        try:
-            outcome_emoji = {
-                TradeOutcome.WIN: "✅",
-                TradeOutcome.LOSS: "❌",
-                TradeOutcome.BREAKEVEN: "⚖️"
-            }
-
-            message = f"{outcome_emoji[tracking_data.trade_outcome]} TRADE FERMÉ: {trade_result.get('exit_reason', 'UNKNOWN')}\n"
-            message += f"📊 Analyse post-trade en cours...\n"
-            message += f"⏱️ Suivi: {tracking_data.tracking_duration_minutes} minutes\n"
-            message += f"💰 P&L: ${trade_result.get('pnl', 0.0):.2f}"
-
-            await self.discord.send_notification(
-                message,
-                notification_type=self.discord.NotificationType.INFO,
-                channel='trades'
-            )
-
-        except Exception as e:
-            logger.error(f"❌ Erreur notification immédiate: {e}")
+        # Code original commenté ci-dessous pour référence:
+        # if not self.discord:
+        #     return
+        #
+        # try:
+        #     outcome_emoji = {
+        #         TradeOutcome.WIN: "✅",
+        #         TradeOutcome.LOSS: "❌",
+        #         TradeOutcome.BREAKEVEN: "⚖️"
+        #     }
+        #
+        #     message = f"{outcome_emoji[tracking_data.trade_outcome]} TRADE FERMÉ: {trade_result.get('exit_reason', 'UNKNOWN')}\n"
+        #     message += f"📊 Analyse post-trade en cours...\n"
+        #     message += f"⏱️ Suivi: {tracking_data.tracking_duration_minutes} minutes\n"
+        #     message += f"💰 P&L: ${trade_result.get('pnl', 0.0):.2f}"
+        #
+        #     await self.discord.send_custom_message(
+        #         channel_type='trade_executions',
+        #         title='📊 Trade Closure',
+        #         description=message,
+        #         color=0x3B82F6,  # Bleu info
+        #         urgent=False
+        #     )
+        #
+        # except Exception as e:
+        #     logger.error(f"❌ Erreur notification immédiate: {e}")
 
     async def _send_final_analysis_notification(self, analysis: PostMortemAnalysis):
-        """Notification finale avec analyse complète"""
+        """
+        Notification finale avec analyse complète
 
-        if not self.discord:
-            return
+        ❌ DÉSACTIVÉ 17/11: Post-mortem enregistré mais pas envoyé à Discord
+        Éviter doublons avec TRADE FERMÉ principal
+        """
+        # ❌ DÉSACTIVÉ: Éviter doublons avec TRADE FERMÉ principal
+        # Les données sont toujours enregistrées pour analyse future
+        return
 
-        try:
-            # Construire message selon outcome
-            if analysis.trade_outcome == TradeOutcome.WIN:
-                message = self._format_winning_trade_message(analysis)
-            elif analysis.trade_outcome == TradeOutcome.LOSS:
-                message = self._format_losing_trade_message(analysis)
-            else:
-                message = self._format_breakeven_trade_message(analysis)
-
-            await self.discord.send_notification(
-                message,
-                notification_type=self.discord.NotificationType.INFO,
-                channel='trades',
-                urgent=True
-            )
-
-        except Exception as e:
-            logger.error(f"❌ Erreur notification finale: {e}")
+        # Code original commenté ci-dessous pour référence:
+        # if not self.discord:
+        #     return
+        #
+        # try:
+        #     outcome_emoji = {
+        #         TradeOutcome.WIN: "✅",
+        #         TradeOutcome.LOSS: "❌",
+        #         TradeOutcome.BREAKEVEN: "⚖️"
+        #     }
+        #
+        #     if analysis.trade_outcome == TradeOutcome.WIN:
+        #         message = self._format_winning_trade_message(analysis)
+        #     elif analysis.trade_outcome == TradeOutcome.LOSS:
+        #         message = self._format_losing_trade_message(analysis)
+        #     else:
+        #         message = self._format_breakeven_trade_message(analysis)
+        #
+        #     color = 0x10B981 if analysis.trade_outcome == TradeOutcome.WIN else 0xEF4444
+        #     await self.discord.send_custom_message(
+        #         channel_type='trade_executions',
+        #         title=f'{outcome_emoji[analysis.trade_outcome]} Post-Mortem Analysis',
+        #         description=message,
+        #         color=color,
+        #         urgent=True
+        #     )
+        #
+        # except Exception as e:
+        #     logger.error(f"❌ Erreur notification finale: {e}")
 
     def _format_winning_trade_message(self, analysis: PostMortemAnalysis) -> str:
         """Format message pour trade gagnant"""
@@ -554,9 +705,45 @@ class PostMortemAnalyzer:
 
     async def _get_current_market_data(self) -> Optional[MarketData]:
         """Obtient données marché actuelles"""
-        # À implémenter selon votre source de données
-        # Placeholder pour maintenant
+        # ✅ CORRIGÉ 17/11: Placeholder - À implémenter selon votre source de données
+        # Pour l'instant, retourne None car le tracking long terme nécessite une source de données continue
+        # L'analyse immédiate est envoyée via _send_immediate_analysis()
         return None
+
+    async def _send_immediate_analysis(self,
+                                     trade_id: str,
+                                     trade_result: Dict[str, Any],
+                                     market_data: MarketData,
+                                     outcome: TradeOutcome):
+        """Envoie une analyse immédiate basée sur les données disponibles (sans tracking long terme)"""
+        try:
+            if not self.discord:
+                return
+
+            # Créer tracking data minimal
+            tracking_data = PostTradeTracking(
+                trade_id=trade_id,
+                trade_outcome=outcome,
+                tracking_start_time=datetime.now(timezone.utc),
+                tracking_duration_minutes=0,  # Immédiat
+                price_at_exit=trade_result.get('exit_price', 0.0),
+                max_favorable_price=trade_result.get('exit_price', 0.0),  # Pas de tracking, utiliser exit
+                max_adverse_price=trade_result.get('exit_price', 0.0),    # Pas de tracking, utiliser exit
+                final_price=trade_result.get('exit_price', 0.0),
+                time_to_max_favorable=0,
+                time_to_max_adverse=0
+            )
+
+            # Analyser avec données disponibles
+            analysis = self._perform_complete_analysis(trade_result, tracking_data)
+
+            # Envoyer notification
+            await self._send_final_analysis_notification(analysis)
+
+            logger.info(f"✅ Post-mortem analyse immédiate envoyée: {trade_id}")
+
+        except Exception as e:
+            logger.error(f"❌ Erreur analyse immédiate post-mortem: {e}")
 
 
 class PatternTracker:

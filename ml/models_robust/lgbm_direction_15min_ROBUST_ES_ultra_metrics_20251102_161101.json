@@ -1,0 +1,23 @@
+{
+  "accuracy": 0.5799812909260992,
+  "f1_macro": 0.38117402222533636,
+  "mode": "ultra",
+  "n_features": 100,
+  "best_params": {
+    "objective": "multiclass",
+    "num_class": 3,
+    "metric": "multi_logloss",
+    "boosting_type": "gbdt",
+    "n_estimators": 1000,
+    "verbose": -1,
+    "random_state": 42,
+    "learning_rate": 0.0997742689168273,
+    "max_depth": 6,
+    "num_leaves": 61,
+    "min_data_in_leaf": 145,
+    "feature_fraction": 0.8623800905716617,
+    "bagging_fraction": 0.8364881302341646,
+    "lambda_l1": 0.15021211625687325,
+    "lambda_l2": 4.672643025789153
+  }
+}

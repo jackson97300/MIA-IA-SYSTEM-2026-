@@ -14,10 +14,98 @@ logger = logging.getLogger(__name__)
 
 class EnhancedDataValidator:
     """Validateur de données enrichi pour le système MIA IA"""
-    
-    def __init__(self, base_dir: str = "."):
+
+    def __init__(self, base_dir: str = ".", max_spread_ticks: int = 20):
         self.base_dir = base_dir
-        
+        self.max_spread_ticks = max_spread_ticks  # Seuil spread anormal
+
+    def validate(self, snapshot: Dict[str, Any]) -> Tuple[bool, str]:
+        """
+        Valide un snapshot en temps réel (appelé depuis la boucle principale).
+
+        Vérifie:
+        - Présence des champs obligatoires
+        - Cohérence des prix (ask >= bid)
+        - Spread anormal (< max_spread_ticks)
+        - VIX valide (0 < VIX < 100)
+        - Prix positifs
+
+        Args:
+            snapshot: Dict contenant les données marché temps réel
+
+        Returns:
+            (is_valid, reason)
+            - is_valid: True si snapshot valide, False sinon
+            - reason: "OK" si valide, sinon raison du rejet
+        """
+        # 1. Vérifier champs obligatoires
+        required_fields = [
+            't_ms', 'mid', 'best_bid', 'best_ask', 'vwap',
+            'delta', 'volume', 'vix', 'session_id'
+            # 'tick_size' retiré car pas fourni par dumper C++ (sera déduit du symbol)
+        ]
+
+        missing = [f for f in required_fields if f not in snapshot]
+        if missing:
+            return False, f"Champs manquants: {', '.join(missing)}"
+
+        # 2. Vérifier cohérence prix
+        try:
+            best_bid = float(snapshot.get('best_bid', 0))
+            best_ask = float(snapshot.get('best_ask', 0))
+            mid = float(snapshot.get('mid', 0))
+        except (ValueError, TypeError) as e:
+            return False, f"Prix non numériques: {e}"
+
+        # 2a. Prix positifs
+        if best_bid <= 0 or best_ask <= 0 or mid <= 0:
+            return False, f"Prix nuls/négatifs: bid={best_bid}, ask={best_ask}, mid={mid}"
+
+        # 2b. Ask >= Bid (cohérence marché)
+        if best_ask < best_bid:
+            return False, f"Prix incohérent: Ask {best_ask:.2f} < Bid {best_bid:.2f}"
+
+        # 3. Vérifier spread anormal
+        try:
+            # Déduire tick_size depuis le symbole si pas fourni
+            symbol = snapshot.get('sym', '')
+            if 'ES' in symbol:
+                default_tick_size = 0.25  # ES = 0.25 points
+            elif 'NQ' in symbol:
+                default_tick_size = 0.25  # NQ = 0.25 points
+            elif 'RTY' in symbol:
+                default_tick_size = 0.10  # RTY = 0.10 points
+            else:
+                default_tick_size = 0.25  # Défaut
+
+            tick_size = float(snapshot.get('tick_size', default_tick_size))
+            if tick_size <= 0:
+                return False, f"tick_size invalide: {tick_size}"
+
+            spread_ticks = (best_ask - best_bid) / tick_size
+
+            if spread_ticks > self.max_spread_ticks:
+                return False, f"Spread anormal: {spread_ticks:.0f} ticks (max {self.max_spread_ticks})"
+
+        except (ValueError, TypeError, ZeroDivisionError) as e:
+            return False, f"Erreur calcul spread: {e}"
+
+        # 4. Vérifier VIX valide
+        vix = snapshot.get('vix', -1)
+        if not isinstance(vix, (int, float)):
+            return False, f"VIX non numérique: {type(vix).__name__}"
+
+        if not (0 < vix < 100):
+            return False, f"VIX hors plage: {vix} (doit être 0-100)"
+
+        # 5. Vérifier session_id présent
+        session_id = snapshot.get('session_id', '')
+        if not session_id or not isinstance(session_id, str):
+            return False, f"session_id invalide: '{session_id}'"
+
+        # Toutes les validations passées
+        return True, "OK"
+
     def get_month_name(self, month_num: str) -> str:
         """Convertit le numéro de mois en nom français"""
         month_names = {
@@ -26,15 +114,15 @@ class EnhancedDataValidator:
             "09": "SEPTEMBRE", "10": "OCTOBRE", "11": "NOVEMBRE", "12": "DECEMBRE"
         }
         return month_names.get(month_num, "INCONNU")
-    
+
     def get_organized_data_path(self, ymd: str) -> str:
         """Génère le chemin organisé pour les données"""
         year = ymd[:4]
         month_num = ymd[4:6]
         month_name = self.get_month_name(month_num)
-        
+
         return os.path.join(self.base_dir, "DATA_SIERRA_CHART", f"DATA_{year}", month_name, ymd)
-    
+
     def validate_vva_structure(self, file_path: str) -> Dict[str, Any]:
         """Valide la structure VVA (actuel et précédent)"""
         result = {
@@ -45,7 +133,7 @@ class EnhancedDataValidator:
             "previous_fields": [],
             "errors": []
         }
-        
+
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 lines_checked = 0
@@ -53,16 +141,16 @@ class EnhancedDataValidator:
                     line = line.strip()
                     if not line:
                         continue
-                    
+
                     try:
                         data = json.loads(line)
                         lines_checked += 1
-                        
+
                         # Vérifier les champs VVA actuels
                         if 'vah' in data or 'val' in data or 'vpoc' in data:
                             result["has_current"] = True
                             result["current_fields"] = [k for k in data.keys() if k in ['vah', 'val', 'vpoc', 'vah_prev', 'val_prev', 'vpoc_prev']]
-                        
+
                         # VVA previous
                         if "pvah" in data and "pval" in data and "ppoc" in data:
                             try:
@@ -73,20 +161,20 @@ class EnhancedDataValidator:
                                     errors.append(f"Invalid VVA previous order: pval={pval}, ppoc={ppoc}, pvah={pvah}")
                             except (ValueError, TypeError):
                                 errors.append("Invalid VVA previous values")
-                        
+
                         if lines_checked >= 5:  # Vérifier les 5 premières lignes
                             break
-                            
+
                     except json.JSONDecodeError as e:
                         result["errors"].append(f"JSON invalide ligne {lines_checked + 1}: {e}")
-                
+
                 result["valid"] = result["has_current"] and len(result["errors"]) == 0
-                
+
         except Exception as e:
             result["errors"].append(f"Erreur lecture: {e}")
-        
+
         return result
-    
+
     def validate_menthorq_structure(self, file_path: str) -> Dict[str, Any]:
         """Valide la structure MenthorQ (gamma, blind spots, correlation)"""
         result = {
@@ -104,7 +192,7 @@ class EnhancedDataValidator:
             "correlation_pairs": [],
             "errors": []
         }
-        
+
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 lines_checked = 0
@@ -112,70 +200,70 @@ class EnhancedDataValidator:
                     line = line.strip()
                     if not line:
                         continue
-                    
+
                     try:
                         data = json.loads(line)
                         lines_checked += 1
-                        
+
                         # Vérifier le type de données MenthorQ
                         if data.get('type') == 'menthorq_level':
                             level_type = data.get('level_type', '')
-                            
+
                             # Vérifier les niveaux gamma (call/put resistance/support)
                             if 'call' in level_type or 'put' in level_type:
                                 result["has_gamma"] = True
                                 if level_type not in result["gamma_types"]:
                                     result["gamma_types"].append(level_type)
-                            
+
                             # Vérifier les blind spots
                             if 'blind_spot' in level_type:
                                 result["has_blind_spots"] = True
                                 if level_type not in result["blind_types"]:
                                     result["blind_types"].append(level_type)
-                            
+
                             # Vérifier HVL
                             if 'hvl' in level_type:
                                 result["has_hvl"] = True
-                            
+
                             # Vérifier GEX
                             if 'gex' in level_type:
                                 result["has_gex"] = True
                                 if level_type not in result["gex_types"]:
                                     result["gex_types"].append(level_type)
-                            
+
                             # Vérifier call/put
                             if 'call' in level_type or 'put' in level_type:
                                 result["has_call_put"] = True
-                            
+
                             # Vérifier min/max
                             if 'min' in level_type or 'max' in level_type:
                                 result["has_min_max"] = True
-                        
+
                         # Vérifier la correlation
                         if data.get('type') == 'correlation':
                             result["has_correlation"] = True
                             if 'cc' in data:  # correlation coefficient
                                 result["correlation_pairs"].append(f"cc={data['cc']}")
-                        
+
                         # Debug: afficher le type détecté (dans un champ séparé, pas dans errors)
                         if lines_checked <= 5:  # Afficher les 5 premiers types pour debug
                             if "debug_info" not in result:
                                 result["debug_info"] = []
                             result["debug_info"].append(f"ligne {lines_checked}: type={data.get('type')}, level_type={data.get('level_type', 'N/A')}")
-                        
+
                         if lines_checked >= 50:  # Vérifier plus de lignes pour MenthorQ
                             break
-                            
+
                     except json.JSONDecodeError as e:
                         result["errors"].append(f"JSON invalide ligne {lines_checked + 1}: {e}")
-                
+
                 result["valid"] = (result["has_gamma"] or result["has_blind_spots"] or result["has_correlation"] or result["has_hvl"] or result["has_gex"]) and len(result["errors"]) == 0
-                
+
         except Exception as e:
             result["errors"].append(f"Erreur lecture: {e}")
-        
+
         return result
-    
+
     def validate_orderflow_structure(self, file_path: str) -> Dict[str, Any]:
         """Valide la structure Order Flow (NBCV)"""
         result = {
@@ -187,7 +275,7 @@ class EnhancedDataValidator:
             "volume_fields": [],
             "errors": []
         }
-        
+
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 lines_checked = 0
@@ -195,40 +283,40 @@ class EnhancedDataValidator:
                     line = line.strip()
                     if not line:
                         continue
-                    
+
                     try:
                         data = json.loads(line)
                         lines_checked += 1
-                        
+
                         # Vérifier les champs delta
                         delta_fields = [k for k in data.keys() if 'delta' in k.lower()]
                         if delta_fields:
                             result["has_delta"] = True
                             result["delta_fields"] = delta_fields
-                        
+
                         # Vérifier les champs volume
                         volume_fields = [k for k in data.keys() if 'volume' in k.lower() or 'vol' in k.lower()]
                         if volume_fields:
                             result["has_volume"] = True
                             result["volume_fields"] = volume_fields
-                        
+
                         # Vérifier la pression
                         if 'pressure' in data or 'ask_volume' in data or 'bid_volume' in data:
                             result["has_pressure"] = True
-                        
+
                         if lines_checked >= 5:
                             break
-                            
+
                     except json.JSONDecodeError as e:
                         result["errors"].append(f"JSON invalide ligne {lines_checked + 1}: {e}")
-                
+
                 result["valid"] = (result["has_delta"] or result["has_volume"]) and len(result["errors"]) == 0
-                
+
         except Exception as e:
             result["errors"].append(f"Erreur lecture: {e}")
-        
+
         return result
-    
+
     def validate_vix_structure(self, file_path: str) -> Dict[str, Any]:
         """Valide la structure VIX"""
         result = {
@@ -238,49 +326,49 @@ class EnhancedDataValidator:
             "value_range": {"min": None, "max": None},
             "errors": []
         }
-        
+
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 lines_checked = 0
                 values = []
-                
+
                 for line in f:
                     line = line.strip()
                     if not line:
                         continue
-                    
+
                     try:
                         data = json.loads(line)
                         lines_checked += 1
-                        
+
                         # Vérifier la valeur VIX
                         if 'value' in data or 'vix' in data:
                             result["has_value"] = True
                             vix_value = data.get('value') or data.get('vix')
                             if isinstance(vix_value, (int, float)):
                                 values.append(vix_value)
-                        
+
                         # Vérifier le timestamp
                         if 't' in data or 'timestamp' in data:
                             result["has_timestamp"] = True
-                        
+
                         if lines_checked >= 10:
                             break
-                            
+
                     except json.JSONDecodeError as e:
                         result["errors"].append(f"JSON invalide ligne {lines_checked + 1}: {e}")
-                
+
                 if values:
                     result["value_range"]["min"] = min(values)
                     result["value_range"]["max"] = max(values)
-                
+
                 result["valid"] = result["has_value"] and len(result["errors"]) == 0
-                
+
         except Exception as e:
             result["errors"].append(f"Erreur lecture: {e}")
-        
+
         return result
-    
+
     def validate_unified_structure(self, file_path: str) -> Dict[str, Any]:
         """Valide la structure du fichier unifié"""
         result = {
@@ -295,7 +383,7 @@ class EnhancedDataValidator:
             "has_orderflow": False,
             "errors": []
         }
-        
+
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 lines_checked = 0
@@ -303,54 +391,54 @@ class EnhancedDataValidator:
                     line = line.strip()
                     if not line:
                         continue
-                    
+
                     try:
                         data = json.loads(line)
                         lines_checked += 1
-                        
+
                         # Vérifier les sections principales
                         if 'basedata' in data:
                             result["has_basedata"] = True
-                        
+
                         if 'menthorq_levels' in data or 'menthorq' in data:
                             result["has_menthorq"] = True
-                        
+
                         if 'alerts' in data:
                             result["has_alerts"] = True
-                        
+
                         if 'mia' in data:
                             result["has_mia"] = True
-                        
+
                         if 'vix' in data:
                             result["has_vix"] = True
-                        
+
                         if 'vwap' in data:
                             result["has_vwap"] = True
-                        
+
                         if 'vva' in data:
                             result["has_vva"] = True
-                        
+
                         if 'nbcv' in data or 'orderflow' in data:
                             result["has_orderflow"] = True
-                        
+
                         if lines_checked >= 5:
                             break
-                            
+
                     except json.JSONDecodeError as e:
                         result["errors"].append(f"JSON invalide ligne {lines_checked + 1}: {e}")
-                
+
                 # Pour le fichier unifié, basedata et menthorq sont requis, mais alerts et mia sont optionnels (générés par unifier)
                 result["valid"] = (result["has_basedata"] and result["has_menthorq"]) and len(result["errors"]) == 0
-                
+
         except Exception as e:
             result["errors"].append(f"Erreur lecture: {e}")
-        
+
         return result
-    
+
     def validate_all_files_enhanced(self, ymd: str) -> Dict[str, Any]:
         """Valide tous les fichiers avec vérification de structure"""
         organized_path = self.get_organized_data_path(ymd)
-        
+
         results = {
             "valid": True,
             "date": ymd,
@@ -365,48 +453,58 @@ class EnhancedDataValidator:
                 "critical_issues": []
             }
         }
-        
-        # Fichiers à valider avec leurs validateurs spécifiques
+
+        # Fichiers à valider avec leurs validateurs spécifiques (date dynamique)
         files_to_validate = {
-            "CHART_3/chart_3_vva_20250918.jsonl": ("vva", self.validate_vva_structure),
-            "CHART_3/chart_3_nbcv_20250918.jsonl": ("orderflow", self.validate_orderflow_structure),
-            "CHART_3/chart_3_vix_20250918.jsonl": ("vix", self.validate_vix_structure),
-            "CHART_10/chart_10_menthorq_20250918.jsonl": ("menthorq", self.validate_menthorq_structure),
-            "unified_20250918.jsonl": ("unified", self.validate_unified_structure)
+            f"CHART_3/chart_3_vva_{ymd}.jsonl": ("vva", self.validate_vva_structure),
+            f"CHART_3/chart_3_nbcv_{ymd}.jsonl": ("orderflow", self.validate_orderflow_structure),
+            f"CHART_3/chart_3_vix_{ymd}.jsonl": ("vix", self.validate_vix_structure),
+            f"CHART_9/chart_9_menthorq_{ymd}.jsonl": ("menthorq", self.validate_menthorq_structure),
+            f"unified_{ymd}.jsonl": ("unified", self.validate_unified_structure)
         }
-        
+
         for file_path, (data_type, validator_func) in files_to_validate.items():
             full_path = os.path.join(organized_path, file_path)
             results["summary"]["files_total"] += 1
-            
+
             # Vérifier existence du fichier
             if not os.path.exists(full_path):
-                results["file_validation"][file_path] = {
-                    "exists": False,
-                    "message": "Fichier manquant"
-                }
-                results["summary"]["critical_issues"].append(f"Fichier manquant: {file_path}")
-                continue
-            
+                # Pour les fichiers unifiés, chercher dans les sous-répertoires
+                if "unified" in file_path:
+                    # Chercher dans CHART_3/unified/ et CHART_9/unified/
+                    for chart in ["CHART_3", "CHART_9"]:
+                        alt_path = os.path.join(organized_path, chart, "unified", f"unified_{ymd}.jsonl")
+                        if os.path.exists(alt_path):
+                            full_path = alt_path
+                            break
+
+                if not os.path.exists(full_path):
+                    results["file_validation"][file_path] = {
+                        "exists": False,
+                        "message": "Fichier manquant"
+                    }
+                    results["summary"]["critical_issues"].append(f"Fichier manquant: {file_path}")
+                    continue
+
             results["file_validation"][file_path] = {
                 "exists": True,
                 "message": "Fichier présent"
             }
             results["summary"]["files_ok"] += 1
-            
+
             # Valider la structure des données
             results["summary"]["structures_total"] += 1
             structure_result = validator_func(full_path)
             results["structure_validation"][data_type] = structure_result
-            
+
             if structure_result["valid"]:
                 results["summary"]["structures_ok"] += 1
             else:
                 results["summary"]["critical_issues"].extend(structure_result.get("errors", []))
                 results["valid"] = False
-        
+
         return results
-    
+
     def print_enhanced_validation_report(self, results: Dict[str, Any]) -> None:
         """Affiche un rapport de validation enrichi"""
         print(f"\n=== RAPPORT DE VALIDATION ENRICHI ===")
@@ -414,21 +512,21 @@ class EnhancedDataValidator:
         print(f"Chemin organisé: {results['organized_path']}")
         print(f"Statut global: {'[OK] VALIDE' if results['valid'] else '[ERREUR] INVALIDE'}")
         print()
-        
+
         print(f"[INFO] RÉSUMÉ FICHIERS:")
         print(f"  - Fichiers présents: {results['summary']['files_ok']}/{results['summary']['files_total']}")
         print(f"  - Structures valides: {results['summary']['structures_ok']}/{results['summary']['structures_total']}")
-        
+
         if results['summary']['critical_issues']:
             print(f"\n[ALERTE] PROBLÈMES CRITIQUES:")
             for issue in results['summary']['critical_issues']:
                 print(f"    [ERREUR] {issue}")
-        
+
         print(f"\n[INFO] VALIDATION DES STRUCTURES:")
         for data_type, validation in results['structure_validation'].items():
             status = "[OK]" if validation['valid'] else "[ERREUR]"
             print(f"\n  {status} {data_type.upper()}:")
-            
+
             if data_type == "vva":
                 print(f"    - VVA Actuel: {'[OK]' if validation['has_current'] else '[ERREUR]'}")
                 print(f"    - VVA Précédent: {'[OK]' if validation['has_previous'] else '[ERREUR]'}")
@@ -436,7 +534,7 @@ class EnhancedDataValidator:
                     print(f"    - Champs actuels: {', '.join(validation['current_fields'])}")
                 if validation['previous_fields']:
                     print(f"    - Champs précédents: {', '.join(validation['previous_fields'])}")
-            
+
             elif data_type == "menthorq":
                 print(f"    - Gamma Levels (Call/Put): {'[OK]' if validation['has_gamma'] else '[ERREUR]'}")
                 print(f"    - Blind Spots: {'[OK]' if validation['has_blind_spots'] else '[ERREUR]'}")
@@ -455,20 +553,20 @@ class EnhancedDataValidator:
                     print(f"    - Correlation: {', '.join(validation['correlation_pairs'])}")
                 if validation.get('debug_info'):
                     print(f"    - Debug (5 premières lignes): {', '.join(validation['debug_info'])}")
-            
+
             elif data_type == "orderflow":
                 print(f"    - Delta: {'[OK]' if validation['has_delta'] else '[ERREUR]'}")
                 print(f"    - Volume: {'[OK]' if validation['has_volume'] else '[ERREUR]'}")
                 print(f"    - Pression: {'[OK]' if validation['has_pressure'] else '[ERREUR]'}")
                 if validation['delta_fields']:
                     print(f"    - Champs Delta: {', '.join(validation['delta_fields'])}")
-            
+
             elif data_type == "vix":
                 print(f"    - Valeur VIX: {'[OK]' if validation['has_value'] else '[ERREUR]'}")
                 print(f"    - Timestamp: {'[OK]' if validation['has_timestamp'] else '[ERREUR]'}")
                 if validation['value_range']['min'] is not None:
                     print(f"    - Plage VIX: {validation['value_range']['min']:.2f} - {validation['value_range']['max']:.2f}")
-            
+
             elif data_type == "unified":
                 print(f"    - Basedata: {'[OK]' if validation['has_basedata'] else '[ERREUR]'}")
                 print(f"    - MenthorQ: {'[OK]' if validation['has_menthorq'] else '[ERREUR]'}")
@@ -478,33 +576,33 @@ class EnhancedDataValidator:
                 print(f"    - VWAP: {'[OK]' if validation['has_vwap'] else '[ERREUR]'}")
                 print(f"    - VVA: {'[OK]' if validation['has_vva'] else '[ERREUR]'}")
                 print(f"    - OrderFlow: {'[OK]' if validation['has_orderflow'] else '[ERREUR]'}")
-            
+
             if validation.get('errors'):
                 print(f"    - Erreurs: {', '.join(validation['errors'])}")
 
 def main():
     """Fonction principale pour tester le validateur enrichi"""
     import argparse
-    
+
     parser = argparse.ArgumentParser(description="Validateur de données enrichi MIA IA")
     parser.add_argument("--date", type=str, default="today", help="Date à valider (YYYYMMDD ou 'today')")
     parser.add_argument("--base-dir", type=str, default=".", help="Répertoire de base")
-    
+
     args = parser.parse_args()
-    
+
     # Résoudre la date
     if args.date.lower() == "today":
         ymd = datetime.datetime.now().strftime("%Y%m%d")
     else:
         ymd = args.date
-    
+
     # Valider
     validator = EnhancedDataValidator(args.base_dir)
     results = validator.validate_all_files_enhanced(ymd)
-    
+
     # Afficher le rapport
     validator.print_enhanced_validation_report(results)
-    
+
     # Code de sortie
     import sys
     sys.exit(0 if results['valid'] else 1)

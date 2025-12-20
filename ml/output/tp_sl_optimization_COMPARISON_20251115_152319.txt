@@ -1,0 +1,70 @@
+================================================================================
+RAPPORT COMPARATIF: TP/SL OPTIMAL ES vs NQ
+================================================================================
+
+## RESULTATS PAR SYMBOLE
+
+### ES (S&P 500)
+
+TP Optimal:      16 ticks
+SL Optimal:      10 ticks
+R:R:             1.60:1
+P&L/trade:       +0.533 ticks
+WinRate:         42.7%
+Profit Factor:   1.12
+Fees:            0.12 ticks
+Tick Value:      $12.5
+
+Sur 1,000 trades:
+  P&L Net: +6,657.64 USD
+
+### NQ (Nasdaq-100)
+
+TP Optimal:      23 ticks
+SL Optimal:      9 ticks
+R:R:             2.56:1
+P&L/trade:       +1.994 ticks
+WinRate:         39.2%
+Profit Factor:   1.42
+Fees:            0.28 ticks
+Tick Value:      $5.0
+
+Sur 1,000 trades:
+  P&L Net: +9,968.24 USD
+
+## COMPARAISON
+
+| Metrique | ES | NQ | Gagnant |
+|----------|----|----|---------|
+| TP Optimal | 16t | 23t | - |
+| SL Optimal | 10t | 9t | - |
+| R:R | 1.60:1 | 2.56:1 | NQ |
+| P&L/trade | +0.533t | +1.994t | NQ |
+| WinRate | 42.7% | 39.2% | ES |
+| P&L 1000 trades | $6,658 | $9,968 | NQ |
+| Objectif +1.0t | NON | OUI | - |
+
+## RECOMMANDATION FINALE
+
+**FOCUS PRINCIPAL: NQ**
+
+- TP Optimal: **23 ticks**
+- SL Optimal: **9 ticks**
+- R:R: **2.56:1**
+- Performance: **+1.994 t/trade**
+
+**Configuration recommandee:**
+
+```python
+# ES:
+tp_ticks_es = 16  # R:R 1.60:1
+sl_ticks_es = 10
+# Performance attendue: +0.533 t/trade
+
+# NQ:
+tp_ticks_nq = 23  # R:R 2.56:1
+sl_ticks_nq = 9
+# Performance attendue: +1.994 t/trade
+```
+
+================================================================================

@@ -125,12 +125,26 @@ class PositionState:
     unrealized_pnl: float = 0.0
     ts: datetime = field(default_factory=utcnow)
 
+# ---- Signal simplifié pour RiskManager ----
+@dataclass
+class TradingSignal:
+    """Signal de trading simplifié pour RiskManager"""
+    timestamp: datetime
+    symbol: str
+    action: str  # 'LONG', 'SHORT', etc.
+    entry_price: float
+    confidence: float = 0.5
+    strategy: str = 'unknown'
+    stop_loss: Optional[float] = None
+    take_profit: Optional[float] = None
+    metadata: dict = field(default_factory=dict)
+
 # Export control
 __all__ = [
     # Enums existants
     'TradingMode', 'Position', 'AutomationStatus',
     # Types de signaux
-    'Side', 'SignalName', 'VIXRegime', 'SignalProbe', 'Decision',
+    'Side', 'SignalName', 'VIXRegime', 'SignalProbe', 'Decision', 'TradingSignal',
     # Types d'exécution
     'ExecutionPlan', 'OrderRequest', 'OrderResult', 'OrderFill', 'PositionState',
     # Utilitaires

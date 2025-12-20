@@ -1,0 +1,14 @@
+/* ui_styles.css — dark theme */
+:root{
+  --bg:#0b1016; --card:#0f1620; --muted:#9fb3c8; --text:#e6eef7;
+  --green:#0fbf84; --red:#ef476f; --amber:#f8c36b; --blue:#4ea8de; --accent:#a78bfa;
+}
+html, body, [data-testid="stAppViewContainer"]{ background:var(--bg)!important; color:var(--text)!important; }
+.page-title{ margin:.25rem 0 .5rem 0; }
+.brand{ font-weight:800; font-size:1.05rem; margin:.2rem 0 .4rem 0; }
+.section-title{ font-weight:800; margin:.6rem 0 .4rem; font-size:1.05rem; color:var(--text); }
+.kpi-card{ background:var(--card); border:1px solid rgba(255,255,255,.06); padding:10px 12px; border-radius:14px; margin:.25rem 0; }
+.kpi-label{ color:var(--muted); font-size:.82rem; }
+.kpi-value{ font-weight:800; font-size:1.05rem; }
+.kpi-value.success{ color:var(--green); } .kpi-value.danger{ color:var(--red); } .kpi-value.info{ color:var(--blue); } .kpi-value.accent{ color:var(--accent); } .kpi-value.neutral{ color:var(--muted); }
+.pill{ display:inline-block; padding:4px 10px; border-radius:999px; font-size:.82rem; font-weight:700; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); color:var(--text); }

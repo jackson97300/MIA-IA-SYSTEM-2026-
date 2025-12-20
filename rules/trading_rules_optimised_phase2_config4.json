@@ -1,0 +1,202 @@
+{
+  "configuration_name": "OPTIMALE_PHASE2_CONFIG4_EXTENDED_HOURS",
+  "version": "1.1.0",
+  "date_created": "2025-11-08",
+  "date_modified": "2025-11-08",
+  "description": "OPTION 2: Config #4 avec heures étendues 17h-22h pour collecter plus de trades (seuils optimaux maintenus)",
+
+  "calibration_mode": {
+    "enabled": false,
+    "description": "Mode production - Toutes les règles actives"
+  },
+
+  "entry_rules": {
+    "strategies": {
+      "enabled": true,
+      "allowed_strategies": ["liquidity_sweep_reversal", "hybrid_strategy"],
+      "description": "Stratégies autorisées pour les entrées"
+    },
+
+    "confluence": {
+      "enabled": true,
+      "min_confluence_es": 0.30,
+      "min_confluence_nq": 0.30,
+      "min_confluence_rty": 0.55,
+      "description": "Seuils de confluence minimale par marché"
+    },
+
+    "smart_money": {
+      "enabled": true,
+      "min_threshold": 0.15,
+      "description": "Seuil minimal Smart Money Flow (valeur absolue)"
+    },
+
+    "menthorq": {
+      "enabled": true,
+      "min_threshold": 0.15,
+      "description": "Seuil minimal MenthorQ (COEUR du système)"
+    },
+
+    "battle_navale": {
+      "enabled": true,
+      "min_threshold": 0.05,
+      "require": true,
+      "description": "Battle Navale requis pour entrée"
+    },
+
+    "pressure": {
+      "enabled": true,
+      "min_threshold": 0.08,
+      "description": "Seuil minimal Pressure Strength"
+    },
+
+    "dom": {
+      "enabled": true,
+      "min_imbalance": 0.10,
+      "require": false,
+      "description": "DOM Imbalance (non requis, mais améliore qualité)"
+    },
+
+    "delta": {
+      "enabled": true,
+      "min_value": 40,
+      "require": false,
+      "description": "Delta minimal (non requis, mais améliore qualité)"
+    },
+
+    "vwap": {
+      "enabled": true,
+      "max_distance_ticks": 500,
+      "description": "Distance maximale au VWAP (évite extrêmes)"
+    },
+
+    "timing": {
+      "enabled": true,
+      "preferred_hours": [17, 18, 19, 20, 21, 22],
+      "stop_hour": 23,
+      "avoid_mid_session": false,
+      "avoid_hours": [],
+      "description": "OPTION 2: Toutes heures 17h-22h pour collecter plus de trades"
+    },
+
+    "position": {
+      "enabled": true,
+      "max_open_positions_total": 1,
+      "max_open_positions_per_symbol": 1,
+      "description": "Limite positions ouvertes"
+    }
+  },
+
+  "exit_rules": {
+    "tp_sl": {
+      "enabled": true,
+      "ES": {
+        "tp_ticks": 24,
+        "sl_ticks": 11,
+        "tick_value": 12.50
+      },
+      "NQ": {
+        "tp_ticks": 18,
+        "sl_ticks": 12,
+        "tick_value": 5.00
+      },
+      "RTY": {
+        "tp_ticks": 10,
+        "sl_ticks": 8,
+        "tick_value": 5.00
+      },
+      "description": "TP/SL par marché (optimisés Phase 2)"
+    },
+
+    "tp_partial": {
+      "enabled": false,
+      "tp_partial_ticks": 7,
+      "partial_size_pct": 0.50,
+      "description": "TP partiel désactivé (dégrade performance selon backtest)"
+    },
+
+    "trailing_stop": {
+      "enabled": false,
+      "trigger_profit_ticks": 10,
+      "trail_distance_ticks": 5,
+      "description": "Trailing stop désactivé"
+    }
+  },
+
+  "risk_management": {
+    "daily_limits": {
+      "enabled": true,
+      "max_trades_per_day": 15,
+      "min_trades_per_day": 6,
+      "max_loss_usd": 500,
+      "max_loss_r": 3,
+      "r_value_usd": 60,
+      "description": "Limites journalières"
+    },
+
+    "streak_protection": {
+      "enabled": true,
+      "vigilance_trigger_losses": 2,
+      "strict_mode_trigger_losses": 3,
+      "stop_trigger_losses": 5,
+      "strict_mode_confluence_boost": 0.10,
+      "description": "Protection contre séries de pertes"
+    },
+
+    "cooldown": {
+      "enabled": true,
+      "after_loss_seconds": 300,
+      "after_win_seconds": 60,
+      "description": "Cooldown entre trades"
+    }
+  },
+
+  "context_rules": {
+    "volatility": {
+      "enabled": false,
+      "description": "Filtres volatilité (désactivés)"
+    },
+
+    "market_hours": {
+      "enabled": true,
+      "rty_enabled": true,
+      "description": "RTY activé"
+    }
+  },
+
+  "ml_weights": {
+    "description": "Poids des features pour calcul de confluence",
+    "weight_smart_money": 0.32,
+    "weight_institutional": 0.25,
+    "weight_battle_navale": 0.13,
+    "weight_menthorq": 0.20,
+    "weight_pressure": 0.10,
+    "validation": "Somme doit être 1.00"
+  },
+
+  "metadata": {
+    "optimization_phase": "Phase 2 - Mode NORMAL",
+    "configs_tested": 50000,
+    "backtest_days": ["2025-11-05", "2025-11-06", "2025-11-07"],
+    "performance_metrics": {
+      "trades_total": 27,
+      "trades_per_day": 9.0,
+      "win_rate": 0.778,
+      "pnl_net_total": 5485.0,
+      "pnl_per_day": 1828.33,
+      "profit_factor": 8.43,
+      "sharpe_ratio": 18.22,
+      "max_drawdown": "N/A",
+      "score_composite": 2.85
+    },
+    "notes": [
+      "✅ OPTION 2 ACTIVÉE: Heures étendues 17h-22h (au lieu de 17-18 + 21h)",
+      "✅ Objectif: Collecter 12-15 trades/jour (au lieu de 9)",
+      "✅ Tous les seuils optimaux MAINTENUS (confluence 0.30, smart money 0.15, etc.)",
+      "⚠️ Win Rate attendu: 60-70% (légèrement inférieur car plus d'heures)",
+      "⚠️ P&L attendu: $1,200-1,500/jour (reste positif)",
+      "🎯 Avantage: Validation plus rapide (2 semaines au lieu de 3)",
+      "🎯 Plan: Si WR < 60% après 3 jours → revenir à heures strictes"
+    ]
+  }
+}

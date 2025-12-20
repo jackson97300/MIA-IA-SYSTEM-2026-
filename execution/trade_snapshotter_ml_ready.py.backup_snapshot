@@ -1,0 +1,776 @@
+#!/usr/bin/env python3
+"""
+MIA_IA_SYSTEM - Trade Snapshotter ML_READY
+Version native ML_READY - Pas de conversion nécessaire
+=======================================================
+
+Version: 3.0 - ML_READY Native
+Date: 2 Novembre 2025
+
+Capture obsessive de données pour chaque moment de trading
+Utilise directement les données ML_READY du dumper G3
+
+RESPONSABILITÉS:
+1. Snapshot PRE-ANALYSE - État marché complet avant stratégies
+2. Snapshot DÉCISION - Processus décision + signal sélectionné
+3. Snapshot EXÉCUTION - Détails ordre et remplissage
+4. Snapshot RÉSULTAT - Outcome complet + P&L
+5. Préparation données ML - Features pour apprentissage
+"""
+
+import time
+import json
+import uuid
+from typing import Dict, List, Optional, Any
+from pathlib import Path
+from datetime import datetime, timezone, timedelta
+from dataclasses import dataclass, asdict
+from enum import Enum
+from core.logger import get_logger
+
+logger = get_logger(__name__)
+
+# === ENUMS ===
+
+class SnapshotType(Enum):
+    """Types de snapshots"""
+    PRE_ANALYSIS = "pre_analysis"
+    DECISION = "decision"
+    EXECUTION = "execution"
+    POSITION_UPDATE = "position_update"
+    FINAL_RESULT = "final_result"
+    REJECTED_SIGNAL = "rejected_signal"  # ✅ PHASE 1.8 : Nouveau type
+
+class TradingMode(Enum):
+    """Modes de trading"""
+    LIVE = "live"
+    PAPER = "paper"
+    BACKTEST = "backtest"
+
+# === MAIN CLASS ===
+
+class TradeSnapshotterMLReady:
+    """
+    Capture complète des données de trading en version ML_READY
+    Pas de conversion - Utilise ml_data directement
+    """
+
+    def __init__(self, base_path: str = "snapshots", mode: TradingMode = TradingMode.PAPER):
+        """
+        Initialisation du snapshotter ML_READY
+
+        Args:
+            base_path: Dossier racine pour les snapshots
+            mode: Mode de trading (live/paper/backtest)
+        """
+        self.base_path = Path(base_path)
+        self.mode = mode
+
+        # Trade ID tracking
+        self.current_trade_id: Optional[str] = None
+        self.trades = {}  # {trade_id: {...}}
+
+        # Snapshots storage
+        self.snapshots = {
+            'pre_analysis': [],
+            'decision': [],
+            'execution': [],
+            'final_result': []
+        }
+
+        # Statistics
+        self.stats = {
+            'total_snapshots': 0,
+            'total_trades': 0,
+            'last_snapshot_time': None
+        }
+
+        # Ensure directories exist
+        self.ensure_directories()
+
+        logger.info(f"✅ TradeSnapshotterMLReady initialisé: {self.base_path} (mode: {mode.value})")
+
+    def ensure_directories(self):
+        """Créer la structure de dossiers"""
+        directories = [
+            self.base_path,
+            self.base_path / "daily",
+            self.base_path / "ml_ready",
+            self.base_path / "archive",
+            self.base_path / "rejected_signals"  # ✅ PHASE 1.8 : Nouveau dossier
+        ]
+
+        for directory in directories:
+            directory.mkdir(parents=True, exist_ok=True)
+
+    def generate_trade_id(self) -> str:
+        """Génère un ID trade unique"""
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        unique_id = str(uuid.uuid4())[:8]
+        return f"TRADE_{timestamp}_{unique_id}"
+
+    # === SNAPSHOT METHODS ===
+
+    def capture_pre_analysis_snapshot(self, ml_data: Dict[str, Any]) -> str:
+        """
+        SNAPSHOT PRE-ANALYSE
+        Capture l'état complet du marché avant analyse des stratégies
+
+        Args:
+            ml_data: Dictionnaire ML_READY complet
+
+        Returns:
+            trade_id: ID unique du trade
+        """
+        start_time = time.perf_counter()
+
+        try:
+            # Générer nouveau trade ID
+            trade_id = self.generate_trade_id()
+            self.current_trade_id = trade_id
+
+            # Extraire symbol (essayer 'sym' en priorité, puis 'symbol')
+            symbol = ml_data.get('sym', ml_data.get('symbol', 'UNKNOWN'))
+
+            # Créer snapshot
+            pre_analysis_snapshot = {
+                'snapshot_id': f"{trade_id}_PRE",
+                'trade_id': trade_id,
+                'snapshot_type': SnapshotType.PRE_ANALYSIS.value,
+                'timestamp': datetime.now(timezone.utc).isoformat(),
+                'mode': self.mode.value,
+
+                # Market data (directement depuis ml_data)
+                'market': {
+                    'symbol': symbol,
+                    'timestamp_ms': ml_data.get('t_ms', 0),
+                    'mid': ml_data.get('mid', 0),
+                    'bid': ml_data.get('best_bid', 0),
+                    'ask': ml_data.get('best_ask', 0),
+                    'spread': ml_data.get('best_ask', 0) - ml_data.get('best_bid', 0),
+                    'volume': ml_data.get('volume', 0),
+                    'high': ml_data.get('high', ml_data.get('mid', 0)),
+                    'low': ml_data.get('low', ml_data.get('mid', 0)),
+                    'open': ml_data.get('open', ml_data.get('mid', 0)),
+                    'close': ml_data.get('close', ml_data.get('mid', 0))
+                },
+
+                # Order Flow
+                'order_flow': {
+                    'delta': ml_data.get('delta', 0),
+                    'cum_delta': ml_data.get('cum_delta_session', 0),
+                    'bid_vol': ml_data.get('bidvol', 0),
+                    'ask_vol': ml_data.get('askvol', 0),
+                    'imbalance': ml_data.get('imbalance', 0),
+                    'trades': ml_data.get('trades', 0)
+                },
+
+                # VWAP
+                'vwap': {
+                    'price': ml_data.get('vwap', 0),
+                    'position': 'above' if ml_data.get('mid', 0) > ml_data.get('vwap', 0) else 'below',
+                    'distance_pct': ((ml_data.get('mid', 0) - ml_data.get('vwap', 0)) / ml_data.get('vwap', 1)) * 100 if ml_data.get('vwap') else 0,
+                    'std1_upper': ml_data.get('vwap_std1_upper', 0),
+                    'std1_lower': ml_data.get('vwap_std1_lower', 0),
+                    'std2_upper': ml_data.get('vwap_std2_upper', 0),
+                    'std2_lower': ml_data.get('vwap_std2_lower', 0)
+                },
+
+                # GEX & Options
+                'gex': {
+                    'nearest_strike': ml_data.get('nearest_gex_strike', 0),
+                    'nearest_gamma_t': ml_data.get('nearest_gex_gamma_t', 0),
+                    'max_strike': ml_data.get('max_gex_strike', 0),
+                    'max_gamma_t': ml_data.get('max_gex_gamma_t', 0),
+                    'dealers_bias': ml_data.get('dealers_bias', 0),
+                    'call_wall': ml_data.get('call_wall', 0),
+                    'put_wall': ml_data.get('put_wall', 0),
+                    'gamma_flip': ml_data.get('gamma_flip', 0)
+                },
+
+                # POC & Value Area
+                'volume_profile': {
+                    'poc': ml_data.get('poc', 0),
+                    'vah': ml_data.get('vah', 0),
+                    'val': ml_data.get('val', 0),
+                    'position_in_range': ml_data.get('position_in_range', 0.5)
+                },
+
+                # Indicators
+                'indicators': {
+                    'atr': ml_data.get('atr', 0),
+                    'vix': ml_data.get('vix', 15),
+                    'bb_upper': ml_data.get('bb_upper', 0),
+                    'bb_lower': ml_data.get('bb_lower', 0),
+                    'bb_width': ml_data.get('bb_width', 0)
+                },
+
+                # Session Context (essayer 'session_id' en priorité, puis 'session')
+                'session': {
+                    'name': ml_data.get('session_id', ml_data.get('session', 'unknown')),
+                    'minutes_in': ml_data.get('session_elapsed_s', ml_data.get('minutes_in_session', 0)) / 60,
+                    'is_open': True  # Assume open si on reçoit des ticks
+                },
+
+                # Bullish Score (si disponible)
+                'bullish_score': ml_data.get('bullish_score', 0.0),
+
+                # Performance
+                'capture_time_ms': 0  # Sera mis à jour
+            }
+
+            # Calcul temps de capture
+            capture_time = (time.perf_counter() - start_time) * 1000
+            pre_analysis_snapshot['capture_time_ms'] = capture_time
+
+            # Stocker
+            self.snapshots['pre_analysis'].append(pre_analysis_snapshot)
+            self.stats['total_snapshots'] += 1
+            self.stats['last_snapshot_time'] = datetime.now()
+
+            # Initialiser trade
+            self.trades[trade_id] = {
+                'trade_id': trade_id,
+                'symbol': symbol,
+                'start_time': datetime.now(),
+                'pre_analysis': pre_analysis_snapshot,
+                'decision': None,
+                'execution': None,
+                'result': None
+            }
+
+            # Sauvegarder snapshot
+            self._save_snapshot_to_file(pre_analysis_snapshot)
+
+            logger.debug(f"📸 Snapshot PRE-ANALYSE capturé: {trade_id} ({capture_time:.2f}ms)")
+
+            return trade_id
+
+        except Exception as e:
+            logger.error(f"❌ Erreur capture pre_analysis: {e}")
+            return self.generate_trade_id()  # Fallback
+
+    def capture_decision_snapshot(self,
+                                  symbol: str,
+                                  signal: Any,
+                                  ml_data: Dict[str, Any],
+                                  strategy_results: Optional[List] = None) -> bool:
+        """
+        SNAPSHOT DÉCISION
+        Capture le processus de décision et le signal sélectionné
+
+        Args:
+            symbol: ES ou NQ
+            signal: TradingSignal sélectionné
+            ml_data: Données ML_READY complètes
+            strategy_results: Liste de tous les signaux générés
+
+        Returns:
+            success: True si capture réussie
+        """
+        if not self.current_trade_id:
+            logger.warning("⚠️ Pas de trade_id actif pour snapshot décision")
+            return False
+
+        try:
+            # Extraire infos du signal (essayer 'side' pour PatternSignal, puis 'action')
+            strategy_name = getattr(signal, 'strategy', 'unknown')
+            action = getattr(signal, 'side', getattr(signal, 'action', 'UNKNOWN'))  # 'side' pour PatternSignal
+            confidence = getattr(signal, 'confidence', 0)
+            entry_price = getattr(signal, 'entry', getattr(signal, 'entry_price', ml_data.get('mid', 0)))  # 'entry' pour PatternSignal
+            stop_loss = getattr(signal, 'stop', getattr(signal, 'stop_loss', None))  # 'stop' pour PatternSignal
+            take_profit_list = getattr(signal, 'targets', None)
+            take_profit = take_profit_list[0] if take_profit_list and len(take_profit_list) > 0 else getattr(signal, 'take_profit', None)
+
+            # Créer snapshot
+            decision_snapshot = {
+                'snapshot_id': f"{self.current_trade_id}_DECISION",
+                'trade_id': self.current_trade_id,
+                'snapshot_type': SnapshotType.DECISION.value,
+                'timestamp': datetime.now(timezone.utc).isoformat(),
+
+                # Signal principal
+                'signal': {
+                    'strategy': strategy_name,
+                    'action': action,
+                    'confidence': confidence,
+                    'entry_price': entry_price,
+                    'stop_loss': stop_loss,
+                    'take_profit': take_profit,
+                    'risk_reward': abs((take_profit - entry_price) / (entry_price - stop_loss)) if stop_loss and take_profit else 0
+                },
+
+                # Context décision (utiliser session_id correctement)
+                'context': {
+                    'mid_price': ml_data.get('mid', 0),
+                    'vwap': ml_data.get('vwap', 0),
+                    'bullish_score': ml_data.get('bullish_score', 0),
+                    'dealers_bias': ml_data.get('dealers_bias', 0),
+                    'session': ml_data.get('session_id', ml_data.get('session', 'unknown')),
+                    'vix': ml_data.get('vix', 15)
+                },
+
+                # Toutes les stratégies évaluées (extraire 'side' pour PatternSignal)
+                'all_strategies': [
+                    {
+                        'strategy': getattr(s, 'strategy', 'unknown'),
+                        'action': getattr(s, 'side', getattr(s, 'action', 'UNKNOWN')),
+                        'confidence': getattr(s, 'confidence', 0)
+                    }
+                    for s in (strategy_results or [])
+                ]
+            }
+
+            # Stocker
+            self.snapshots['decision'].append(decision_snapshot)
+            self.stats['total_snapshots'] += 1
+
+            # Mettre à jour trade
+            if self.current_trade_id in self.trades:
+                self.trades[self.current_trade_id]['decision'] = decision_snapshot
+
+            # Sauvegarder
+            self._save_snapshot_to_file(decision_snapshot)
+
+            logger.debug(f"📸 Snapshot DÉCISION capturé: {strategy_name} {action} @ {entry_price}")
+
+            return True
+
+        except Exception as e:
+            logger.error(f"❌ Erreur capture decision: {e}")
+            return False
+
+    def capture_execution_snapshot(self,
+                                   symbol: str,
+                                   order_id: str,
+                                   order_details: Dict[str, Any],
+                                   fill_details: Optional[Dict[str, Any]] = None) -> bool:
+        """
+        SNAPSHOT EXÉCUTION
+        Capture les détails de l'ordre et du remplissage
+
+        Args:
+            symbol: ES ou NQ
+            order_id: ID de l'ordre DTC
+            order_details: Détails de l'ordre passé
+            fill_details: Détails du remplissage (si disponible)
+
+        Returns:
+            success: True si capture réussie
+        """
+        if not self.current_trade_id:
+            logger.warning("⚠️ Pas de trade_id actif pour snapshot execution")
+            return False
+
+        try:
+            execution_snapshot = {
+                'snapshot_id': f"{self.current_trade_id}_EXECUTION",
+                'trade_id': self.current_trade_id,
+                'snapshot_type': SnapshotType.EXECUTION.value,
+                'timestamp': datetime.now(timezone.utc).isoformat(),
+
+                # Ordre
+                'order': {
+                    'order_id': order_id,
+                    'symbol': symbol,
+                    'side': order_details.get('side', 'UNKNOWN'),
+                    'quantity': order_details.get('quantity', 1),
+                    'order_type': order_details.get('order_type', 'MARKET'),
+                    'price': order_details.get('price'),
+                    'status': order_details.get('status', 'PENDING')
+                },
+
+                # Remplissage
+                'fill': fill_details if fill_details else None
+            }
+
+            # Stocker
+            self.snapshots['execution'].append(execution_snapshot)
+            self.stats['total_snapshots'] += 1
+
+            # Mettre à jour trade
+            if self.current_trade_id in self.trades:
+                self.trades[self.current_trade_id]['execution'] = execution_snapshot
+
+            # Sauvegarder
+            self._save_snapshot_to_file(execution_snapshot)
+
+            logger.debug(f"📸 Snapshot EXÉCUTION capturé: {order_id}")
+
+            return True
+
+        except Exception as e:
+            logger.error(f"❌ Erreur capture execution: {e}")
+            return False
+
+    def capture_position_snapshot(self,
+                                  symbol: str,
+                                  position_data: Dict[str, Any],
+                                  ml_data: Optional[Dict[str, Any]] = None) -> bool:
+        """
+        SNAPSHOT POSITION OUVERTE
+        Capture l'état d'une position active avec MFE/MAE tracking
+
+        Args:
+            symbol: ES, NQ ou RTY
+            position_data: Données de la position (entry, TP, SL, side, MFE/MAE, etc.)
+            ml_data: Données ML_READY actuelles (optionnel)
+
+        Returns:
+            success: True si capture réussie
+        """
+        if not self.current_trade_id:
+            logger.warning("⚠️ Pas de trade_id actif pour snapshot position")
+            return False
+
+        try:
+            position_snapshot = {
+                'snapshot_id': f"{self.current_trade_id}_POSITION",
+                'trade_id': self.current_trade_id,
+                'snapshot_type': SnapshotType.POSITION_UPDATE.value,
+                'timestamp': datetime.now(timezone.utc).isoformat(),
+
+                # Position
+                'position': {
+                    'symbol': symbol,
+                    'side': position_data.get('side', 'UNKNOWN'),
+                    'quantity': position_data.get('quantity', 1),
+                    'entry_price': position_data.get('entry_price'),
+                    'entry_time': position_data.get('entry_time').isoformat() if position_data.get('entry_time') else None,
+                    'tp_price': position_data.get('tp_price'),
+                    'sl_price': position_data.get('sl_price'),
+                    'strategy': position_data.get('strategy', 'UNKNOWN'),
+
+                    # MFE/MAE tracking
+                    'max_profit_ticks': position_data.get('max_profit_ticks', 0.0),
+                    'max_loss_ticks': position_data.get('max_loss_ticks', 0.0),
+                    'unrealized_pnl_ticks': position_data.get('unrealized_pnl_ticks', 0.0),
+                    'tick_size': position_data.get('tick_size', 0.25)
+                },
+
+                # ML data snapshot (si disponible)
+                'ml_data_snapshot': ml_data if ml_data else None
+            }
+
+            # Stocker
+            if 'position_updates' not in self.snapshots:
+                self.snapshots['position_updates'] = []
+            self.snapshots['position_updates'].append(position_snapshot)
+            self.stats['total_snapshots'] += 1
+
+            # Mettre à jour trade
+            if self.current_trade_id in self.trades:
+                if 'positions' not in self.trades[self.current_trade_id]:
+                    self.trades[self.current_trade_id]['positions'] = []
+                self.trades[self.current_trade_id]['positions'].append(position_snapshot)
+
+            # Sauvegarder
+            self._save_snapshot_to_file(position_snapshot)
+
+            logger.debug(f"📸 Snapshot POSITION capturé: {symbol} (MFE: {position_data.get('max_profit_ticks', 0):.1f}t, MAE: {position_data.get('max_loss_ticks', 0):.1f}t)")
+
+            return True
+
+        except Exception as e:
+            logger.error(f"❌ Erreur capture position: {e}")
+            return False
+
+    def capture_final_result(self,
+                           symbol: str,
+                           pnl: float,
+                           exit_price: float,
+                           exit_reason: str,
+                           ml_data: Optional[Dict[str, Any]] = None) -> bool:
+        """
+        SNAPSHOT RÉSULTAT FINAL
+        Capture le résultat complet du trade
+
+        Args:
+            symbol: ES ou NQ
+            pnl: Profit/Loss réalisé
+            exit_price: Prix de sortie
+            exit_reason: Raison de la sortie
+            ml_data: Données ML_READY au moment de la sortie
+
+        Returns:
+            success: True si capture réussie
+        """
+        if not self.current_trade_id:
+            logger.warning("⚠️ Pas de trade_id actif pour snapshot final")
+            return False
+
+        try:
+            # Récupérer infos du trade
+            trade = self.trades.get(self.current_trade_id, {})
+            entry_price = trade.get('decision', {}).get('signal', {}).get('entry_price', 0)
+
+            result_snapshot = {
+                'snapshot_id': f"{self.current_trade_id}_RESULT",
+                'trade_id': self.current_trade_id,
+                'snapshot_type': SnapshotType.FINAL_RESULT.value,
+                'timestamp': datetime.now(timezone.utc).isoformat(),
+
+                # Résultat
+                'result': {
+                    'pnl': pnl,
+                    'entry_price': entry_price,
+                    'exit_price': exit_price,
+                    'exit_reason': exit_reason,
+                    'points': exit_price - entry_price if entry_price else 0,
+                    'ticks': (exit_price - entry_price) / 0.25 if entry_price else 0,
+                    'success': pnl > 0
+                },
+
+                # Context sortie
+                'exit_context': {
+                    'mid': ml_data.get('mid', exit_price) if ml_data else exit_price,
+                    'vwap': ml_data.get('vwap', 0) if ml_data else 0,
+                    'bullish_score': ml_data.get('bullish_score', 0) if ml_data else 0
+                } if ml_data else None,
+
+                # Durée
+                'duration': {
+                    'start': trade.get('start_time'),
+                    'end': datetime.now(),
+                    'duration_seconds': (datetime.now() - trade.get('start_time')).total_seconds() if trade.get('start_time') else 0
+                }
+            }
+
+            # Stocker
+            self.snapshots['final_result'].append(result_snapshot)
+            self.stats['total_snapshots'] += 1
+            self.stats['total_trades'] += 1
+
+            # Mettre à jour trade
+            if self.current_trade_id in self.trades:
+                self.trades[self.current_trade_id]['result'] = result_snapshot
+
+            # Sauvegarder
+            self._save_snapshot_to_file(result_snapshot)
+            self._save_complete_trade(self.current_trade_id)
+
+            logger.info(f"📸 Snapshot RÉSULTAT capturé: {pnl:+.2f} ({exit_reason})")
+
+            # Reset current trade
+            self.current_trade_id = None
+
+            return True
+
+        except Exception as e:
+            logger.error(f"❌ Erreur capture result: {e}")
+            return False
+
+    # ═══════════════════════════════════════════════════════════════
+    # ✅ PHASE 1.8 : CAPTURE SIGNAUX REJETÉS
+    # ═══════════════════════════════════════════════════════════════
+
+    def capture_rejected_signal_snapshot(self,
+                                        symbol: str,
+                                        signal: Optional[Dict[str, Any]],
+                                        ml_data: Dict[str, Any],
+                                        rejection_reason: str,
+                                        rejection_category: str,
+                                        ml_probability: float = 0.0,
+                                        ml_threshold: float = 0.0) -> str:
+        """
+        SNAPSHOT SIGNAL REJETÉ
+        Capture un signal qui a été rejeté pour analyse post-mortem
+
+        Args:
+            symbol: Symbole (ES, NQ, RTY)
+            signal: Signal rejeté (peut être None si pas encore créé)
+            ml_data: Données ML_READY au moment du rejet
+            rejection_reason: Raison détaillée du rejet
+            rejection_category: Catégorie (DATA, SAFETY, NO_SIGNAL, CONTEXT, MARKET_FILTER, RISK, ML)
+            ml_probability: Probabilité ML (si disponible)
+            ml_threshold: Seuil ML utilisé (si applicable)
+
+        Returns:
+            rejection_id: ID unique du rejet pour tracking
+        """
+        try:
+            # Générer ID unique pour ce rejet
+            rejection_id = f"REJ_{symbol}_{int(datetime.now().timestamp() * 1000)}"
+
+            rejected_snapshot = {
+                'rejection_id': rejection_id,
+                'snapshot_type': SnapshotType.REJECTED_SIGNAL.value,
+                'timestamp': datetime.now(timezone.utc).isoformat(),
+                'symbol': symbol,
+
+                # Raison du rejet
+                'rejection': {
+                    'reason': rejection_reason,
+                    'category': rejection_category,  # DATA, SAFETY, NO_SIGNAL, CONTEXT, MARKET_FILTER, RISK, ML
+                    'ml_probability': ml_probability,
+                    'ml_threshold': ml_threshold,
+                    'gap': ml_threshold - ml_probability if ml_threshold > 0 else 0
+                },
+
+                # Signal (si disponible)
+                'signal': {
+                    'action': signal.get('action') if signal else 'UNKNOWN',
+                    'confidence': signal.get('confidence', 0) if signal else 0,
+                    'strategy': signal.get('strategy') if signal else 'UNKNOWN',
+                    'entry_price': signal.get('entry_price') if signal else ml_data.get('mid', 0)
+                } if signal else {
+                    'action': 'UNKNOWN',
+                    'confidence': 0,
+                    'strategy': 'UNKNOWN',
+                    'entry_price': ml_data.get('mid', 0)
+                },
+
+                # Contexte marché au moment du rejet
+                'market_context': {
+                    'mid': ml_data.get('mid', 0),
+                    'best_bid': ml_data.get('best_bid', 0),
+                    'best_ask': ml_data.get('best_ask', 0),
+                    'vix': ml_data.get('vix', 20.0),
+                    'atr': ml_data.get('atr', 0),
+                    'bullish_score': ml_data.get('bullish_score', 0),
+                    'vwap': ml_data.get('vwap', 0),
+                    'd_vwap_ticks': ml_data.get('d_vwap_ticks', 0),
+                    'session_id': ml_data.get('session_id', 'unknown'),
+                    'volatility_regime': ml_data.get('volatility_regime', 'unknown')
+                },
+
+                # Distances MenthorQ (pour analyse)
+                'menthor_distances': ml_data.get('menthor_distances', {}),
+
+                # Metadata pour post-mortem virtuel
+                'post_mortem_data': {
+                    'can_analyze': True,  # Si on a assez de données pour analyser
+                    'entry_price': ml_data.get('mid', 0),
+                    'timestamp_ms': ml_data.get('t_ms', 0),
+                    'symbol_full': ml_data.get('sym', symbol)
+                }
+            }
+
+            # Sauvegarder dans dossier rejected_signals
+            timestamp_str = datetime.now().strftime("%Y%m%d")
+            filename = f"{timestamp_str}_{rejection_id}.json"
+            filepath = self.base_path / "rejected_signals" / filename
+
+            with open(filepath, 'w') as f:
+                json.dump(rejected_snapshot, f, indent=2, default=str)
+
+            logger.debug(f"📸 Signal rejeté capturé: {rejection_category} - {rejection_reason[:50]}")
+
+            return rejection_id
+
+        except Exception as e:
+            logger.error(f"❌ Erreur capture signal rejeté: {e}")
+            return f"REJ_ERROR_{int(time.time())}"
+
+    # === HELPER METHODS ===
+
+    def _save_snapshot_to_file(self, snapshot: Dict[str, Any]) -> bool:
+        """Sauvegarde un snapshot dans un fichier JSON"""
+        try:
+            snapshot_type = snapshot.get('snapshot_type', 'unknown')
+            trade_id = snapshot.get('trade_id', 'unknown')
+
+            # Nom du fichier
+            filename = f"{trade_id}_{snapshot_type}.json"
+            filepath = self.base_path / "daily" / filename
+
+            # Sauvegarder
+            with open(filepath, 'w') as f:
+                json.dump(snapshot, f, indent=2, default=str)
+
+            return True
+
+        except Exception as e:
+            logger.error(f"❌ Erreur sauvegarde snapshot: {e}")
+            return False
+
+    def _save_complete_trade(self, trade_id: str) -> bool:
+        """Sauvegarde un trade complet (tous snapshots)"""
+        try:
+            if trade_id not in self.trades:
+                return False
+
+            trade = self.trades[trade_id]
+
+            # Nom du fichier
+            filename = f"{trade_id}_COMPLETE.json"
+            filepath = self.base_path / "ml_ready" / filename
+
+            # Sauvegarder
+            with open(filepath, 'w') as f:
+                json.dump(trade, f, indent=2, default=str)
+
+            logger.debug(f"💾 Trade complet sauvegardé: {trade_id}")
+
+            return True
+
+        except Exception as e:
+            logger.error(f"❌ Erreur sauvegarde trade complet: {e}")
+            return False
+
+    def get_statistics(self) -> Dict[str, Any]:
+        """Retourne les statistiques du snapshotter"""
+        return {
+            'total_snapshots': self.stats['total_snapshots'],
+            'total_trades': self.stats['total_trades'],
+            'pre_analysis_count': len(self.snapshots['pre_analysis']),
+            'decision_count': len(self.snapshots['decision']),
+            'execution_count': len(self.snapshots['execution']),
+            'result_count': len(self.snapshots['final_result']),
+            'active_trades': len([t for t in self.trades.values() if t.get('result') is None]),
+            'completed_trades': len([t for t in self.trades.values() if t.get('result') is not None]),
+            'last_snapshot_time': self.stats['last_snapshot_time']
+        }
+
+
+# === FACTORY FUNCTION ===
+
+def create_trade_snapshotter_ml_ready(base_path: str = "snapshots",
+                                      mode: TradingMode = TradingMode.PAPER) -> TradeSnapshotterMLReady:
+    """
+    Factory pour créer un TradeSnapshotter ML_READY
+
+    Args:
+        base_path: Dossier racine pour les snapshots
+        mode: Mode de trading
+
+    Returns:
+        TradeSnapshotterMLReady instance
+    """
+    return TradeSnapshotterMLReady(base_path=base_path, mode=mode)
+
+
+# === TESTS ===
+
+if __name__ == "__main__":
+    # Test basique
+    logger.info("=== TEST TRADE SNAPSHOTTER ML_READY ===")
+
+    # Créer snapshotter
+    snapshotter = create_trade_snapshotter_ml_ready()
+
+    # Créer ml_data test
+    ml_data_test = {
+        'symbol': 'ES',
+        't_ms': int(datetime.now().timestamp() * 1000),
+        'mid': 5300.0,
+        'best_bid': 5299.75,
+        'best_ask': 5300.25,
+        'volume': 1000,
+        'delta': 50,
+        'cum_delta_session': 2500,
+        'vwap': 5298.5,
+        'nearest_gex_strike': 5300,
+        'dealers_bias': 0.15,
+        'bullish_score': 0.62
+    }
+
+    # Test snapshot pre-analysis
+    trade_id = snapshotter.capture_pre_analysis_snapshot(ml_data_test)
+    logger.info(f"✅ Trade ID créé: {trade_id}")
+
+    # Statistiques
+    stats = snapshotter.get_statistics()
+    logger.info(f"✅ Statistiques: {stats}")
+
+    logger.info("=== TEST TERMINÉ ===")

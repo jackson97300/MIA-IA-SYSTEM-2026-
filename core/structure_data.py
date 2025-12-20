@@ -370,6 +370,32 @@ class StructureDataProcessor:
             normalized["schema_version"] = SCHEMA_VERSION
             self._normalize_field_names(normalized)
             self._harmonize_values(normalized)
+            # Sécurité DOM: dropper DOM incohérent selon la famille de symbole
+            try:
+                sym = str(normalized.get("sym", ""))
+                dom = normalized.get("dom") or {}
+                dom_bid1 = normalized.get("dom_bid1") if "dom_bid1" in normalized else dom.get("bid1")
+                dom_ask1 = normalized.get("dom_ask1") if "dom_ask1" in normalized else dom.get("ask1")
+                if isinstance(dom_bid1, (int, float)) and isinstance(dom_ask1, (int, float)):
+                    def looks_like_es(p: float) -> bool: return p > 1000.0 and p < 10000.0
+                    def looks_like_nq(p: float) -> bool: return p > 10000.0 and p < 40000.0
+                    bad = False
+                    if sym.startswith("ES") and not (looks_like_es(dom_bid1) and looks_like_es(dom_ask1)):
+                        bad = True
+                    if sym.startswith("NQ") and not (looks_like_nq(dom_bid1) and looks_like_nq(dom_ask1)):
+                        bad = True
+                    if bad:
+                        # retirer champs DOM incohérents
+                        for k in ("dom_bid1","dom_ask1","dom_bq1","dom_aq1"):
+                            if k in normalized: normalized.pop(k, None)
+                        if isinstance(dom, dict):
+                            dom.pop("bid1", None); dom.pop("ask1", None); dom.pop("bq1", None); dom.pop("aq1", None)
+                            if dom:
+                                normalized["dom"] = dom
+                            elif "dom" in normalized:
+                                normalized.pop("dom", None)
+            except Exception:
+                pass
             return normalized
         except Exception as e:
             logger.exception(f"Erreur normalisation événement: {e}")

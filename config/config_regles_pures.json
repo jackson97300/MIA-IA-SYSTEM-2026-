@@ -1,0 +1,29 @@
+{
+  "mode_regles_pures": true,
+  "data_collection_mode": true,
+
+  "symbols": {
+    "ES": {
+      "enabled": true,
+      "sessions": ["ASIA", "LONDON", "US"]
+    },
+    "NQ": {
+      "enabled": true,
+      "sessions": ["ASIA", "LONDON", "US"]
+    },
+    "RTY": {
+      "enabled": true,
+      "sessions": ["LONDON", "US"]
+    }
+  },
+
+  "risk_parameters": {
+    "max_daily_loss_usd": 99999,
+    "max_losing_streak": 99,
+    "max_simultaneous_positions": 3
+  },
+
+  "order_dedup_ttl_seconds": 10,
+
+  "pre_flight_check_enabled": false
+}

@@ -1,0 +1,35 @@
+--- MIA_Dumper_G3_Unifier.cpp.ORIGINAL	2025-11-04 23:00:00.000000000 +0100
++++ MIA_Dumper_G3_Unifier.cpp.PATCHED	2025-11-04 23:35:00.000000000 +0100
+@@ -2438,12 +2438,29 @@
+   if (!(t_ms>0)) return;
+   const double tick = (sc.TickSize>0.0 ? sc.TickSize : 0.25);
+   const double tsec = (double)t_ms / 1000.0;
+
+-  // ================== GARDE-FOUS POUR DONNÉES DE QUALITÉ ===================
+-  // Détection des conditions de marché fermé/stale
+-  bool closed = is_closed_or_stale(U, 0, 0, 1.0, false, 0, U.bid, U.ask, "QUOTE", U.dom_bq1, U.dom_aq1);
++  // ================== PATCH V3.4: ARRÊT AUTOMATIQUE MARCHÉ FERMÉ ===================
++  // Calcul RÉEL des rates 1s et session progress pour détection marché fermé
++  int tick_rate_1s_int=0, trade_rate_1s_int=0, delta_rate_1s_int=0;
++  ML_ReadRates1s(chart, sym, tick_rate_1s_int, trade_rate_1s_int, delta_rate_1s_int);
++
++  int elapsed_s=0;
++  double progress01=0.0;
++  CalculateSessionMetrics(t_ms, elapsed_s, progress01);
++
++  // Détection des conditions de marché fermé/stale AVEC LES VRAIES VALEURS
++  // Note: is_dom_fresh calculé plus tard, on passe false pour l'instant
++  bool closed = is_closed_or_stale(U, tick_rate_1s_int, trade_rate_1s_int,
++                                   progress01, false, 0, U.bid, U.ask,
++                                   "QUOTE", U.dom_bq1, U.dom_aq1);
++
++  // Si marché fermé (score >= 2) → ARRÊT COMPLET (pas d'écriture, même pas heartbeat)
++  // Critères: tick_rate=0 + trade_rate=0 + DOM stale + session edges + weak quote
++  if (closed) {
++    return;  // ✅ NOUVEAU: Arrêt automatique si marché fermé/inactif
++  }
++  // ================== FIN PATCH V3.4 ===================
+
+   // Tentative de réparation BBO
+   double bid = U.bid, ask = U.ask;
+   bool bbo_repaired = repair_bbo(bid, ask, U, t_ms);

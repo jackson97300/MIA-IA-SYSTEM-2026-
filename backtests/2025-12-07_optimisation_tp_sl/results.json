@@ -1,0 +1,147 @@
+{
+  "test_name": "Optimisation TP/SL",
+  "test_date": "2025-12-06T15:25:13.251230",
+  "mode": "FULL",
+  "results": {
+    "ES_ACTUEL": {
+      "trades": 134,
+      "wins": 29,
+      "losses": 50,
+      "pnl": -2875.0,
+      "win_rate": 21.641791044776117,
+      "tp": 30,
+      "sl": 22,
+      "symbol": "ES"
+    },
+    "ES_TIGHT": {
+      "trades": 134,
+      "wins": 33,
+      "losses": 58,
+      "pnl": -2737.5,
+      "win_rate": 24.62686567164179,
+      "tp": 25,
+      "sl": 18,
+      "symbol": "ES"
+    },
+    "ES_WIDE": {
+      "trades": 134,
+      "wins": 26,
+      "losses": 44,
+      "pnl": -2375.0,
+      "win_rate": 19.402985074626866,
+      "tp": 35,
+      "sl": 25,
+      "symbol": "ES"
+    },
+    "ES_LARGE_TP": {
+      "trades": 134,
+      "wins": 22,
+      "losses": 54,
+      "pnl": -3850.0,
+      "win_rate": 16.417910447761194,
+      "tp": 40,
+      "sl": 22,
+      "symbol": "ES"
+    },
+    "ES_SMALL_SL": {
+      "trades": 134,
+      "wins": 28,
+      "losses": 60,
+      "pnl": -3000.0,
+      "win_rate": 20.8955223880597,
+      "tp": 30,
+      "sl": 18,
+      "symbol": "ES"
+    },
+    "ES_RR_2_1": {
+      "trades": 134,
+      "wins": 22,
+      "losses": 54,
+      "pnl": -2750.0,
+      "win_rate": 16.417910447761194,
+      "tp": 44,
+      "sl": 22,
+      "symbol": "ES"
+    },
+    "ES_RR_3_1": {
+      "trades": 134,
+      "wins": 9,
+      "losses": 56,
+      "pnl": -7975.0,
+      "win_rate": 6.7164179104477615,
+      "tp": 66,
+      "sl": 22,
+      "symbol": "ES"
+    },
+    "NQ_ACTUEL": {
+      "trades": 56,
+      "wins": 32,
+      "losses": 23,
+      "pnl": 5000.0,
+      "win_rate": 57.14285714285714,
+      "tp": 60,
+      "sl": 40,
+      "symbol": "NQ"
+    },
+    "NQ_TIGHT": {
+      "trades": 56,
+      "wins": 35,
+      "losses": 21,
+      "pnl": 5075.0,
+      "win_rate": 62.5,
+      "tp": 50,
+      "sl": 35,
+      "symbol": "NQ"
+    },
+    "NQ_WIDE": {
+      "trades": 56,
+      "wins": 28,
+      "losses": 27,
+      "pnl": 3725.0,
+      "win_rate": 50.0,
+      "tp": 70,
+      "sl": 45,
+      "symbol": "NQ"
+    },
+    "NQ_LARGE_TP": {
+      "trades": 56,
+      "wins": 24,
+      "losses": 30,
+      "pnl": 3600.0,
+      "win_rate": 42.857142857142854,
+      "tp": 80,
+      "sl": 40,
+      "symbol": "NQ"
+    },
+    "NQ_SMALL_SL": {
+      "trades": 56,
+      "wins": 28,
+      "losses": 27,
+      "pnl": 3675.0,
+      "win_rate": 50.0,
+      "tp": 60,
+      "sl": 35,
+      "symbol": "NQ"
+    },
+    "NQ_RR_2_1": {
+      "trades": 56,
+      "wins": 24,
+      "losses": 30,
+      "pnl": 3600.0,
+      "win_rate": 42.857142857142854,
+      "tp": 80,
+      "sl": 40,
+      "symbol": "NQ"
+    },
+    "NQ_RR_3_1": {
+      "trades": 56,
+      "wins": 14,
+      "losses": 34,
+      "pnl": 1600.0,
+      "win_rate": 25.0,
+      "tp": 120,
+      "sl": 40,
+      "symbol": "NQ"
+    }
+  }
+}
